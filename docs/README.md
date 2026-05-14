@@ -26,32 +26,41 @@ That means:
 - [Phases](./phases): phase-level goals and exit criteria.
 - [Epics](./epics): one file per epic story.
 
+## Docs-Only Workflow Rule
+
+When a task is explicitly marked as docs-only, keep the work strictly in documentation artifacts (plans, specs, stories, and checklists).
+
+- Do not implement runtime features as part of the task.
+- Do not run browser or end-to-end behavior tests for not-yet-implemented features.
+- Capture intended behavior as explicit validation stories so implementation teams can verify later.
+- Keep epic docs aligned with [Development Handoff Stories](./development-handoff-stories.md) as the source of truth for planning units.
+
 ## Epic Checklist
 
 Checked items are done. The list is ordered by recommended implementation sequence.
 
 - [ ] [Epic 01: Render Contract](./epics/01-render-contract.md)
-- [ ] [Epic 02: Analysis IR](./epics/02-analysis-ir.md)
-- [ ] [Epic 03: Preset Schema](./epics/03-preset-schema.md)
+- [ ] [Epic 02: Preview Console](./epics/02-preview-console.md)
+- [ ] [Epic 03: Analysis IR](./epics/03-analysis-ir.md)
 - [ ] [Epic 04: Layer Library](./epics/04-layer-library.md)
 - [ ] [Epic 05: Modulation System](./epics/05-modulation-system.md)
-- [ ] [Epic 11: Raindrops Shader](./epics/11-raindrops-shader.md)
-- [ ] [Epic 12: Spectroid Chase Shader](./epics/12-spectroid-chase-shader.md)
-- [ ] [Epic 06: Timeline Director](./epics/06-timeline-director.md)
-- [ ] [Epic 07: Transition System](./epics/07-transition-system.md)
-- [ ] [Epic 08: Preview Console](./epics/08-preview-console.md)
-- [ ] [Epic 09: Render Diagnostics](./epics/09-render-diagnostics.md)
-- [ ] [Epic 10: Fixture Mapping And Export](./epics/10-fixture-mapping-and-export.md)
+- [ ] [Epic 06: Preset Schema](./epics/06-preset-schema.md)
+- [ ] [Epic 07: Raindrops Shader](./epics/07-raindrops-shader.md)
+- [ ] [Epic 08: Spectroid Chase Shader](./epics/08-spectroid-chase-shader.md)
+- [ ] [Epic 09: Timeline Director](./epics/09-timeline-director.md)
+- [ ] [Epic 10: Transition System](./epics/10-transition-system.md)
+- [ ] [Epic 11: Fixture Mapping And Export](./epics/11-fixture-mapping-and-export.md)
+- [ ] [Epic 12: Render Diagnostics](./epics/12-render-diagnostics.md)
 
 ## Current Baseline
 
 The current codebase already has useful foundations:
 
 - Full-track audio analysis with beat times, onset, and five normalized frequency bands.
-- A precomputed JSON frame cache.
+- A structured separation between read-only room configurations (`data/fixtures/`) and generated outputs (`data/artifacts/`).
+- A precomputed, chunked binary canvas cache.
 - A browser player that synchronizes audio playback with cached frames.
 - Two prototype shader classes: wave and radial pulse.
 - A small tuning UI for generation parameters.
 
 The main gap is architecture depth. Production quality should come from a richer engine model, better musical analysis, a preset/timeline system, stronger low-res rendering techniques, and a more complete preview workflow.
-

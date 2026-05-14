@@ -1,43 +1,28 @@
-# Epic 04: Layer Library
+## Epic 04: Layer Library
 
-## Story
+### Backend Track
 
-As a preset author, I want a library of low-resolution-native visual layers so I can build varied looks that read clearly on a `100x50` canvas.
+- [ ] 04.B1 Layer interface: define a registry-based layer API with deterministic seeded execution.
+- [ ] 04.B2 Wave layer migration: convert wave into a reusable registry-backed layer.
+- [ ] 04.B3 Radial pulse migration: convert radial pulse into a reusable registry-backed layer.
+- [ ] 04.B4 Solid field layer: add a solid fill layer.
+- [ ] 04.B5 Gradient field layer: add a gradient layer.
+- [ ] 04.B6 Bars layer: add horizontal or vertical bars.
+- [ ] 04.B7 Rings layer: add ring or expanding pulse output.
+- [ ] 04.B8 Beat flash layer: add a beat flash layer.
+- [ ] 04.B9 Scanner layer: add a scanner or sweep layer.
+- [ ] 04.B10 Mirror transform: add mirror or symmetry transforms.
+- [ ] 04.B11 Blend ops: add `max`, `add`, `alpha`, `multiply`, `screen`, `difference`, and `mask`.
+- [ ] 04.B12 Scroll and zoom transforms: add scroll and zoom transforms.
 
-## Why This Matters
+### Frontend Track
 
-At this resolution, not every effect works. The layer library should favor bold forms, clean rhythm, and strong silhouettes.
+- [ ] 04.F1 Layer metadata type: add frontend-readable layer ids, labels, and parameter schemas.
+- [ ] 04.F2 Layer fixture browsing readiness: define a simple UI-facing shape for inspecting available layers later.
 
-## Scope
+### Validation Track
 
-- Convert current wave and radial pulse into reusable layers.
-- Add low-res-native layers:
-  - Solid and gradient fields.
-  - Horizontal and vertical bars.
-  - Rings and expanding pulses.
-  - Beat flashes.
-  - Scanners and sweeps.
-  - Symmetric waveforms.
-  - Particle sparks with bounded counts.
-  - Pixel masks and stencils.
-  - Noise fields.
-  - Kaleidoscope or mirror transforms.
-- Add blend modes: max, add, alpha, multiply, screen, difference, mask.
-- Add coordinate transforms: mirror, rotate, scroll, zoom, warp.
-
-## Acceptance Criteria
-
-- Layers are registered by id.
-- Layers expose parameter schemas.
-- Layers are deterministic when seeded.
-- Each layer has at least one visual fixture or snapshot test.
-
-## Dependencies
-
-- Preset schema.
-- Modulation system.
-
-## First Iteration
-
-Create layer interfaces and migrate `WaveShader` and `RadialPulseShader` into the registry without changing their visible output.
+- [ ] 04.V1 Registry test: prove layers are registered and loadable by id.
+- [ ] 04.V2 Determinism test: prove seeded layers render reproducibly.
+- [ ] 04.V3 Visual fixture coverage: add at least one fixture or snapshot test per layer.
 

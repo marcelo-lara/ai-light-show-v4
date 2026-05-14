@@ -6,11 +6,11 @@ Move from hardcoded shader orchestration to a reusable low-res visual engine. Pr
 
 ## Included Epics
 
-- [Epic 03: Preset Schema](../epics/03-preset-schema.md)
+- [Epic 06: Preset Schema](../epics/06-preset-schema.md)
 - [Epic 04: Layer Library](../epics/04-layer-library.md)
 - [Epic 05: Modulation System](../epics/05-modulation-system.md)
-- [Epic 11: Raindrops Shader](../epics/11-raindrops-shader.md)
-- [Epic 12: Spectroid Chase Shader](../epics/12-spectroid-chase-shader.md)
+- [Epic 07: Raindrops Shader](../epics/07-raindrops-shader.md)
+- [Epic 08: Spectroid Chase Shader](../epics/08-spectroid-chase-shader.md)
 
 ## Deliverables
 

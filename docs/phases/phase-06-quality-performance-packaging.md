@@ -6,8 +6,8 @@ Make the system reliable enough for repeated production use.
 
 ## Included Epics
 
-- [Epic 09: Render Diagnostics](../epics/09-render-diagnostics.md)
-- [Epic 10: Fixture Mapping And Export](../epics/10-fixture-mapping-and-export.md)
+- [Epic 12: Render Diagnostics](../epics/12-render-diagnostics.md)
+- [Epic 11: Fixture Mapping And Export](../epics/11-fixture-mapping-and-export.md)
 
 ## Deliverables
 

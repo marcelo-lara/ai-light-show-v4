@@ -18,17 +18,17 @@ Use these as small implementation handoff units. Each story should fit one focus
 ## Implementation Order
 
 1. Epic 01: Render Contract
-2. Epic 02: Analysis IR
-3. Epic 03: Preset Schema
+2. Epic 02: Preview Console
+3. Epic 03: Analysis IR
 4. Epic 04: Layer Library
 5. Epic 05: Modulation System
-6. Epic 11: Raindrops Shader
-7. Epic 12: Spectroid Chase Shader
-8. Epic 06: Timeline Director
-9. Epic 07: Transition System
-10. Epic 08: Preview Console
-11. Epic 09: Render Diagnostics
-12. Epic 10: Fixture Mapping And Export
+6. Epic 06: Preset Schema
+7. Epic 07: Raindrops Shader
+8. Epic 08: Spectroid Chase Shader
+9. Epic 09: Timeline Director
+10. Epic 10: Transition System
+11. Epic 11: Fixture Mapping And Export
+12. Epic 12: Render Diagnostics
 
 ## Epic 01: Render Contract
 
@@ -40,7 +40,7 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 01.B4 Backend compatibility checks: reject missing required fields and unsupported schema versions.
 - [ ] 01.B5 Current song state: add backend-owned `current_song` and `current_canvas` state to the playback contract.
 - [ ] 01.B6 Empty canvas state: define the contract for a loaded song with no current canvas yet.
-- [ ] 01.B7 Chunked binary frames: split v2 frame payloads into short binary chunks instead of one monolithic `.bin` file to reduce memory pressure and enable progressive loading later.
+- [ ] 01.B7 Chunked binary frames: split v2 frame payloads into short binary chunks stored in `data/artifacts/` instead of one monolithic `.bin` file to reduce memory pressure and enable progressive loading later.
 
 ### Frontend Track
 
@@ -57,52 +57,86 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 01.V4 Empty canvas contract test: prove a song can load without an existing canvas or show.
 - [ ] 01.V5 v1/v2 parity test: add a regression test that loads a short fixture as both legacy JSON frames and v2 binary frames and proves the decoded pixels match exactly.
 
-## Epic 02: Analysis IR
+## Epic 02: Preview Console
 
 ### Backend Track
 
-- [ ] 02.B1 Analysis schema v1: version the analysis cache and invalidate it when analyzer logic changes.
-- [ ] 02.B2 Beat timing signals: add `beat_phase` and nearest-beat distance to timestamp queries.
-- [ ] 02.B3 Bar timing signal: add `bar_phase` to timestamp queries.
-- [ ] 02.B4 Smoothed envelopes: add smoothed per-band envelopes.
-- [ ] 02.B5 Global energy: add a normalized global energy curve.
-- [ ] 02.B6 Musical structure: add downbeat, phrase, and section candidates with confidence values.
-- [ ] 02.B7 Analysis diagnostics: expose confidence, source metadata, and basic debug stats in the analysis artifact.
+- [ ] 02.B1 Song load endpoint: add one backend action that sets the current song and returns the updated current song plus current canvas state.
+- [ ] 02.B2 Missing canvas on load: make song-load succeed even when no show exists for that song.
+- [ ] 02.B3 Render action contract: make `Render` create or replace the current canvas for the already loaded song.
+- [ ] 02.B4 Metadata payload support: expose artifact metadata needed by the console without UI-only assumptions.
+- [ ] 02.B5 Generation status payload: expose render job status, progress, and failure details through the API.
+- [ ] 02.B6 Analysis phase progress: expose analysis-stage progress and status text before frame rendering begins.
+- [ ] 02.B7 Render progress cadence: publish render progress with current and total frame counts at least every `200` frames.
+- [ ] 02.B8 Canvas naming contract: accept a user-provided canvas name and persist exports as `{song_name}.{canvas_name}.json`.
+- [ ] 02.B9 Progress phase payload wiring: extend job status so the API reports analysis vs render phase and enough numeric progress for the frontend progress bar to reflect the active phase.
 
 ### Frontend Track
 
-- [ ] 02.F1 Analysis type updates: add types for beat phase, bar phase, energy, and structure metadata.
-- [ ] 02.F2 Analysis debug readiness: expose analysis metadata in a shape the UI can inspect later.
+- [ ] 02.F1 Console network spec: update the frontend to target port `3400` and the backend API on port `3401`.
+- [ ] 02.F2 Server-owned song flow: request song changes from the backend instead of loading song files directly in the frontend.
+- [ ] 02.F3 Song-loaded UI update: update the frontend when the backend reports a new current song and current canvas.
+- [ ] 02.F4 Empty canvas state UI: allow a song to be loaded and preview-ready even when no show exists yet.
+- [ ] 02.F5 Main tab: add a `Main` tab in the left column with only `show name` input and a `Render` button.
+- [ ] 02.F6 Shader tabs: add one left-column tab per shader or layer property group.
+- [ ] 02.F24 Main tab preset checklist: in the `Main` tab, add a `show name` input that defaults to overwrite mode and a checklist of presets to include in the render.
+- [ ] 02.F25 Preset tab visibility control: show one preset-parameter tab per checked preset and hide tabs for unchecked presets before applying to the canvas.
+- [ ] 02.F7 Fixture overlay load: load fixture references from `data/fixtures/fixtures.json`.
+- [ ] 02.F8 POI overlay load: load POI references from `data/fixtures/pois.json`.
+- [ ] 02.F9 Canvas reference overlay: draw fixtures and POIs as a visual overlay on the canvas.
+- [ ] 02.F10 Overlay marker styling: make fixture markers visually distinct from POI markers.
+- [ ] 02.F11 Artifact metadata panel: show render metadata, schema version, preset id, seed, and compatibility state.
+- [ ] 02.F12 Generation workflow UI: show render job status, progress, and failure details.
+- [ ] 02.F13 Preset-driven controls: build shader or layer controls from schema-defined groups instead of hardcoded controls.
+- [ ] 02.F14 Timeline view: add timeline display for scene and transition metadata.
+- [ ] 02.F15 Frame inspector: add pixel inspection with coordinates and RGB values.
+- [ ] 02.F16 Fullscreen preview: add fullscreen preview while preserving `100x50` pixel character.
+- [ ] 02.F17 A/B compare: add compare mode between two renders.
+- [ ] 02.F18 Approval workflow: add render approval status in the UI.
+- [ ] 02.F19 Full-width canvas fit: scale the preview canvas to the full available content width while preserving the render aspect ratio.
+- [ ] 02.F20 Generating progress bar: show render progress as a progress bar behind the `Generating...` label instead of text-only status.
+- [ ] 02.F21 Canvas name input: add a textbox for the canvas name used when `Render` creates `{song_name}.{canvas_name}.json`.
+- [ ] 02.F22 Header canvas-only title: show only the current canvas name in the header and hide the redundant song-name text there.
+- [ ] 02.F23 Phase-aware progress UI: drive the `Generating...` progress bar from the backend's analysis/render phase payload instead of a generic polling state.
 
 ### Validation Track
 
-- [ ] 02.V1 Cache invalidation test: prove analyzer schema changes invalidate cached analysis.
-- [ ] 02.V2 Timestamp query test: prove beat phase, bar phase, and nearest-beat fields are available at render time.
-- [ ] 02.V3 Signal sanity test: verify smoothed envelopes and energy values stay normalized and bounded.
+- [ ] 02.V1 Port configuration check: prove the frontend and backend run on the documented ports `3400` and `3401`.
+- [ ] 02.V2 Schema error state test: prove incompatible artifacts show a clear UI state.
+- [ ] 02.V3 Song load flow test: prove the frontend asks the backend to load a song and updates when the backend confirms the new current song.
+- [ ] 02.V4 Missing canvas flow test: prove a song with no canvas still loads and only creates a show on `Render`.
+- [ ] 02.V5 Left-tab layout test: prove the left column shows one `Main` tab and one tab per shader or layer group.
+- [ ] 02.V6 Overlay load test: prove fixtures and POIs load from their JSON files and render as overlay references.
+- [ ] 02.V7 Overlay alignment test: prove fixture and POI markers stay aligned to canvas coordinates.
+- [ ] 02.V8 Review workflow test: prove a user can load a song, render a show, inspect it, and approve it from the UI.
+- [ ] 02.V9 Full-width preview test: prove the canvas expands to the available width without distorting the render aspect ratio.
+- [ ] 02.V10 Canvas name render test: prove the entered canvas name is sent to the backend and the resulting canvas file uses `{song_name}.{canvas_name}.json`.
+- [ ] 02.V11 Progress phase test: prove the UI distinguishes analysis progress from render progress and updates render progress every `200` frames.
+- [ ] 02.V12 Chunk compatibility flow test: prove the preview can still load and play a chunked v2 canvas artifact without changing current-canvas selection semantics.
+- [ ] 02.V13 Preset tab selection flow test: prove the `Main` tab shows overwrite-default `show name` input plus preset checklist, and that selecting presets shows only those preset parameter tabs while unselected preset tabs remain hidden before render.
 
-## Epic 03: Preset Schema
+## Epic 03: Analysis IR
 
 ### Backend Track
 
-- [ ] 03.B1 Preset format v1: define preset identity, version, display fields, tags, and description.
-- [ ] 03.B2 Parameter schema: define typed parameters with defaults, bounds, step size, and UI grouping.
-- [ ] 03.B3 Layer stack schema: let a preset declare ordered layers and per-layer params.
-- [ ] 03.B4 Palette schema: let a preset declare palette and color controls.
-- [ ] 03.B5 Blend schema: let a preset declare blend modes at preset or layer level.
-- [ ] 03.B6 Preset validation: fail invalid presets with actionable errors before render time.
-- [ ] 03.B7 Baseline preset migration: represent the current wave plus pulse look as preset `undersea_pulse_01`.
+- [ ] 03.B1 Analysis schema v1: version the analysis cache and invalidate it when analyzer logic changes.
+- [ ] 03.B2 Beat timing signals: add `beat_phase` and nearest-beat distance to timestamp queries.
+- [ ] 03.B3 Bar timing signal: add `bar_phase` to timestamp queries.
+- [ ] 03.B4 Smoothed envelopes: add smoothed per-band envelopes.
+- [ ] 03.B5 Global energy: add a normalized global energy curve.
+- [ ] 03.B6 Musical structure: add downbeat, phrase, and section candidates with confidence values.
+- [ ] 03.B7 Analysis diagnostics: expose confidence, source metadata, and basic debug stats in the analysis artifact.
 
 ### Frontend Track
 
-- [ ] 03.F1 Preset summary type: add frontend types for preset identity, labels, and tags.
-- [ ] 03.F2 Parameter schema type: add frontend types for typed preset parameters and UI groups.
-- [ ] 03.F3 Preset loading readiness: make the UI able to consume schema-defined presets later without hardcoded assumptions.
+- [ ] 03.F1 Analysis type updates: add types for beat phase, bar phase, energy, and structure metadata.
+- [ ] 03.F2 Analysis debug readiness: expose analysis metadata in a shape the UI can inspect later.
 
 ### Validation Track
 
-- [ ] 03.V1 Valid preset test: prove a valid preset loads and passes schema validation.
-- [ ] 03.V2 Invalid preset test: prove invalid presets fail with actionable errors.
-- [ ] 03.V3 Baseline parity test: prove `undersea_pulse_01` reproduces the current baseline look closely enough.
+- [ ] 03.V1 Cache invalidation test: prove analyzer schema changes invalidate cached analysis.
+- [ ] 03.V2 Timestamp query test: prove beat phase, bar phase, and nearest-beat fields are available at render time.
+- [ ] 03.V3 Signal sanity test: verify smoothed envelopes and energy values stay normalized and bounded.
 
 ## Epic 04: Layer Library
 
@@ -155,199 +189,170 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 05.V2 Determinism test: prove modulator outputs stay stable for the same inputs.
 - [ ] 05.V3 Mapping test: prove mapping operations apply in the declared order.
 
-## Epic 11: Raindrops Shader
+## Epic 06: Preset Schema
 
 ### Backend Track
 
-- [ ] 11.B1 Raindrops layer spec: define a POI-aware radial pulse layer named `raindrops`.
-- [ ] 11.B2 POI source selection: allow pulses to start from one or more configured POIs.
-- [ ] 11.B3 POI transit behavior: allow pulses to pass through configured POIs on the canvas.
-- [ ] 11.B4 POI collision behavior: allow pulses to collide at configured POIs and create a visible interaction.
-- [ ] 11.B5 Parameter schema: define controls for pulse rate, radius growth, decay, collision strength, and POI selection.
-- [ ] 11.B6 Preset integration: make the raindrops shader usable from the preset and layer system.
+- [ ] 06.B1 Preset format v1: define preset identity, version, display fields, tags, and description.
+- [ ] 06.B2 Parameter schema: define typed parameters with defaults, bounds, step size, and UI grouping.
+- [ ] 06.B3 Layer stack schema: let a preset declare ordered layers and per-layer params.
+- [ ] 06.B4 Palette schema: let a preset declare palette and color controls.
+- [ ] 06.B5 Blend schema: let a preset declare blend modes at preset or layer level.
+- [ ] 06.B6 Preset validation: fail invalid presets with actionable errors before render time.
+- [ ] 06.B7 Undersea waves preset: define the first preset `undersea_waves` featuring 3 layered sine waves moving left to right, restricted to parcan chase effects, with a configurable base color (default blue). The wave speed must dynamically respond to beat timing, and the wave intensity/glitter must modulate based on FFT band changes.
+- [ ] 06.B8 Baseline preset migration: represent the current wave plus pulse look as preset `undersea_pulse_01`.
 
 ### Frontend Track
 
-- [ ] 11.F1 Shader metadata types: add frontend-readable types for the `raindrops` shader and its parameter schema.
-- [ ] 11.F2 POI selection readiness: make the UI able to consume POI-backed shader controls later.
-- [ ] 11.F3 Overlay compatibility: ensure the fixture and POI reference overlay remains useful while previewing raindrops output.
+- [ ] 06.F1 Preset summary type: add frontend types for preset identity, labels, and tags.
+- [ ] 06.F2 Parameter schema type: add frontend types for typed preset parameters and UI groups.
+- [ ] 06.F3 Preset loading readiness: make the UI able to consume schema-defined presets later without hardcoded assumptions.
 
 ### Validation Track
 
-- [ ] 11.V1 POI start test: prove pulses can originate from configured POIs.
-- [ ] 11.V2 POI transit test: prove pulses can pass through intermediate POIs.
-- [ ] 11.V3 POI collision test: prove two or more pulses can collide at a POI and produce deterministic output.
-- [ ] 11.V4 Snapshot test: add at least one visual fixture or snapshot test for the raindrops shader.
+- [ ] 06.V1 Valid preset test: prove a valid preset loads and passes schema validation.
+- [ ] 06.V2 Invalid preset test: prove invalid presets fail with actionable errors.
+- [ ] 06.V3 Undersea waves test: prove `undersea_waves` renders 3 layered sine waves, respects the configurable base color, limits output intensity exclusively to parcan anchor coordinates, and validates that wave speed and glitter respond to beat and FFT signals respectively.
+- [ ] 06.V4 Baseline parity test: prove `undersea_pulse_01` reproduces the current baseline look closely enough.
 
-## Epic 12: Spectroid Chase Shader
+## Epic 07: Raindrops Shader
 
 ### Backend Track
 
-- [ ] 12.B2 Central spectroid signal: define the analysis input for central spectroid, note, or chord-reactive triggering.
-- [ ] 12.B1 Chase layer spec: define a note or chord-reactive shader named `spectroid_chase`.
-- [ ] 12.B3 Parcan anchor selection: use parcan fixture positions as chase origin anchors on the canvas.
-- [ ] 12.B4 Chase path generation: generate outward line motion from parcan anchors toward the canvas.
-- [ ] 12.B5 Moving head follow lines: define line-follow behavior that moving heads can track visually later.
-- [ ] 12.B6 Parameter schema: define controls for trigger sensitivity, line length, spread, fade, and chase speed.
-- [ ] 12.B7 Preset integration: make the shader usable from the preset and layer system.
+- [ ] 07.B1 Raindrops layer spec: define a POI-aware radial pulse layer named `raindrops`.
+- [ ] 07.B2 POI source selection: allow pulses to start from one or more configured POIs.
+- [ ] 07.B3 POI transit behavior: allow pulses to pass through configured POIs on the canvas.
+- [ ] 07.B4 POI collision behavior: allow pulses to collide at configured POIs and create a visible interaction.
+- [ ] 07.B5 Parameter schema: define controls for pulse rate, radius growth, decay, collision strength, and POI selection.
+- [ ] 07.B6 Preset integration: make the raindrops shader usable from the preset and layer system.
 
 ### Frontend Track
 
-- [ ] 12.F1 Shader metadata types: add frontend-readable types for the `spectroid_chase` shader and its parameter schema.
-- [ ] 12.F2 Fixture-anchor readiness: make the UI able to consume parcan-anchor and moving-head-line controls later.
-- [ ] 12.F3 Overlay compatibility: ensure fixture and POI overlays remain useful while previewing the chase shader.
+- [ ] 07.F1 Shader metadata types: add frontend-readable types for the `raindrops` shader and its parameter schema.
+- [ ] 07.F2 POI selection readiness: make the UI able to consume POI-backed shader controls later.
+- [ ] 07.F3 Overlay compatibility: ensure the fixture and POI reference overlay remains useful while previewing raindrops output.
 
 ### Validation Track
 
-- [ ] 12.V1 Trigger response test: prove the shader reacts deterministically to the central spectroid or note/chord signal.
-- [ ] 12.V2 Parcan anchor test: prove chase lines start from parcan positions.
-- [ ] 12.V3 Line-follow test: prove outward line motion is stable and visually trackable for moving-head follow behavior.
-- [ ] 12.V4 Snapshot test: add at least one visual fixture or snapshot test for the spectroid chase shader.
+- [ ] 07.V1 POI start test: prove pulses can originate from configured POIs.
+- [ ] 07.V2 POI transit test: prove pulses can pass through intermediate POIs.
+- [ ] 07.V3 POI collision test: prove two or more pulses can collide at a POI and produce deterministic output.
+- [ ] 07.V4 Snapshot test: add at least one visual fixture or snapshot test for the raindrops shader.
 
-## Epic 06: Timeline Director
+## Epic 08: Spectroid Chase Shader
 
 ### Backend Track
 
-- [ ] 06.B1 Scene model: define scene fields for `start`, `end`, `preset_id`, `params`, `seed`, and `intensity`.
-- [ ] 06.B2 Auto timeline from sections: generate a first-pass timeline from detected sections.
-- [ ] 06.B3 Auto timeline from phrases or beats: support fallback scene generation from phrase or beat grouping.
-- [ ] 06.B4 Scene overrides: support manual scene edits without breaking auto-generated defaults.
-- [ ] 06.B5 Scene automation: support scene-level intensity automation.
-- [ ] 06.B6 Param automation: support scene-level parameter automation.
-- [ ] 06.B7 Artifact integration: include timeline metadata in render artifacts.
+- [ ] 08.B1 Central spectroid signal: define the analysis input for central spectroid, note, or chord-reactive triggering.
+- [ ] 08.B2 Chase layer spec: define a note or chord-reactive shader named `spectroid_chase`.
+- [ ] 08.B3 Parcan anchor selection: use parcan fixture positions as chase origin anchors on the canvas.
+- [ ] 08.B4 Chase path generation: generate outward line motion from parcan anchors toward the canvas.
+- [ ] 08.B5 Moving head follow lines: define line-follow behavior that moving heads can track visually later.
+- [ ] 08.B6 Parameter schema: define controls for trigger sensitivity, line length, spread, fade, and chase speed.
+- [ ] 08.B7 Preset integration: make the shader usable from the preset and layer system.
 
 ### Frontend Track
 
-- [ ] 06.F1 Timeline types: add frontend types for scenes, ranges, and automation metadata.
-- [ ] 06.F2 Timeline display readiness: make the UI able to consume timeline metadata later.
+- [ ] 08.F1 Shader metadata types: add frontend-readable types for the `spectroid_chase` shader and its parameter schema.
+- [ ] 08.F2 Fixture-anchor readiness: make the UI able to consume parcan-anchor and moving-head-line controls later.
+- [ ] 08.F3 Overlay compatibility: ensure fixture and POI overlays remain useful while previewing the chase shader.
 
 ### Validation Track
 
-- [ ] 06.V1 Multi-scene render test: prove one song can render with multiple scenes.
-- [ ] 06.V2 Alignment test: prove scene boundaries align to beats or phrases by default.
-- [ ] 06.V3 Override test: prove manual scene overrides persist over auto-generated defaults.
+- [ ] 08.V1 Trigger response test: prove the shader reacts deterministically to the central spectroid or note/chord signal.
+- [ ] 08.V2 Parcan anchor test: prove chase lines start from parcan positions.
+- [ ] 08.V3 Line-follow test: prove outward line motion is stable and visually trackable for moving-head follow behavior.
+- [ ] 08.V4 Snapshot test: add at least one visual fixture or snapshot test for the spectroid chase shader.
 
-## Epic 07: Transition System
+## Epic 09: Timeline Director
 
 ### Backend Track
 
-- [ ] 07.B1 Transition model: define transition type, alignment target, duration, and params.
-- [ ] 07.B2 Hard cut: implement hard cut transitions.
-- [ ] 07.B3 Crossfade: implement crossfade transitions.
-- [ ] 07.B4 Beat flash cut: implement beat flash cut transitions.
-- [ ] 07.B5 Beat-aware alignment: allow transitions to snap to beat, bar, phrase, or section boundaries.
-- [ ] 07.B6 Transition metadata: expose transition metadata in render artifacts.
-- [ ] 07.B7 Transition debug info: expose preview or debug information in artifacts.
+- [ ] 09.B1 Scene model: define scene fields for `start`, `end`, `preset_id`, `params`, `seed`, and `intensity`.
+- [ ] 09.B2 Auto timeline from sections: generate a first-pass timeline from detected sections.
+- [ ] 09.B3 Auto timeline from phrases or beats: support fallback scene generation from phrase or beat grouping.
+- [ ] 09.B4 Scene overrides: support manual scene edits without breaking auto-generated defaults.
+- [ ] 09.B5 Scene automation: support scene-level intensity automation.
+- [ ] 09.B6 Param automation: support scene-level parameter automation.
+- [ ] 09.B7 Artifact integration: include timeline metadata in render artifacts.
 
 ### Frontend Track
 
-- [ ] 07.F1 Transition types: add frontend types for transition metadata.
-- [ ] 07.F2 Transition preview readiness: make the UI able to consume transition metadata later.
+- [ ] 09.F1 Timeline types: add frontend types for scenes, ranges, and automation metadata.
+- [ ] 09.F2 Timeline display readiness: make the UI able to consume timeline metadata later.
 
 ### Validation Track
 
-- [ ] 07.V1 Deterministic transition test: prove transition output is reproducible.
-- [ ] 07.V2 Duration test: prove transition durations can be expressed and applied consistently.
-- [ ] 07.V3 Alignment test: prove transitions honor beat, bar, phrase, or section alignment rules.
+- [ ] 09.V1 Multi-scene render test: prove one song can render with multiple scenes.
+- [ ] 09.V2 Alignment test: prove scene boundaries align to beats or phrases by default.
+- [ ] 09.V3 Override test: prove manual scene overrides persist over auto-generated defaults.
 
-## Epic 08: Preview Console
+## Epic 10: Transition System
 
 ### Backend Track
 
-- [ ] 08.B3 Song load endpoint: add one backend action that sets the current song and returns the updated current song plus current canvas state.
-- [ ] 08.B4 Missing canvas on load: make song-load succeed even when no show exists for that song.
-- [ ] 08.B5 Render action contract: make `Render` create or replace the current canvas for the already loaded song.
-- [ ] 08.B2 Metadata payload support: expose artifact metadata needed by the console without UI-only assumptions.
-- [ ] 08.B1 Generation status payload: expose render job status, progress, and failure details through the API.
-- [ ] 08.B6 Analysis phase progress: expose analysis-stage progress and status text before frame rendering begins.
-- [ ] 08.B7 Render progress cadence: publish render progress with current and total frame counts at least every `200` frames.
-- [ ] 08.B8 Canvas naming contract: accept a user-provided canvas name and persist exports as `{song_name}.{canvas_name}.json`.
-- [ ] 08.B9 Progress phase payload wiring: extend job status so the API reports analysis vs render phase and enough numeric progress for the frontend progress bar to reflect the active phase.
+- [ ] 10.B1 Transition model: define transition type, alignment target, duration, and params.
+- [ ] 10.B2 Hard cut: implement hard cut transitions.
+- [ ] 10.B3 Crossfade: implement crossfade transitions.
+- [ ] 10.B4 Beat flash cut: implement beat flash cut transitions.
+- [ ] 10.B5 Beat-aware alignment: allow transitions to snap to beat, bar, phrase, or section boundaries.
+- [ ] 10.B6 Transition metadata: expose transition metadata in render artifacts.
+- [ ] 10.B7 Transition debug info: expose preview or debug information in artifacts.
 
 ### Frontend Track
 
-- [ ] 08.F1 Console network spec: update the frontend to target port `3400` and the backend API on port `3401`.
-- [ ] 08.F4 Server-owned song flow: request song changes from the backend instead of loading song files directly in the frontend.
-- [ ] 08.F5 Song-loaded UI update: update the frontend when the backend reports a new current song and current canvas.
-- [ ] 08.F6 Empty canvas state UI: allow a song to be loaded and preview-ready even when no show exists yet.
-- [ ] 08.F7 Main tab: add a `Main` tab in the left column with only `show name` input and a `Render` button.
-- [ ] 08.F8 Shader tabs: add one left-column tab per shader or layer property group.
-- [ ] 08.F10 Fixture overlay load: load fixture references from `data/fixtures/fixtures.json`.
-- [ ] 08.F11 POI overlay load: load POI references from `data/fixtures/pois.json`.
-- [ ] 08.F12 Canvas reference overlay: draw fixtures and POIs as a visual overlay on the canvas.
-- [ ] 08.F13 Overlay marker styling: make fixture markers visually distinct from POI markers.
-- [ ] 08.F2 Artifact metadata panel: show render metadata, schema version, preset id, seed, and compatibility state.
-- [ ] 08.F3 Generation workflow UI: show render job status, progress, and failure details.
-- [ ] 08.F9 Preset-driven controls: build shader or layer controls from schema-defined groups instead of hardcoded controls.
-- [ ] 08.F14 Timeline view: add timeline display for scene and transition metadata.
-- [ ] 08.F15 Frame inspector: add pixel inspection with coordinates and RGB values.
-- [ ] 08.F16 Fullscreen preview: add fullscreen preview while preserving `100x50` pixel character.
-- [ ] 08.F17 A/B compare: add compare mode between two renders.
-- [ ] 08.F18 Approval workflow: add render approval status in the UI.
-- [ ] 08.F19 Full-width canvas fit: scale the preview canvas to the full available content width while preserving the render aspect ratio.
-- [ ] 08.F20 Generating progress bar: show render progress as a progress bar behind the `Generating...` label instead of text-only status.
-- [ ] 08.F21 Canvas name input: add a textbox for the canvas name used when `Render` creates `{song_name}.{canvas_name}.json`.
-- [ ] 08.F22 Header canvas-only title: show only the current canvas name in the header and hide the redundant song-name text there.
-- [ ] 08.F23 Phase-aware progress UI: drive the `Generating...` progress bar from the backend's analysis/render phase payload instead of a generic polling state.
+- [ ] 10.F1 Transition types: add frontend types for transition metadata.
+- [ ] 10.F2 Transition preview readiness: make the UI able to consume transition metadata later.
 
 ### Validation Track
 
-- [ ] 08.V1 Port configuration check: prove the frontend and backend run on the documented ports `3400` and `3401`.
-- [ ] 08.V2 Schema error state test: prove incompatible artifacts show a clear UI state.
-- [ ] 08.V3 Song load flow test: prove the frontend asks the backend to load a song and updates when the backend confirms the new current song.
-- [ ] 08.V4 Missing canvas flow test: prove a song with no canvas still loads and only creates a show on `Render`.
-- [ ] 08.V5 Left-tab layout test: prove the left column shows one `Main` tab and one tab per shader or layer group.
-- [ ] 08.V6 Overlay load test: prove fixtures and POIs load from their JSON files and render as overlay references.
-- [ ] 08.V7 Overlay alignment test: prove fixture and POI markers stay aligned to canvas coordinates.
-- [ ] 08.V8 Review workflow test: prove a user can load a song, render a show, inspect it, and approve it from the UI.
-- [ ] 08.V9 Full-width preview test: prove the canvas expands to the available width without distorting the render aspect ratio.
-- [ ] 08.V10 Canvas name render test: prove the entered canvas name is sent to the backend and the resulting canvas file uses `{song_name}.{canvas_name}.json`.
-- [ ] 08.V11 Progress phase test: prove the UI distinguishes analysis progress from render progress and updates render progress every `200` frames.
-- [ ] 08.V12 Chunk compatibility flow test: prove the preview can still load and play a chunked v2 canvas artifact without changing current-canvas selection semantics.
+- [ ] 10.V1 Deterministic transition test: prove transition output is reproducible.
+- [ ] 10.V2 Duration test: prove transition durations can be expressed and applied consistently.
+- [ ] 10.V3 Alignment test: prove transitions honor beat, bar, phrase, or section alignment rules.
 
-## Epic 09: Render Diagnostics
+## Epic 11: Fixture Mapping And Export
 
 ### Backend Track
 
-- [ ] 09.B1 Diagnostics summary: compute brightness, average color, frame delta, blank-frame warnings, and render duration.
-- [ ] 09.B2 Variety metrics: add beat-response and section-variation style signals that flag static or repetitive renders.
-- [ ] 09.B3 Contact sheets: generate contact sheets for each render.
-- [ ] 09.B4 Preview strip or GIF: generate a short preview strip or GIF for each render.
+- [ ] 11.B1 Canonical pixel order: document and encode the canonical origin and row-major pixel order.
+- [ ] 11.B2 Fixture reference schema: treat `data/fixtures/fixtures.json` as real fixture instances with fixture-type id and normalized canvas location.
+- [ ] 11.B3 POI reference schema: treat `data/fixtures/pois.json` as normalized points of interest with optional per-fixture pan and tilt calibration targeting `ref_0_0_0`.
+- [ ] 11.B4 Mapping config: define fixture or layout mapping inputs.
+- [ ] 11.B5 Linear mapping: support linear pixel order.
+- [ ] 11.B6 Serpentine mapping: support serpentine pixel order.
+- [ ] 11.B7 Export manifest v1: export mapped frame metadata without changing the canonical render artifact.
+- [ ] 11.B8 Gamma correction: add gamma correction to export.
+- [ ] 11.B9 Brightness limiting: add brightness limiting to export.
 
 ### Frontend Track
 
-- [ ] 09.F1 Diagnostics types: add frontend types for diagnostics summaries and warnings.
-- [ ] 09.F2 Diagnostics view: surface diagnostics summaries and warnings in the console UI.
-- [ ] 09.F3 Diagnostics asset view: surface contact sheets and preview assets in the UI.
+- [ ] 11.F1 Export metadata types: add frontend types for export and mapping metadata.
+- [ ] 11.F2 Export review readiness: make the UI able to inspect export metadata and mapping results later.
+- [ ] 11.F3 Fixture and POI reference types: add frontend-readable types for fixture instances and POIs.
 
 ### Validation Track
 
-- [ ] 09.V1 Blank render test: catch obviously blank renders.
-- [ ] 09.V2 Static render test: catch accidentally static renders.
-- [ ] 09.V3 Regression change test: catch accidental visual output changes.
+- [ ] 11.V1 Orientation test pattern: add a test pattern that makes orientation obvious.
+- [ ] 11.V2 Ordering test pattern: add a test pattern that makes pixel ordering obvious.
+- [ ] 11.V3 Mapping validation: add validation checks for orientation, ordering, and layout mapping.
 
-## Epic 10: Fixture Mapping And Export
+## Epic 12: Render Diagnostics
 
 ### Backend Track
 
-- [ ] 10.B1 Canonical pixel order: document and encode the canonical origin and row-major pixel order.
-- [ ] 10.B2a Fixture reference schema: treat `fixtures.json` as real fixture instances with fixture-type id and normalized canvas location.
-- [ ] 10.B2b POI reference schema: treat `pois.json` as normalized points of interest with optional per-fixture pan and tilt calibration.
-- [ ] 10.B2 Mapping config: define fixture or layout mapping inputs.
-- [ ] 10.B3 Linear mapping: support linear pixel order.
-- [ ] 10.B4 Serpentine mapping: support serpentine pixel order.
-- [ ] 10.B5 Export manifest v1: export mapped frame metadata without changing the canonical render artifact.
-- [ ] 10.B6 Gamma correction: add gamma correction to export.
-- [ ] 10.B7 Brightness limiting: add brightness limiting to export.
+- [ ] 12.B1 Diagnostics summary: compute brightness, average color, frame delta, blank-frame warnings, and render duration.
+- [ ] 12.B2 Variety metrics: add beat-response and section-variation style signals that flag static or repetitive renders.
+- [ ] 12.B3 Contact sheets: generate contact sheets for each render.
+- [ ] 12.B4 Preview strip or GIF: generate a short preview strip or GIF for each render.
 
 ### Frontend Track
 
-- [ ] 10.F1 Export metadata types: add frontend types for export and mapping metadata.
-- [ ] 10.F2 Export review readiness: make the UI able to inspect export metadata and mapping results later.
-- [ ] 10.F3 Fixture and POI reference types: add frontend-readable types for fixture instances and POIs.
+- [ ] 12.F1 Diagnostics types: add frontend types for diagnostics summaries and warnings.
+- [ ] 12.F2 Diagnostics view: surface diagnostics summaries and warnings in the console UI.
+- [ ] 12.F3 Diagnostics asset view: surface contact sheets and preview assets in the UI.
 
 ### Validation Track
 
-- [ ] 10.V1 Orientation test pattern: add a test pattern that makes orientation obvious.
-- [ ] 10.V2 Ordering test pattern: add a test pattern that makes pixel ordering obvious.
-- [ ] 10.V3 Mapping validation: add validation checks for orientation, ordering, and layout mapping.
+- [ ] 12.V1 Blank render test: catch obviously blank renders.
+- [ ] 12.V2 Static render test: catch accidentally static renders.
+- [ ] 12.V3 Regression change test: catch accidental visual output changes.

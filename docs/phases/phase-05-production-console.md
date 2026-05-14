@@ -6,8 +6,8 @@ Upgrade the frontend from a playback prototype into a review and generation cons
 
 ## Included Epics
 
-- [Epic 08: Preview Console](../epics/08-preview-console.md)
-- [Epic 09: Render Diagnostics](../epics/09-render-diagnostics.md)
+- [Epic 02: Preview Console](../epics/02-preview-console.md)
+- [Epic 12: Render Diagnostics](../epics/12-render-diagnostics.md)
 
 ## Deliverables
 

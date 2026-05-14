@@ -7,7 +7,7 @@ Make the current prototype dependable. Before adding visual complexity, define e
 ## Included Epics
 
 - [Epic 01: Render Contract](../epics/01-render-contract.md)
-- [Epic 09: Render Diagnostics](../epics/09-render-diagnostics.md)
+- [Epic 12: Render Diagnostics](../epics/12-render-diagnostics.md)
 
 ## Deliverables
 

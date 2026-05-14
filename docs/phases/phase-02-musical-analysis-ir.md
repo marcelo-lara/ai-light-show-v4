@@ -6,7 +6,7 @@ Turn audio analysis into musical direction signals. Raw frequency bands are usef
 
 ## Included Epics
 
-- [Epic 02: Analysis IR](../epics/02-analysis-ir.md)
+- [Epic 03: Analysis IR](../epics/03-analysis-ir.md)
 - [Epic 05: Modulation System](../epics/05-modulation-system.md)
 
 ## Deliverables

@@ -1,42 +1,23 @@
-# Epic 05: Modulation System
+## Epic 05: Modulation System
 
-## Story
+### Backend Track
 
-As a preset author, I want parameters to be driven by musical and procedural modulators so effects feel alive without hardcoding behavior inside each layer.
+- [ ] 05.B1 Audio modulator sources: support band envelopes, onset, beat pulse, beat phase, bar phase, and phrase progress.
+- [ ] 05.B2 Procedural modulator sources: support LFO and seeded random sources.
+- [ ] 05.B3 Mapping ops part 1: support scale, clamp, and invert.
+- [ ] 05.B4 Mapping ops part 2: support curve, smooth, lag, and quantize.
+- [ ] 05.B5 Preset bindings: allow presets to bind modulators to layer parameters without custom Python code.
+- [ ] 05.B6 Deterministic execution: make modulator outputs stable for the same analysis, seed, and time.
+- [ ] 05.B7 Debug output shape: expose resolved modulator values in a structured format.
 
-## Why This Matters
+### Frontend Track
 
-Production visuals need consistent modulation language. Without it, every layer invents its own smoothing, beat response, random motion, and intensity handling.
+- [ ] 05.F1 Modulator value types: add frontend types for current modulator values and mappings.
+- [ ] 05.F2 Modulator inspection readiness: define a UI-facing shape for viewing live modulator values later.
 
-## Scope
+### Validation Track
 
-- Define modulation sources:
-  - Band envelopes.
-  - Onset.
-  - Beat pulse.
-  - Beat phase.
-  - Bar phase.
-  - Phrase progress.
-  - Section intensity.
-  - LFO.
-  - Random walk.
-  - Seeded sample-and-hold.
-- Define mapping operations: scale, clamp, invert, curve, smooth, lag, quantize.
-- Allow parameter bindings in presets.
-- Add debug output for modulated values.
-
-## Acceptance Criteria
-
-- A preset can bind a layer parameter to a modulator without custom code.
-- Modulator values are deterministic.
-- The frontend can show current modulator values during playback.
-
-## Dependencies
-
-- Analysis IR.
-- Preset schema.
-
-## First Iteration
-
-Implement bindings for `bass`, `treble`, `global_energy`, `beat_pulse`, and `beat_phase`, with scale/clamp/curve mapping.
+- [ ] 05.V1 Binding test: prove presets can bind modulators to layer parameters without layer-specific code.
+- [ ] 05.V2 Determinism test: prove modulator outputs stay stable for the same inputs.
+- [ ] 05.V3 Mapping test: prove mapping operations apply in the declared order.
 

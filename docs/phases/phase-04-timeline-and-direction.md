@@ -6,8 +6,8 @@ Make a show feel directed across the full song. The engine should arrange scenes
 
 ## Included Epics
 
-- [Epic 06: Timeline Director](../epics/06-timeline-director.md)
-- [Epic 07: Transition System](../epics/07-transition-system.md)
+- [Epic 09: Timeline Director](../epics/09-timeline-director.md)
+- [Epic 10: Transition System](../epics/10-transition-system.md)
 
 ## Deliverables
 
