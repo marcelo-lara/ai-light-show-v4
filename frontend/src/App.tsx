@@ -1,143 +1,195 @@
 import React, { useEffect } from 'react';
-import { usePlaybackStore } from '../store/playback';
-import { CompatibilityError } from '../components/CompatibilityError';
-import { MetadataDisplay } from '../components/MetadataDisplay';
+import { usePlaybackStore } from './store/playback';
+import { CompatibilityError } from './components/CompatibilityError';
+import CanvasDisplay from './components/CanvasDisplay';
+import ControlPanel from './components/ControlPanel';
+import ProgressTracking from './components/ProgressTracking';
+import type { RenderArtifactMetadata } from './types/renderContract';
 
 /**
- * Main app component for Phase 1: Render Contract
+ * Main app component for Phase 2: Preview Console
+ * 
+ * Epic 02: Interactive preview with canvas rendering, controls, and progress tracking
  */
 export const App: React.FC = () => {
-  const { playbackState, compatibilityError, isLoading, loadPlaybackState, clearCompatibilityError } =
-    usePlaybackStore();
+  const {
+    playbackState,
+    compatibilityError,
+    isLoading,
+    loadPlaybackState,
+    clearCompatibilityError,
+    loadFixtures,
+    loadPOIs,
+    canvasName,
+    setCanvasName,
+    startRender,
+    renderJob,
+    fixtures,
+    pois,
+  } = usePlaybackStore();
 
   useEffect(() => {
+    // Load initial state and fixtures
     loadPlaybackState();
-  }, [loadPlaybackState]);
+    loadFixtures();
+    loadPOIs();
+  }, [loadPlaybackState, loadFixtures, loadPOIs]);
+
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <div>Loading...</div>
+      </div>
+    );
+  }
+
+  if (compatibilityError.has_error) {
+    return <CompatibilityError error={compatibilityError} onDismiss={clearCompatibilityError} />;
+  }
+
+  // Get current song
+  const currentSong = playbackState?.current_song;
+
+  // Dummy metadata for display (would come from loaded artifact)
+  const dummyMetadata: RenderArtifactMetadata = {
+    schema_version: '1.0',
+    render_id: 'render_12345',
+    render_timestamp: new Date().toISOString(),
+    frame_count: 300,
+    fps: 30,
+    duration: 10,
+    preset_id: 'preset_default',
+    seed: 12345,
+    compatibility_state: 'compatible',
+  };
+
+  // Control panel tabs
+  const tabs = [
+    { id: 'main', label: 'Main', type: 'main' as const },
+    { id: 'shader1', label: 'Raindrops', type: 'shader' as const },
+    { id: 'shader2', label: 'Chase', type: 'shader' as const },
+  ];
 
   return (
     <div
       style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        backgroundColor: '#f0f0f0',
         fontFamily: 'system-ui, -apple-system, sans-serif',
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '20px',
-        backgroundColor: '#fafafa',
       }}
     >
-      <header style={{ marginBottom: '20px' }}>
-        <h1>AI Light Show v4 - Phase 1: Render Contract</h1>
-        <p style={{ color: '#666', marginTop: '8px' }}>
-          Backend API: {isLoading ? 'Loading...' : 'Ready'}
-        </p>
-      </header>
+      {/* Header */}
+      <div
+        style={{
+          backgroundColor: '#333',
+          color: '#fff',
+          padding: '16px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          borderBottom: '2px solid #2196f3',
+        }}
+      >
+        <div style={{ fontSize: '18px', fontWeight: 'bold' }}>
+          AI Light Show - Preview Console
+        </div>
+        <div style={{ fontSize: '12px', color: '#aaa' }}>
+          {currentSong ? `Song: ${currentSong.title}` : 'No song loaded'}
+        </div>
+      </div>
 
-      {/* Compatibility Error Display (Epic 01.F2) */}
-      <CompatibilityError error={compatibilityError} onDismiss={clearCompatibilityError} />
-
-      {/* Main Content */}
+      {/* Main content grid */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 2fr',
-          gap: '20px',
+          gridTemplateColumns: '320px 1fr',
+          gap: '16px',
+          padding: '16px',
+          flex: 1,
+          overflow: 'hidden',
+          minHeight: 0,
         }}
       >
-        {/* Left Panel - Controls */}
+        {/* Left panel: Controls */}
         <div
           style={{
-            backgroundColor: 'white',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
-            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+            overflow: 'auto',
+            minHeight: 0,
           }}
         >
-          <h2 style={{ marginTop: 0 }}>Main</h2>
-          <p>Show Name:</p>
-          <input
-            type="text"
-            placeholder="Enter show name"
-            style={{
-              width: '100%',
-              padding: '8px',
-              marginBottom: '16px',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-              boxSizing: 'border-box',
-            }}
+          <ControlPanel
+            tabs={tabs}
+            canvasNameValue={canvasName}
+            onCanvasNameChange={setCanvasName}
+            onRenderClick={() => startRender(canvasName)}
+            isRendering={renderJob.phase === 'analyzing' || renderJob.phase === 'rendering'}
           />
-          <button
-            style={{
-              width: '100%',
-              padding: '10px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-            }}
-          >
-            Render
-          </button>
+
+          {renderJob.jobId && (
+            <ProgressTracking
+              progress={{
+                phase: renderJob.phase as any,
+                status_text: renderJob.statusText,
+                render_percent: renderJob.percent,
+                error_message: renderJob.errorMessage || undefined,
+              }}
+            />
+          )}
         </div>
 
-        {/* Right Panel - Playback State & Metadata */}
-        <div>
-          {/* Playback State */}
-          <div
-            style={{
-              backgroundColor: 'white',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-              padding: '16px',
-              marginBottom: '20px',
-            }}
-          >
-            <h2 style={{ marginTop: 0 }}>Current Playback State</h2>
-            <div style={{ fontFamily: 'monospace', fontSize: '12px', whiteSpace: 'pre-wrap' }}>
-              {JSON.stringify(playbackState, null, 2)}
+        {/* Right panel: Canvas display */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+            overflow: 'auto',
+            backgroundColor: '#fff',
+            padding: '16px',
+            borderRadius: '4px',
+            minHeight: 0,
+          }}
+        >
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#333' }}>Canvas Preview</h3>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+              <CanvasDisplay
+                metadata={dummyMetadata}
+                fixtures={fixtures as any}
+                pois={pois as any}
+                showGrid={true}
+                showOverlay={true}
+                scale={6}
+              />
             </div>
           </div>
 
-          {/* Metadata Display (Epic 01.F3) */}
-          {playbackState?.current_song?.current_canvas?.render_artifact?.metadata && (
+          {/* Metadata display */}
+          {currentSong && (
             <div
               style={{
-                backgroundColor: 'white',
-                border: '1px solid #ddd',
+                padding: '12px',
+                backgroundColor: '#f5f5f5',
                 borderRadius: '4px',
-                padding: '16px',
+                fontSize: '11px',
+                fontFamily: 'monospace',
+                borderTop: '1px solid #ddd',
               }}
             >
-              <h2 style={{ marginTop: 0 }}>Render Metadata</h2>
-              <MetadataDisplay
-                metadata={playbackState.current_song.current_canvas.render_artifact.metadata}
-              />
-            </div>
-          )}
-
-          {/* Empty Canvas State (Epic 01.B6 & 01.F4) */}
-          {playbackState?.current_song?.current_canvas?.is_empty && (
-            <div
-              style={{
-                backgroundColor: '#e8f5e9',
-                border: '1px solid #4caf50',
-                borderRadius: '4px',
-                padding: '16px',
-                fontStyle: 'italic',
-                color: '#2e7d32',
-              }}
-            >
-              <strong>No render available yet.</strong> Load a song and click Render to generate a light show.
+              <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>Artifact Metadata</div>
+              <div>Render ID: {dummyMetadata.render_id}</div>
+              <div>Schema: v{dummyMetadata.schema_version}</div>
+              <div>Seed: {dummyMetadata.seed}</div>
+              <div>Status: {dummyMetadata.compatibility_state}</div>
             </div>
           )}
         </div>
       </div>
-
-      {/* Footer */}
-      <footer style={{ marginTop: '40px', paddingTop: '20px', borderTop: '1px solid #ddd', color: '#666', fontSize: '12px' }}>
-        <p>Phase 1 Implementation: Render Contract - Schema v1.0</p>
-      </footer>
     </div>
   );
 };

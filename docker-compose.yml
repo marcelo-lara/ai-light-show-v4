@@ -25,5 +25,9 @@ services:
       - "3400:3400"
     volumes:
       - ./frontend:/app/frontend
+      - /app/frontend/node_modules  # Named volume to preserve node_modules
     working_dir: /app/frontend
     command: npm run dev
+
+volumes:
+  node_modules:

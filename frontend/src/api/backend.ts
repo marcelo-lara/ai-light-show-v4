@@ -79,6 +79,50 @@ class BackendAPI {
     const response = await this.client.post('/api/playback/stop');
     return response.data;
   }
+
+  // Epic 02: Fixtures and POIs
+  async getFixtures(): Promise<{
+    fixtures: Array<Record<string, unknown>>;
+    schema_version: string;
+  }> {
+    const response = await this.client.get('/api/fixtures');
+    return response.data;
+  }
+
+  async getPOIs(): Promise<{
+    pois: Array<Record<string, unknown>>;
+    schema_version: string;
+  }> {
+    const response = await this.client.get('/api/pois');
+    return response.data;
+  }
+
+  // Epic 02: Render job management
+  async startRender(canvasName: string, presetIds?: string[], seed?: number) {
+    const response = await this.client.post('/api/render/start', {
+      canvas_name: canvasName,
+      preset_ids: presetIds,
+      seed,
+    });
+    return response.data;
+  }
+
+  async getRenderStatus(jobId: string): Promise<Record<string, unknown>> {
+    const response = await this.client.get(`/api/render/${jobId}/status`);
+    return response.data;
+  }
+
+  async completeRender(jobId: string): Promise<Record<string, unknown>> {
+    const response = await this.client.post(`/api/render/${jobId}/complete`, {});
+    return response.data;
+  }
+
+  async failRender(jobId: string, errorMessage: string): Promise<Record<string, unknown>> {
+    const response = await this.client.post(`/api/render/${jobId}/fail`, {
+      error_message: errorMessage,
+    });
+    return response.data;
+  }
 }
 
 export default new BackendAPI();
