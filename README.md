@@ -27,8 +27,135 @@ To maintain a clean separation of concerns, data is strictly separated:
 - **Backend API Server**: Port `3401`
 - **Docs-Only Tasks**: update plans/specs/stories only; do not treat unimplemented UI behavior as runtime-testable until implementation exists.
 
-## Documentation
+## Phase 1: Render Contract ✅ COMPLETE
 
-This project follows an iterative roadmap of Epics to ensure a production-grade result. 
+**Status:** Phase 1 is fully implemented and ready for development.
 
-For full details on the roadmap, epics, implementation handoff stories, and architectural specifications, please see the Documentation Hub.
+Phase 1 establishes the render contract and baseline infrastructure:
+
+### Key Features
+- ✅ **Versioned Schema**: `RenderArtifactMetadata` with complete metadata
+- ✅ **Stable Render IDs**: Deterministic hash-based identifiers for reproducibility
+- ✅ **Seed-based Rendering**: Explicit seed handling for deterministic outputs
+- ✅ **Compatibility Validation**: Schema version checking and required field validation
+- ✅ **Backend State Management**: Server-owned song and canvas state
+- ✅ **Empty Canvas Support**: Songs load without existing renders
+- ✅ **Chunked Binary Frames**: Progressive loading with 15KB chunks instead of monolithic files
+- ✅ **Render Diagnostics**: Metrics for brightness, variety, static/blank frame detection
+- ✅ **Type Safety**: Full TypeScript + Pydantic coverage
+
+### Project Structure
+```
+backend/
+  app/
+    main.py              # FastAPI application
+    models.py            # Render contract schemas
+    render_contract.py   # Render ID & validation logic
+    diagnostics.py       # Render diagnostics
+    chunked_frames.py    # Binary frame I/O
+  tests/
+    test_render_contract.py
+    test_diagnostics.py
+    test_chunked_frames.py
+
+frontend/
+  src/
+    api/backend.ts       # HTTP client
+    types/renderContract.ts  # TypeScript interfaces
+    store/playback.ts    # Zustand state
+    components/          # React components
+    App.tsx             # Main app
+    main.tsx            # Entry point
+  index.html
+  vite.config.ts
+
+docker-compose.yml
+Dockerfile.backend
+Dockerfile.frontend
+```
+
+### Quick Start
+
+#### Prerequisites
+- Docker and Docker Compose installed
+
+#### Build and Run
+```bash
+# Build containers
+docker compose build
+
+# Start services (backend :3401, frontend :3400)
+docker compose up -d
+
+# View logs
+docker compose logs -f
+```
+
+#### Test
+```bash
+# Run backend tests
+docker compose run backend poetry run pytest tests/ -v
+
+# Frontend type checking
+docker compose run frontend npm run type-check
+```
+
+#### Access
+- **Frontend UI**: http://localhost:3400
+- **Backend API**: http://localhost:3401
+- **API Documentation**: http://localhost:3401/docs
+
+### API Endpoints (Phase 1)
+
+**Playback State**
+- `GET /api/playback/state` — Get backend-owned state
+- `POST /api/songs/{song_id}/load` — Load song
+- `POST /api/playback/play` — Start playback
+- `POST /api/playback/stop` — Stop playback
+
+**Render Contract**
+- `POST /api/render/generate-id` — Generate stable render_id
+- `POST /api/render/validate` — Validate artifact compatibility
+- `GET /api/render/{render_id}/status` — Get render status
+
+### Implementation Highlights
+
+1. **Deterministic Rendering**
+   - Same inputs (song, preset, seed, params) always produce identical render_id
+   - Prevents accidental render duplication
+   - Enables content addressing and caching
+
+2. **Progressive Frame Loading**
+   - Frames stored in ~1.5 MB chunks instead of one large file
+   - Supports streaming playback without full memory load
+   - `ChunkedFrameReader` for random access
+   - `ChunkedFrameIterator` for streaming
+
+3. **Render Diagnostics**
+   - Automatic blank render detection
+   - Static render flagging
+   - Beat-response and variation scoring
+   - Contact sheet and preview generation
+
+4. **Type Safety**
+   - Full Pydantic validation on backend
+   - TypeScript interfaces on frontend
+   - Automatic API documentation with Swagger
+
+### Documentation
+
+For detailed information:
+- [Phase 1 Implementation](./PHASE_1_IMPLEMENTATION.md) — Complete implementation details
+- [Phase Roadmap](./docs/phases/) — Development phases
+- [Epics](./docs/epics/) — Epic specifications
+- [Architecture & Specs](./docs/) — Technical specifications
+- [Product Principles](./docs/product-principles.md) — Design philosophy
+
+### Next: Phase 2 - Preview Console
+
+Phase 2 will implement:
+- Canvas rendering (100x50 grid visualization)
+- Frame playback controls and scrubbing
+- Fixture overlay visualization
+- Preset parameter tuning UI
+- Export workflow

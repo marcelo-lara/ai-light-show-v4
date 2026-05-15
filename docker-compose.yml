@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "3401:3401"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./backend:/app/backend
+      - ./data:/app/data
+    working_dir: /app/backend
+    command: poetry run uvicorn app.main:app --host 0.0.0.0 --port 3401 --reload
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3400:3400"
+    volumes:
+      - ./frontend:/app/frontend
+    working_dir: /app/frontend
+    command: npm run dev
