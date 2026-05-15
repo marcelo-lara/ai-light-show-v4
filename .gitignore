@@ -221,3 +221,8 @@ __marimo__/
 ## Project files
 /data
 data/
+
+# Graphify
+.graphify/
+graphify_output/
+*.graphify

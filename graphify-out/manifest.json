@@ -1,0 +1,250 @@
+{
+  "/home/darkangel/ai-light-show-v4/README.md": {
+    "mtime": 1778726252.4781933,
+    "hash": "333fe5678be675985ba4954b0ea87440"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/glossary.md": {
+    "mtime": 1778723249.9143076,
+    "hash": "92ced8db0238d784b68c651324422a5a"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/README.md": {
+    "mtime": 1778726252.4781933,
+    "hash": "557c443dbd8d4a0c324a83f357a2791c"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/spec-moving-head-math.md": {
+    "mtime": 1778722606.1018205,
+    "hash": "92c342191d04f836b0d2e79b08e2e1fb"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/product-principles.md": {
+    "mtime": 1778720456.2957346,
+    "hash": "8a2d71d41bd092a8728ac7ee16265640"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/spec-shader-poi-interaction.md": {
+    "mtime": 1778722606.297816,
+    "hash": "b173485cfe302db0aab7425498ba7f9b"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/development-handoff-stories.md": {
+    "mtime": 1778725995.300378,
+    "hash": "709beb74e2391b087cc9aff6c95bb04a"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/spec-data-schemas.md": {
+    "mtime": 1778722606.420813,
+    "hash": "0f9755e681509049aa4dddf5d850554b"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/roadmap.md": {
+    "mtime": 1778724803.2367465,
+    "hash": "fcee08fe198a7acd648cc11d554f8a0e"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/phases/phase-06-quality-performance-packaging.md": {
+    "mtime": 1778725795.1547568,
+    "hash": "a3fd222a9d4f197aec098d18a2b08162"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/phases/phase-04-timeline-and-direction.md": {
+    "mtime": 1778725795.1547568,
+    "hash": "208190ecd42845d0d92bb089f303eab0"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/phases/phase-03-preset-and-layer-engine.md": {
+    "mtime": 1778725795.1547568,
+    "hash": "98d283d595fdbeb493bd7d8059bc0d1a"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/phases/phase-02-musical-analysis-ir.md": {
+    "mtime": 1778725795.1547568,
+    "hash": "e089c14edd77c8b456f5c58eab0d7e7d"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/phases/phase-05-production-console.md": {
+    "mtime": 1778725795.1547568,
+    "hash": "a03d760b5372ca33734a382e41221c0a"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/phases/phase-01-baseline-and-contracts.md": {
+    "mtime": 1778725795.1547568,
+    "hash": "13bc90c505f14e8e83b59421ae8f8204"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/epics/03-analysis-ir.md": {
+    "mtime": 1778725218.833081,
+    "hash": "f525da4cca7fb12fc4603d5c70559925"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/epics/08-spectroid-chase-shader.md": {
+    "mtime": 1778725218.8400807,
+    "hash": "b025440d4cc57c1b3ff2fb2b11b66c46"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/epics/06-preset-schema.md": {
+    "mtime": 1778725218.8370807,
+    "hash": "cd1e1077027cbb30de50ebf93c3dde15"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/epics/05-modulation-system.md": {
+    "mtime": 1778725218.8360808,
+    "hash": "ff5b33bfc2cde4f9d1a5daf8316856c9"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/epics/09-timeline-director.md": {
+    "mtime": 1778725218.8410807,
+    "hash": "55d88e7cc2b69649a14296a5e77b6f0c"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/epics/02-preview-console.md": {
+    "mtime": 1778725995.300378,
+    "hash": "e87d61f39a5625f24b88e7df93f4645b"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/epics/12-render-diagnostics.md": {
+    "mtime": 1778725218.8460805,
+    "hash": "fce0cac2284155c5d9a53f01975ec17c"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/epics/01-render-contract.md": {
+    "mtime": 1778725218.830081,
+    "hash": "65cf73e47526e80333060d1d9c58d9d8"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/epics/10-transition-system.md": {
+    "mtime": 1778725218.8430808,
+    "hash": "5ceb2e8e0ece8d3fa31bfd359c369082"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/epics/04-layer-library.md": {
+    "mtime": 1778725218.834081,
+    "hash": "7aef0d1dd521b999d2f37e7d4a9a86b2"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/epics/11-fixture-mapping-and-export.md": {
+    "mtime": 1778725218.8440807,
+    "hash": "d91a1b0a47a9f55778f8788c4f26a741"
+  },
+  "/home/darkangel/ai-light-show-v4/docs/epics/07-raindrops-shader.md": {
+    "mtime": 1778725218.838081,
+    "hash": "bf96143f9d308f2fd4565b20f7bb7acb"
+  },
+  "graphify-out/transcripts/Rapture - Nadia Ali.txt": {
+    "mtime": 1778813699.2655718,
+    "hash": "33b3d6d1bac15984184a028b54145a7e"
+  },
+  "graphify-out/transcripts/Chimera - Hana.txt": {
+    "mtime": 1778813704.9264817,
+    "hash": "b04cfba8636917afeee5ce6ce0265df3"
+  },
+  "graphify-out/transcripts/What a Feeling - Courtney Storm.txt": {
+    "mtime": 1778813709.8624034,
+    "hash": "4541ede1664f7b3af1d4d9e293801342"
+  },
+  "graphify-out/transcripts/Armin - Revolution.txt": {
+    "mtime": 1778813714.1273355,
+    "hash": "f0fa56e64306bc079c47002dc31fda63"
+  },
+  "graphify-out/transcripts/Best Friend - Sofi Tukker.txt": {
+    "mtime": 1778813718.3612683,
+    "hash": "71ea8addf026287d504feecfefe0e32f"
+  },
+  "graphify-out/transcripts/Yonaka - Seize the Power.txt": {
+    "mtime": 1778813721.894212,
+    "hash": "a10ab25b74ad116df823f7135fe47d31"
+  },
+  "graphify-out/transcripts/Only this moment - royksopp.txt": {
+    "mtime": 1778813729.7270875,
+    "hash": "28b76baa860634d653cc5f424b0bcd65"
+  },
+  "graphify-out/transcripts/Hideaway - Kiesza.txt": {
+    "mtime": 1778813736.5739787,
+    "hash": "75064f172eafaff4df18afc660a83cc4"
+  },
+  "graphify-out/transcripts/Gabry Ponte - Tutta L'Italia.txt": {
+    "mtime": 1778813740.2749197,
+    "hash": "014aa4576ef9c090d19ec39fefe34a40"
+  },
+  "graphify-out/transcripts/Pet Shop Boys - I'm not scared.txt": {
+    "mtime": 1778813752.3577275,
+    "hash": "418c1343da339311351629073a6192ff"
+  },
+  "graphify-out/transcripts/CruelSummer - Malvina.txt": {
+    "mtime": 1778813758.621628,
+    "hash": "c5d90f5f8647f994b791ec9584393c76"
+  },
+  "graphify-out/transcripts/Cinderella - Ella Lee.txt": {
+    "mtime": 1778813767.6904836,
+    "hash": "2a5d3654e8f9430acaab9268a77aa74e"
+  },
+  "graphify-out/transcripts/Queen of Kings - Alessandra.txt": {
+    "mtime": 1778813771.0864296,
+    "hash": "319488b483bb8ded06028a0f1e9bf4ce"
+  },
+  "graphify-out/transcripts/Sash - Raindrops.txt": {
+    "mtime": 1778813776.2273479,
+    "hash": "acfef84a256d596d32982100aceeea0c"
+  },
+  "graphify-out/transcripts/Underworld - Born Slippy.txt": {
+    "mtime": 1778813822.7136078,
+    "hash": "ab7e2ab434125c2daea0d87af73c6b89"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/Rapture - Nadia Ali.mp3": {
+    "mtime": 1778721135.804715,
+    "hash": "eeacdc06e6c6db0f2b919f159974d709"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/Chimera - Hana.mp3": {
+    "mtime": 1778721135.640718,
+    "hash": "a48399aff94d8f429a234ee337cd8d08"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/What a Feeling - Courtney Storm.mp3": {
+    "mtime": 1778721135.8607137,
+    "hash": "92331a1524774b5541a36f3c43d7dcee"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/Armin - Revolution.mp3": {
+    "mtime": 1778721135.6097186,
+    "hash": "d758bae136cc131dd699da8a8d5241cf"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/Best Friend - Sofi Tukker.mp3": {
+    "mtime": 1778721135.6257184,
+    "hash": "0fa3d075153c0f5847183a5e61fc5df6"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/Yonaka - Seize the Power.mp3": {
+    "mtime": 1778721135.8727136,
+    "hash": "bb73b7acf3d29755d5f90a0e19cc33de"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/Only this moment - royksopp.mp3": {
+    "mtime": 1778721135.7567158,
+    "hash": "3d48aadade3d2ed10416a5bad1c21d61"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/Hideaway - Kiesza.mp3": {
+    "mtime": 1778721135.7167165,
+    "hash": "35be7328a36a61ee7a5836ff332012e5"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/Gabry Ponte - Tutta L'Italia.mp3": {
+    "mtime": 1778721135.7047167,
+    "hash": "3f95bac2963d46e7686a9ba00138605d"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/Pet Shop Boys - I'm not scared.mp3": {
+    "mtime": 1778721135.7747154,
+    "hash": "496d0e344b7357cb5b3ae6408f19b7ef"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/CruelSummer - Malvina.mp3": {
+    "mtime": 1778721135.6757174,
+    "hash": "00185d5e7f0b3ddb1866599286d6a457"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/Cinderella - Ella Lee.mp3": {
+    "mtime": 1778721135.6567178,
+    "hash": "e9c37f22dab21adb733e96398ad5e395"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/Queen of Kings - Alessandra.mp3": {
+    "mtime": 1778721135.7917151,
+    "hash": "f471e4341d968e7c680d40bd89f86a9b"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/Sash - Raindrops.mp3": {
+    "mtime": 1778721135.8207145,
+    "hash": "2970452538b2a1d54885f4cd1a578065"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/Underworld - Born Slippy.mp3": {
+    "mtime": 1778721135.848714,
+    "hash": "ded402d68b9acf1fe008be63cb1cade4"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/In da name of love - Anita and Ray.mp3": {
+    "mtime": 1778721135.7267163,
+    "hash": "364236aa8daf6a91f312d5c34d1699b6"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/Titanium - David Guetta ft Sia.mp3": {
+    "mtime": 1778721135.8347144,
+    "hash": "6bec0383cdd358d2cad3d826483b3c31"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/Fascination (The Droyds One Armed Remix).mp3": {
+    "mtime": 1778721135.6917171,
+    "hash": "f88dc0b1023769bd9a7c51de67043eb7"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/It's a fine day - Opus III.mp3": {
+    "mtime": 1778721135.740716,
+    "hash": "0c05b28babb027d56e0523b186c221af"
+  },
+  "/home/darkangel/ai-light-show-v4/data/songs/ayuni.mp3": {
+    "mtime": 1778721135.8837132,
+    "hash": "382e14ed3b3a0d920610ecd8bff58a09"
+  }
+}
