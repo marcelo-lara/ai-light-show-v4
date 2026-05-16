@@ -33,6 +33,10 @@ from .render_job import (
 )
 from .fixtures import FixtureManager
 from .canvas import CanvasRenderer
+from .preset import PresetRegistry
+from .layers import LayerRegistry
+from .modulation import ModulationSystem, ModulationContext
+from .presets_builtin import get_builtin_presets
 
 
 # Global state (in production, use a proper database)
@@ -40,6 +44,9 @@ _playback_state: Optional[PlaybackState] = None
 _render_id_generator = RenderIdGenerator()
 _render_jobs: dict = {}  # Job ID -> RenderJobStatus
 _fixture_manager: Optional[FixtureManager] = None
+_preset_registry: Optional[PresetRegistry] = None
+_layer_registry: Optional[LayerRegistry] = None
+_modulation_system: Optional[ModulationSystem] = None
 
 # Logging
 logging.basicConfig(level=logging.INFO)
@@ -49,9 +56,24 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifecycle management."""
-    global _fixture_manager
+    global _fixture_manager, _preset_registry, _layer_registry, _modulation_system
     logger.info("AI Light Show Backend starting up")
     _fixture_manager = FixtureManager()
+    
+    # Phase 03: Initialize preset, layer, and modulation systems
+    _preset_registry = PresetRegistry()
+    _layer_registry = LayerRegistry()
+    _modulation_system = ModulationSystem()
+    
+    # Load built-in presets
+    builtin_presets = get_builtin_presets()
+    for preset_key, preset in builtin_presets.items():
+        try:
+            _preset_registry.register_preset(preset, validate=True)
+            logger.info(f"Loaded preset: {preset_key}")
+        except Exception as e:
+            logger.error(f"Failed to load preset {preset_key}: {str(e)}")
+    
     yield
     logger.info("AI Light Show Backend shutting down")
 
@@ -59,8 +81,8 @@ async def lifespan(app: FastAPI):
 # Create FastAPI app
 app = FastAPI(
     title="AI Light Show Backend",
-    description="Phase 1-2: Render Contract & Preview Console",
-    version="0.2.0",
+    description="Phase 1-3: Render Contract, Preview Console & Preset/Layer Engine",
+    version="0.3.0",
     lifespan=lifespan,
 )
 
@@ -437,6 +459,194 @@ async def fail_render(job_id: str, error_data: dict):
     
     logger.error(f"Render job {job_id} failed: {status_obj.error_message}")
     return status_obj.model_dump()
+
+
+# ============ Phase 03: Preset and Layer Engine Endpoints ============
+
+@app.get("/api/phase03/presets")
+async def list_presets():
+    """
+    Epic 06.F1: List all available presets with metadata.
+    
+    Returns preset summaries for UI consumption.
+    """
+    if not _preset_registry:
+        return {"presets": [], "count": 0}
+    
+    presets = _preset_registry.list_presets()
+    return {
+        "presets": [p.model_dump() for p in presets],
+        "count": len(presets),
+    }
+
+
+@app.get("/api/phase03/presets/{preset_id}")
+async def get_preset(preset_id: str, version: str = "latest"):
+    """
+    Get a specific preset by ID and version.
+    
+    Epic 06.F3: Preset loading readiness.
+    """
+    if not _preset_registry:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Preset registry not initialized",
+        )
+    
+    preset = _preset_registry.get_preset(preset_id, version)
+    if not preset:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Preset {preset_id}:{version} not found",
+        )
+    
+    return preset.model_dump()
+
+
+@app.get("/api/phase03/layers")
+async def list_layers():
+    """
+    Epic 04.F1-F2: List all available layers with schemas.
+    
+    Returns layer metadata for layer browser UI.
+    """
+    if not _layer_registry:
+        return {"layers": [], "count": 0}
+    
+    layer_ids = _layer_registry.list_layers()
+    layers = []
+    
+    for layer_id in layer_ids:
+        layer = _layer_registry.get_layer(layer_id)
+        if layer:
+            schema = layer.get_parameter_schema()
+            layers.append({
+                "layer_id": layer.layer_id,
+                "label": layer.label,
+                "parameter_schema": schema,
+                "blend_modes_supported": ["alpha", "max", "add", "multiply", "screen", "difference", "mask", "replace"],
+            })
+    
+    return {
+        "layers": layers,
+        "count": len(layers),
+    }
+
+
+@app.get("/api/phase03/layers/{layer_id}")
+async def get_layer_info(layer_id: str):
+    """
+    Get detailed information about a specific layer.
+    
+    Epic 04.F1: Layer metadata type for parameter introspection.
+    """
+    if not _layer_registry:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Layer registry not initialized",
+        )
+    
+    layer = _layer_registry.get_layer(layer_id)
+    if not layer:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Layer {layer_id} not found",
+        )
+    
+    schema = layer.get_parameter_schema()
+    return {
+        "layer_id": layer.layer_id,
+        "label": layer.label,
+        "parameter_schema": schema,
+        "blend_modes_supported": list(BLEND_MODES.keys()),
+    }
+
+
+@app.get("/api/phase03/modulators")
+async def list_modulators():
+    """
+    Epic 05.F2: List available modulator sources.
+    
+    Returns modulator information for modulation system inspection.
+    """
+    if not _modulation_system:
+        return {"modulators": [], "count": 0}
+    
+    modulators = []
+    for mod_id, mod in _modulation_system.modulators.items():
+        modulators.append({
+            "modulator_id": mod_id,
+            "type": type(mod).__name__,
+        })
+    
+    return {
+        "modulators": modulators,
+        "count": len(modulators),
+    }
+
+
+@app.post("/api/phase03/modulators/inspect")
+async def inspect_modulators(context_data: dict):
+    """
+    Epic 05.B7, 05.F2: Get current modulator values for inspection.
+    
+    Returns debug output with live modulator values.
+    """
+    if not _modulation_system:
+        return {"error": "Modulation system not initialized"}
+    
+    try:
+        context = ModulationContext(
+            frame_time=context_data.get("frame_time", 0.0),
+            beat_progress=context_data.get("beat_progress", 0.0),
+            bar_progress=context_data.get("bar_progress", 0.0),
+            phrase_progress=context_data.get("phrase_progress", 0.0),
+            onset_detected=context_data.get("onset_detected", False),
+            fft_bands=context_data.get("fft_bands", []),
+            seed=context_data.get("seed", 0),
+        )
+        
+        debug_output = _modulation_system.get_debug_output(context)
+        return debug_output
+    except Exception as e:
+        logger.error(f"Failed to inspect modulators: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to inspect modulators: {str(e)}",
+        )
+
+
+@app.post("/api/phase03/presets/validate")
+async def validate_preset(preset_data: dict):
+    """
+    Epic 06.B6: Validate a preset before rendering.
+    
+    Returns validation errors if invalid, empty list if valid.
+    """
+    if not _preset_registry or not _layer_registry:
+        return {"error": "Registry not initialized"}
+    
+    try:
+        # Build PresetDefinition from data
+        from .preset import PresetDefinition, PresetValidator
+        
+        preset = PresetDefinition(**preset_data)
+        errors = PresetValidator.validate_preset(preset, _layer_registry.layers)
+        
+        return {
+            "is_valid": len(errors) == 0,
+            "errors": errors,
+        }
+    except Exception as e:
+        logger.error(f"Failed to validate preset: {str(e)}")
+        return {
+            "is_valid": False,
+            "errors": [str(e)],
+        }
+
+
+# Import BLEND_MODES for list endpoint
+from .layers import BLEND_MODES
 
 
 # Error handlers
