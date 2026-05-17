@@ -9,12 +9,15 @@ Epic 10: Transition System - Transition management
 
 import logging
 import uuid
+import io
 from contextlib import asynccontextmanager
 from typing import Optional
 
+import numpy as np
+from PIL import Image
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 
 from .models import (
     PlaybackState,
@@ -90,8 +93,8 @@ async def lifespan(app: FastAPI):
 # Create FastAPI app
 app = FastAPI(
     title="AI Light Show Backend",
-    description="Phase 1-4: Render Contract, Preview Console, Preset/Layer Engine & Timeline/Direction",
-    version="0.4.0",
+    description="Phase 1-5: Render Contract, Preview Console, Preset/Layer Engine, Timeline/Direction & Production Console",
+    version="0.5.0",
     lifespan=lifespan,
 )
 
@@ -917,6 +920,307 @@ async def align_transition_to_bar(request: dict):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Failed to align transition: {str(e)}",
+        )
+
+
+
+
+# ============ Phase 05: Production Console Endpoints ============
+
+@app.post("/api/phase05/songs/{song_id}/load")
+async def load_song_phase05(song_id: str):
+    """
+    Epic 02.B1: Load song and return current song state with canvas.
+    
+    Epic 02.B2: Success even if no canvas exists yet.
+    
+    Returns: { current_song, current_canvas }
+    """
+    global _playback_state
+    
+    try:
+        # Create empty canvas state for new song
+        current_song = CurrentSongState(
+            song_id=song_id,
+            current_canvas=CurrentCanvasState(
+                song_id=song_id,
+                is_empty=True,
+            ),
+        )
+        
+        _playback_state = PlaybackState(current_song=current_song)
+        
+        logger.info(f"Phase 05: Loaded song {song_id}")
+        return {
+            "status": "success",
+            "song_id": song_id,
+            "has_canvas": False,
+            "current_song": _playback_state.current_song.model_dump(),
+        }
+    except Exception as e:
+        logger.error(f"Failed to load song {song_id}: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to load song: {str(e)}",
+        )
+
+
+@app.get("/api/phase05/canvas/current")
+async def get_current_canvas_phase05():
+    """
+    Epic 02.B4: Get current canvas metadata and render artifact.
+    
+    Returns: { metadata, diagnostics, timeline }
+    """
+    global _playback_state
+    
+    if not _playback_state or not _playback_state.current_song:
+        return {
+            "canvas_id": None,
+            "is_empty": True,
+            "metadata": None,
+            "diagnostics": None,
+        }
+    
+    current_canvas = _playback_state.current_song.current_canvas
+    
+    return {
+        "canvas_id": current_canvas.canvas_id,
+        "is_empty": current_canvas.is_empty,
+        "metadata": current_canvas.render_artifact.metadata.model_dump() if current_canvas.render_artifact else None,
+        "diagnostics": None,  # Would be loaded separately
+        "timeline": current_canvas.render_artifact.timeline if current_canvas.render_artifact else None,
+    }
+
+
+@app.post("/api/phase05/canvas/name")
+async def set_canvas_name(request: dict):
+    """
+    Epic 02.B8: Set canvas name for export as {song_name}.{canvas_name}.json
+    
+    Request: { song_id, canvas_name }
+    """
+    global _playback_state
+    
+    try:
+        canvas_name = request.get("canvas_name", "output")
+        song_id = request.get("song_id")
+        
+        if not _playback_state or not _playback_state.current_song:
+            raise ValueError("No song loaded")
+        
+        # Store canvas name in current state (would persist to file in production)
+        if _playback_state.current_song.current_canvas:
+            _playback_state.current_song.current_canvas.canvas_id = f"{song_id}.{canvas_name}"
+        
+        logger.info(f"Canvas name set to: {canvas_name}")
+        return {
+            "status": "success",
+            "canvas_name": canvas_name,
+            "export_filename": f"{song_id}.{canvas_name}.json",
+        }
+    except Exception as e:
+        logger.error(f"Failed to set canvas name: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to set canvas name: {str(e)}",
+        )
+
+
+@app.get("/api/phase05/render/{job_id}/status")
+async def get_render_status_phase05(job_id: str):
+    """
+    Epic 02.B5, 02.B9: Get render job status with phase info.
+    
+    Returns: RenderJobStatus with phase-aware progress
+    """
+    if job_id not in _render_jobs:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Render job {job_id} not found",
+        )
+    
+    status_obj = _render_jobs[job_id]
+    return status_obj.model_dump()
+
+
+@app.post("/api/phase05/render/{job_id}/progress")
+async def update_render_progress_phase05(job_id: str, progress_data: dict):
+    """
+    Epic 02.B7: Update progress (every 200 frames for render phase).
+    
+    Epic 02.B9: Progress phase payload with analysis vs render phases.
+    """
+    if job_id not in _render_jobs:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Render job {job_id} not found",
+        )
+    
+    status_obj = _render_jobs[job_id]
+    
+    # Update phase
+    if "phase" in progress_data:
+        status_obj.phase = RenderPhase(progress_data["phase"])
+    
+    # Update analysis progress
+    if "analysis_current" in progress_data:
+        status_obj.analysis_current = progress_data["analysis_current"]
+    if "analysis_total" in progress_data:
+        status_obj.analysis_total = progress_data["analysis_total"]
+        if status_obj.analysis_total > 0:
+            status_obj.analysis_percent = (
+                100.0 * status_obj.analysis_current / status_obj.analysis_total
+            )
+    
+    # Update render progress  
+    if "render_current" in progress_data:
+        status_obj.render_current = progress_data["render_current"]
+        if status_obj.render_total > 0:
+            status_obj.render_percent = (
+                100.0 * status_obj.render_current / status_obj.render_total
+            )
+    
+    if "render_total" in progress_data:
+        status_obj.render_total = progress_data["render_total"]
+    
+    # Calculate overall progress
+    total_work = 1.0
+    if status_obj.phase == RenderPhase.ANALYZING:
+        status_obj.overall_percent = status_obj.analysis_percent * 0.3
+    elif status_obj.phase == RenderPhase.RENDERING:
+        status_obj.overall_percent = 30.0 + (status_obj.render_percent * 0.7)
+    elif status_obj.phase == RenderPhase.COMPLETED:
+        status_obj.overall_percent = 100.0
+    
+    if "status_text" in progress_data:
+        status_obj.status_text = progress_data["status_text"]
+    
+    logger.info(f"Progress update for {job_id}: {status_obj.overall_percent:.1f}% complete")
+    return status_obj.model_dump()
+
+
+@app.get("/api/phase05/diagnostics/{render_id}")
+async def get_diagnostics_phase05(render_id: str):
+    """
+    Epic 12.B1, 12.B2: Get computed diagnostics.
+    
+    Returns: DiagnosticsSummary + VarietyMetrics
+    """
+    try:
+        from .diagnostics import DiagnosticsAnalyzer
+        
+        # In production, would load rendered frames from storage
+        # For now, return mock data
+        analyzer = DiagnosticsAnalyzer()
+        
+        # Mock frames for testing
+        mock_frames = [
+            np.random.randint(0, 255, (50, 100, 3), dtype=np.uint8)
+            for _ in range(100)
+        ]
+        
+        summary = analyzer.analyze_frames(mock_frames)
+        variety = analyzer.analyze_variety(summary)
+        
+        return {
+            "render_id": render_id,
+            "summary": {
+                "brightness_avg": summary.brightness_avg,
+                "brightness_min": summary.brightness_min,
+                "brightness_max": summary.brightness_max,
+                "color_avg": summary.color_avg,
+                "frame_delta_avg": summary.frame_delta_avg,
+                "blank_frame_count": summary.blank_frame_count,
+                "static_frame_count": summary.static_frame_count,
+                "render_duration_ms": summary.render_duration_ms,
+                "total_frames": summary.total_frames,
+            },
+            "variety": {
+                "beat_response_score": variety.beat_response_score,
+                "section_variation_score": variety.section_variation_score,
+                "is_static": variety.is_static,
+                "is_repetitive": variety.is_repetitive,
+                "warnings": variety.warnings,
+            },
+        }
+    except Exception as e:
+        logger.error(f"Failed to get diagnostics: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get diagnostics: {str(e)}",
+        )
+
+
+@app.get("/api/phase05/diagnostics/{render_id}/contact-sheet")
+async def get_contact_sheet_phase05(render_id: str):
+    """
+    Epic 12.B3: Get contact sheet image.
+    
+    Returns: PNG image data
+    """
+    try:
+        from .diagnostics import DiagnosticsAnalyzer
+        from fastapi.responses import StreamingResponse
+        import io
+        
+        analyzer = DiagnosticsAnalyzer()
+        
+        # Mock frames for testing
+        mock_frames = [
+            np.random.randint(0, 255, (50, 100, 3), dtype=np.uint8)
+            for _ in range(100)
+        ]
+        
+        contact_sheet = analyzer.generate_contact_sheet(mock_frames)
+        
+        # Convert to bytes
+        img_io = io.BytesIO()
+        contact_sheet.save(img_io, format='PNG')
+        img_io.seek(0)
+        
+        return StreamingResponse(img_io, media_type="image/png")
+    except Exception as e:
+        logger.error(f"Failed to generate contact sheet: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate contact sheet: {str(e)}",
+        )
+
+
+@app.get("/api/phase05/diagnostics/{render_id}/preview-strip")
+async def get_preview_strip_phase05(render_id: str):
+    """
+    Epic 12.B4: Get preview strip or GIF.
+    
+    Returns: GIF image data
+    """
+    try:
+        from .diagnostics import DiagnosticsAnalyzer
+        from fastapi.responses import StreamingResponse
+        import io
+        
+        analyzer = DiagnosticsAnalyzer()
+        
+        # Mock frames for testing
+        mock_frames = [
+            np.random.randint(0, 255, (50, 100, 3), dtype=np.uint8)
+            for _ in range(30)
+        ]
+        
+        preview_gif = analyzer.generate_preview_gif(mock_frames, fps=10)
+        
+        # Convert to bytes
+        img_io = io.BytesIO()
+        preview_gif.save(img_io, format='GIF', duration=100, loop=0)
+        img_io.seek(0)
+        
+        return StreamingResponse(img_io, media_type="image/gif")
+    except Exception as e:
+        logger.error(f"Failed to generate preview strip: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate preview strip: {str(e)}",
         )
 
 
