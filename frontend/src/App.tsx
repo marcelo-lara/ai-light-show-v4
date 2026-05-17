@@ -10,7 +10,9 @@ import DiagnosticsPanel from './components/DiagnosticsPanel';
 import MetadataDisplay from './components/MetadataDisplay';
 import ABCompare from './components/ABCompare';
 import FullscreenPreview from './components/FullscreenPreview';
-import type { RenderJobStatus, TimelineViewState, ABCompareState, ApprovalState, MetadataDisplay as MetadataDisplayType, DiagnosticsPanel as DiagnosticsPanelType } from './types/phase05';
+import { RenderPhase } from './types/phase05';
+import type { RenderJobStatus, TimelineViewState, ABCompareState, DiagnosticsPanel as DiagnosticsPanelType } from './types/phase05';
+import type { CurrentCanvasState, RenderArtifactMetadata } from './types/renderContract';
 
 /**
  * Main app component for Phase 5: Production Console
@@ -24,20 +26,26 @@ export const App: React.FC = () => {
     compatibilityError,
     isLoading,
     loadPlaybackState,
+    loadSongs,
+    loadSong,
     clearCompatibilityError,
     loadFixtures,
     loadPOIs,
+    play,
+    pause,
+    stop,
     fixtures,
     pois,
+    songs,
   } = usePlaybackStore();
 
   // Phase 05 state
-  const [activeTab, setActiveTab] = useState('main');
-  const [showName, setShowName] = useState('output');
   const [canvasName, setCanvasName] = useState('canvas');
+  const [selectedSongId, setSelectedSongId] = useState('');
   const [selectedPresets, setSelectedPresets] = useState<Set<string>>(new Set());
   const [isRendering, setIsRendering] = useState(false);
   const [renderProgress, setRenderProgress] = useState<RenderJobStatus | null>(null);
+  const [renderedCanvas, setRenderedCanvas] = useState<CurrentCanvasState | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showFrameInspector, setShowFrameInspector] = useState(false);
   const [showDiagnostics, setShowDiagnostics] = useState(false);
@@ -45,16 +53,25 @@ export const App: React.FC = () => {
     is_comparing: false,
     split_position: 50,
   });
-  const [approvalState, setApprovalState] = useState<ApprovalState>({
-    is_approved: false,
-  });
 
   useEffect(() => {
     // Load initial state and fixtures
     loadPlaybackState();
+    loadSongs();
     loadFixtures();
     loadPOIs();
-  }, [loadPlaybackState, loadFixtures, loadPOIs]);
+  }, [loadPlaybackState, loadSongs, loadFixtures, loadPOIs]);
+
+  useEffect(() => {
+    if (playbackState?.current_song?.song_id) {
+      setSelectedSongId(playbackState.current_song.song_id);
+      return;
+    }
+
+    if (!selectedSongId && songs.length > 0) {
+      setSelectedSongId(songs[0].id);
+    }
+  }, [playbackState?.current_song?.song_id, selectedSongId, songs]);
 
   if (isLoading) {
     return (
@@ -70,7 +87,55 @@ export const App: React.FC = () => {
 
   // Get current song - Epic 02.F2: Server-owned song state
   const currentSong = playbackState?.current_song;
-  const currentCanvas = currentSong?.current_canvas;
+  const currentCanvas = renderedCanvas ?? currentSong?.current_canvas ?? null;
+  const overlayFixtures = fixtures.flatMap((fixture) => {
+    const fixtureId = typeof fixture.fixture_id === 'string'
+      ? fixture.fixture_id
+      : typeof fixture.id === 'string'
+        ? fixture.id
+        : null;
+
+    const canvasAnchor = fixture.canvas_anchor;
+    const typedCanvasAnchor =
+      canvasAnchor && typeof canvasAnchor === 'object'
+        ? (canvasAnchor as { x?: unknown; y?: unknown })
+        : null;
+    const anchorX = typeof typedCanvasAnchor?.x === 'number' ? typedCanvasAnchor.x : null;
+    const anchorY = typeof typedCanvasAnchor?.y === 'number' ? typedCanvasAnchor.y : null;
+
+    if (!fixtureId) {
+      return [];
+    }
+
+    return [{
+      fixture_id: fixtureId,
+      canvas_anchor: anchorX !== null && anchorY !== null ? { x: anchorX, y: anchorY } : undefined,
+    }];
+  });
+  const overlayPOIs = pois.flatMap((poi) => {
+    const poiId = typeof poi.poi_id === 'string'
+      ? poi.poi_id
+      : typeof poi.id === 'string'
+        ? poi.id
+        : null;
+
+    const canvasPos = poi.canvas_pos;
+    const typedCanvasPos =
+      canvasPos && typeof canvasPos === 'object'
+        ? (canvasPos as { x?: unknown; y?: unknown })
+        : null;
+    const canvasPosX = typeof typedCanvasPos?.x === 'number' ? typedCanvasPos.x : null;
+    const canvasPosY = typeof typedCanvasPos?.y === 'number' ? typedCanvasPos.y : null;
+
+    if (!poiId || canvasPosX === null || canvasPosY === null) {
+      return [];
+    }
+
+    return [{
+      poi_id: poiId,
+      canvas_pos: { x: canvasPosX, y: canvasPosY },
+    }];
+  });
 
   // Mock available presets
   const available_presets = [
@@ -78,17 +143,8 @@ export const App: React.FC = () => {
     { id: 'undersea_waves', name: 'Undersea Waves' },
   ];
 
-  // Mock metadata
-  const mockMetadata: MetadataDisplayType = {
-    render_id: 'render_12345',
-    schema_version: '1.1',
-    preset_id: 'undersea_pulse_01',
-    seed: 12345,
-    compatibility_state: 'compatible',
-    frame_count: 300,
-    fps: 30,
-    duration: 10,
-    created_at: new Date().toISOString(),
+  const displayMetadata = currentCanvas?.render_artifact?.metadata ?? {
+    song_id: currentSong?.song_id,
   };
 
   // Mock timeline
@@ -130,15 +186,15 @@ export const App: React.FC = () => {
   };
 
   const handleRenderStart = (params: { show_name: string; canvas_name: string; selected_presets: string[] }) => {
-    setShowName(params.show_name);
     setCanvasName(params.canvas_name);
     setSelectedPresets(new Set(params.selected_presets));
     setIsRendering(true);
+    setRenderedCanvas(null);
 
     // Mock progress
     setRenderProgress({
       job_id: 'job_' + Date.now(),
-      phase: 'analyzing',
+      phase: RenderPhase.ANALYZING,
       status_text: 'Analyzing audio...',
       analysis_current: 0,
       analysis_total: 100,
@@ -155,7 +211,7 @@ export const App: React.FC = () => {
     }, 1000);
 
     setTimeout(() => {
-      setRenderProgress((prev) => prev ? { ...prev, phase: 'rendering', analysis_current: 100, analysis_percent: 100, render_total: 300 } : null);
+      setRenderProgress((prev) => prev ? { ...prev, phase: RenderPhase.RENDERING, analysis_current: 100, analysis_percent: 100, render_total: 300 } : null);
     }, 2000);
 
     setTimeout(() => {
@@ -163,10 +219,41 @@ export const App: React.FC = () => {
     }, 3000);
 
     setTimeout(() => {
-      setRenderProgress((prev) => prev ? { ...prev, render_current: 300, render_percent: 100, phase: 'completed', overall_percent: 100 } : null);
+      setRenderProgress((prev) => prev ? { ...prev, render_current: 300, render_percent: 100, phase: RenderPhase.COMPLETED, overall_percent: 100 } : null);
+      const previewMetadata: RenderArtifactMetadata = {
+        schema_version: '1.1',
+        render_id: `render_${Date.now()}`,
+        preset_id: params.selected_presets[0] ?? 'undersea_pulse_01',
+        preset_version: '1.0',
+        seed: 12345,
+        song_id: currentSong?.song_id ?? selectedSongId,
+        analysis_id: `analysis_${Date.now()}`,
+        fps: 30,
+        duration: 10,
+        frame_count: 300,
+      };
+      setRenderedCanvas({
+        song_id: previewMetadata.song_id,
+        canvas_id: params.canvas_name,
+        render_artifact: {
+          metadata: previewMetadata,
+        },
+        is_empty: false,
+      });
       setIsRendering(false);
       setShowDiagnostics(true);
     }, 5000);
+  };
+
+  const handleSongLoad = async () => {
+    if (!selectedSongId) {
+      return;
+    }
+
+    setRenderedCanvas(null);
+    setShowDiagnostics(false);
+    setRenderProgress(null);
+    await loadSong(selectedSongId);
   };
 
   return (
@@ -221,6 +308,63 @@ export const App: React.FC = () => {
             minHeight: 0,
           }}
         >
+          <div
+            style={{
+              padding: '16px',
+              borderBottom: '1px solid #ddd',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '12px',
+                fontWeight: 'bold',
+                marginBottom: '8px',
+              }}
+            >
+              Song
+            </div>
+            <select
+              value={selectedSongId}
+              onChange={(event) => setSelectedSongId(event.target.value)}
+              style={{
+                width: '100%',
+                padding: '8px',
+                border: '1px solid #999',
+                borderRadius: '3px',
+                fontSize: '12px',
+                marginBottom: '8px',
+                boxSizing: 'border-box',
+              }}
+            >
+              {songs.length === 0 ? (
+                <option value="">No songs available</option>
+              ) : (
+                songs.map((song) => (
+                  <option key={song.id} value={song.id}>
+                    {song.title}
+                  </option>
+                ))
+              )}
+            </select>
+            <button
+              onClick={() => void handleSongLoad()}
+              disabled={!selectedSongId}
+              style={{
+                width: '100%',
+                padding: '10px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                backgroundColor: selectedSongId ? '#333' : '#ccc',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '3px',
+                cursor: selectedSongId ? 'pointer' : 'not-allowed',
+              }}
+            >
+              Load Song
+            </button>
+          </div>
+
           <MainTab
             onRenderStart={handleRenderStart}
             isRendering={isRendering}
@@ -263,9 +407,9 @@ export const App: React.FC = () => {
           >
             {currentCanvas && !currentCanvas.is_empty ? (
               <CanvasDisplay
-                artifact={currentCanvas.render_artifact}
-                fixtures={fixtures}
-                pois={pois}
+                metadata={currentCanvas.render_artifact?.metadata}
+                fixtures={overlayFixtures}
+                pois={overlayPOIs}
               />
             ) : (
               <div style={{ color: '#555', fontSize: '14px', textAlign: 'center' }}>
@@ -281,6 +425,38 @@ export const App: React.FC = () => {
                 )}
               </div>
             )}
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              gap: '8px',
+              padding: '12px 20px',
+              borderTop: '1px solid #333',
+              justifyContent: 'center',
+            }}
+          >
+            <button
+              onClick={() => void play()}
+              disabled={!currentCanvas || currentCanvas.is_empty || playbackState?.is_playing}
+              style={playbackButtonStyle(!currentCanvas || currentCanvas.is_empty || !!playbackState?.is_playing)}
+            >
+              Play
+            </button>
+            <button
+              onClick={() => void pause()}
+              disabled={!currentCanvas || currentCanvas.is_empty || !playbackState?.is_playing}
+              style={playbackButtonStyle(!currentCanvas || currentCanvas.is_empty || !playbackState?.is_playing)}
+            >
+              Pause
+            </button>
+            <button
+              onClick={() => void stop()}
+              disabled={!currentCanvas || currentCanvas.is_empty}
+              style={playbackButtonStyle(!currentCanvas || currentCanvas.is_empty)}
+            >
+              Stop
+            </button>
           </div>
 
           {/* Timeline view below canvas */}
@@ -302,10 +478,7 @@ export const App: React.FC = () => {
           }}
         >
           <MetadataDisplay
-            metadata={mockMetadata}
-            approval={approvalState}
-            on_approve={() => setApprovalState({ ...approvalState, is_approved: true })}
-            on_reject={() => setApprovalState({ ...approvalState, is_approved: false })}
+            metadata={displayMetadata}
           />
 
           {showDiagnostics && (
@@ -354,9 +527,9 @@ export const App: React.FC = () => {
         canvas_content={
           currentCanvas && !currentCanvas.is_empty ? (
             <CanvasDisplay
-              artifact={currentCanvas.render_artifact}
-              fixtures={fixtures}
-              pois={pois}
+              metadata={currentCanvas.render_artifact?.metadata}
+              fixtures={overlayFixtures}
+              pois={overlayPOIs}
             />
           ) : undefined
         }
@@ -365,73 +538,17 @@ export const App: React.FC = () => {
   );
 };
 
-export default App;
-            overflow: 'auto',
-            minHeight: 0,
-          }}
-        >
-          <MetadataDisplay
-            metadata={mockMetadata}
-            approval={approvalState}
-            on_approve={() => setApprovalState({ ...approvalState, is_approved: true })}
-            on_reject={() => setApprovalState({ ...approvalState, is_approved: false })}
-          />
-
-          {showDiagnostics && (
-            <DiagnosticsPanel
-              diagnostics={mockDiagnostics}
-              is_loading={false}
-            />
-          )}
-
-          <FrameInspector
-            is_active={showFrameInspector}
-            on_toggle={() => setShowFrameInspector(!showFrameInspector)}
-            canvas_width={100}
-            canvas_height={50}
-          />
-
-          <ABCompare
-            compare_state={compareState}
-            on_compare_toggle={() => setCompareState({ ...compareState, is_comparing: !compareState.is_comparing })}
-            on_split_change={(pos) => setCompareState({ ...compareState, split_position: pos })}
-          />
-
-          {/* Fullscreen button */}
-          <button
-            onClick={() => setIsFullscreen(!isFullscreen)}
-            style={{
-              margin: '12px',
-              padding: '8px 12px',
-              fontSize: '12px',
-              backgroundColor: '#2196f3',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '3px',
-              cursor: 'pointer',
-            }}
-          >
-            {isFullscreen ? '← Exit Fullscreen' : 'Fullscreen Preview →'}
-          </button>
-        </div>
-      </div>
-
-      {/* Fullscreen Preview - Epic 02.F16 */}
-      <FullscreenPreview
-        is_active={isFullscreen}
-        on_exit={() => setIsFullscreen(false)}
-        canvas_content={
-          currentCanvas && !currentCanvas.is_empty ? (
-            <CanvasDisplay
-              artifact={currentCanvas.render_artifact}
-              fixtures={fixtures}
-              pois={pois}
-            />
-          ) : undefined
-        }
-      />
-    </div>
-  );
-};
+const playbackButtonStyle = (disabled: boolean): React.CSSProperties => ({
+  minWidth: '84px',
+  padding: '8px 14px',
+  fontSize: '12px',
+  fontWeight: 'bold',
+  backgroundColor: disabled ? '#555' : '#2196f3',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '3px',
+  cursor: disabled ? 'not-allowed' : 'pointer',
+  opacity: disabled ? 0.6 : 1,
+});
 
 export default App;

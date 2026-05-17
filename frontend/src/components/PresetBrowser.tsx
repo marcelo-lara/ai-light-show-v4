@@ -74,7 +74,7 @@ interface ParameterControlProps {
 }
 
 const ParameterControl: React.FC<ParameterControlProps> = ({ parameter, on_change }) => {
-  const { name, label, type, default_value, constraint } = parameter;
+  const { label, type, default_value, constraint } = parameter;
 
   switch (type) {
     case 'float':
@@ -91,7 +91,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({ parameter, on_chang
             onChange={(e) => on_change(Number(e.target.value))}
             style={{ flex: 1 }}
           />
-          <span style={{ fontSize: '11px', minWidth: '30px' }}>{default_value}</span>
+          <span style={{ fontSize: '11px', minWidth: '30px' }}>{String(default_value ?? '')}</span>
         </div>
       );
 

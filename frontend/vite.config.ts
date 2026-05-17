@@ -6,6 +6,7 @@ export default defineConfig({
   server: {
     port: 3400,
     host: true,
+    allowedHosts: ['s2.local', 'localhost', '127.0.0.1'],
   },
   build: {
     outDir: 'dist',

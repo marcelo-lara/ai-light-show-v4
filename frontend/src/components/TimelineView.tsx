@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { TimelineViewState, SceneInfo, TransitionInfo } from '../types/phase05';
+import type { TimelineViewState } from '../types/phase05';
 
 interface TimelineViewProps {
   timeline: TimelineViewState;

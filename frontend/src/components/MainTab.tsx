@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import type { MainTabState, RenderJobStatus } from '../types/phase05';
+import { RenderPhase } from '../types/phase05';
+import type { RenderJobStatus } from '../types/phase05';
 
 interface MainTabProps {
   onRenderStart: (params: { show_name: string; canvas_name: string; selected_presets: string[] }) => void;
@@ -208,12 +209,12 @@ export const MainTab: React.FC<MainTabProps> = ({
           <div style={{ fontSize: '11px', color: '#666' }}>
             {renderProgress.status_text} ({progressPercent.toFixed(1)}%)
           </div>
-          {renderProgress.phase === 'analyzing' && (
+          {renderProgress.phase === RenderPhase.ANALYZING && (
             <div style={{ fontSize: '11px', color: '#999', marginTop: '2px' }}>
               Analysis: {renderProgress.analysis_current}/{renderProgress.analysis_total}
             </div>
           )}
-          {renderProgress.phase === 'rendering' && (
+          {renderProgress.phase === RenderPhase.RENDERING && (
             <div style={{ fontSize: '11px', color: '#999', marginTop: '2px' }}>
               Frames: {renderProgress.render_current}/{renderProgress.render_total}
             </div>

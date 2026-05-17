@@ -1,8 +1,8 @@
-"""
-Phase 06 Frontend Types
-
-Epic 11 & 12 frontend type definitions for export and fixture mapping
-"""
+/**
+ * Phase 06 Frontend Types
+ *
+ * Epic 11 & 12 frontend type definitions for export and fixture mapping
+ */
 
 export interface CanonicalPixelInfo {
   origin: string;

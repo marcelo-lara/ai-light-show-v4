@@ -11,6 +11,7 @@ import logging
 import uuid
 import io
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Optional, List
 
 import numpy as np
@@ -101,7 +102,8 @@ app = FastAPI(
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3400", "localhost"],
+    allow_origins=[],
+    allow_origin_regex=r"^https?://([a-zA-Z0-9-]+\.local|localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -113,6 +115,34 @@ app.add_middleware(
 async def health_check():
     """Health check endpoint."""
     return {"status": "healthy", "version": "0.1.0"}
+
+
+def _list_available_songs() -> list[dict[str, str]]:
+    """Return song files from the shared data directory."""
+    songs_dir = Path(__file__).resolve().parents[2] / "data" / "songs"
+
+    if not songs_dir.exists():
+        return []
+
+    songs = []
+    for song_path in songs_dir.iterdir():
+        if song_path.is_file() and song_path.suffix.lower() == ".mp3":
+            songs.append({
+                "id": song_path.name,
+                "title": song_path.stem,
+            })
+
+    return sorted(songs, key=lambda song: song["title"].lower())
+
+
+@app.get("/api/songs")
+async def list_songs():
+    """List songs available for backend-owned loading."""
+    songs = _list_available_songs()
+    return {
+        "songs": songs,
+        "count": len(songs),
+    }
 
 
 # Epic 01.B5: Backend playback state endpoints
@@ -255,6 +285,15 @@ async def play():
     if _playback_state:
         _playback_state.is_playing = True
     return {"status": "playing"}
+
+
+@app.post("/api/playback/pause")
+async def pause():
+    """Pause playback without clearing the current song."""
+    global _playback_state
+    if _playback_state:
+        _playback_state.is_playing = False
+    return {"status": "paused"}
 
 
 @app.post("/api/playback/stop")

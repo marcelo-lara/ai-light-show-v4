@@ -4,7 +4,7 @@
  * Epic 02: Display the 100x50 virtual canvas with overlay
  */
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import type { RenderArtifactMetadata } from '../types/renderContract';
 
 interface CanvasDisplayProps {
@@ -13,7 +13,6 @@ interface CanvasDisplayProps {
   pois?: Array<{ poi_id: string; canvas_pos: { x: number; y: number } }>;
   showGrid?: boolean;
   showOverlay?: boolean;
-  scale?: number;
 }
 
 /**
@@ -25,19 +24,19 @@ export const CanvasDisplay: React.FC<CanvasDisplayProps> = ({
   pois = [],
   showGrid = true,
   showOverlay = true,
-  scale = 8,
 }) => {
   const CANVAS_WIDTH = 100;
   const CANVAS_HEIGHT = 50;
-  const displayWidth = CANVAS_WIDTH * scale;
-  const displayHeight = CANVAS_HEIGHT * scale;
 
   return (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
+        display: 'grid',
+        gridTemplateRows: 'auto minmax(0, 1fr) auto',
         gap: '12px',
+        width: '100%',
+        height: '100%',
+        minHeight: 0,
       }}
     >
       {/* Metadata info */}
@@ -59,6 +58,7 @@ export const CanvasDisplay: React.FC<CanvasDisplayProps> = ({
         style={{
           position: 'relative',
           width: '100%',
+          height: '100%',
           aspectRatio: `${CANVAS_WIDTH} / ${CANVAS_HEIGHT}`,
           backgroundColor: '#000',
           border: '2px solid #333',
@@ -67,6 +67,7 @@ export const CanvasDisplay: React.FC<CanvasDisplayProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          minHeight: 0,
         }}
       >
         {/* Canvas background (placeholder) */}

@@ -1,15 +1,27 @@
 import axios, { AxiosInstance } from 'axios';
 import type {
   PlaybackState,
-  CurrentSongState,
-  RenderArtifact,
   ArtifactCompatibilityResult,
 } from '../types/renderContract';
+
+export interface SongOption {
+  id: string;
+  title: string;
+}
+
+const defaultBackendURL = (() => {
+  if (typeof window === 'undefined') {
+    return 'http://localhost:3401';
+  }
+
+  const { protocol, hostname } = window.location;
+  return `${protocol}//${hostname}:3401`;
+})();
 
 class BackendAPI {
   private client: AxiosInstance;
 
-  constructor(baseURL: string = 'http://localhost:3401') {
+  constructor(baseURL: string = defaultBackendURL) {
     this.client = axios.create({
       baseURL,
       headers: {
@@ -33,6 +45,11 @@ class BackendAPI {
   // Song loading (backend-owned)
   async loadSong(songId: string): Promise<{ status: string; state: PlaybackState }> {
     const response = await this.client.post(`/api/songs/${songId}/load`);
+    return response.data;
+  }
+
+  async getSongs(): Promise<{ songs: SongOption[]; count: number }> {
+    const response = await this.client.get<{ songs: SongOption[]; count: number }>('/api/songs');
     return response.data;
   }
 
@@ -63,15 +80,14 @@ class BackendAPI {
     return response.data;
   }
 
-  // Get render status
-  async getRenderStatus(renderId: string): Promise<{ status: string }> {
-    const response = await this.client.get(`/api/render/${renderId}/status`);
-    return response.data;
-  }
-
   // Playback controls
   async play(): Promise<{ status: string }> {
     const response = await this.client.post('/api/playback/play');
+    return response.data;
+  }
+
+  async pause(): Promise<{ status: string }> {
+    const response = await this.client.post('/api/playback/pause');
     return response.data;
   }
 

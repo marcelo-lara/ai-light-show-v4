@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import type { PlaybackState, CurrentSongState, CompatibilityErrorState } from '../types/renderContract';
-import backendAPI from '../api/backend';
+import type { PlaybackState, CompatibilityErrorState } from '../types/renderContract';
+import backendAPI, { type SongOption } from '../api/backend';
 
 interface RenderJobState {
   jobId: string | null;
@@ -19,12 +19,15 @@ interface PlaybackStore {
   renderJob: RenderJobState;
   fixtures: Array<Record<string, unknown>>;
   pois: Array<Record<string, unknown>>;
+  songs: SongOption[];
   canvasName: string;
 
   // Actions
   loadPlaybackState: () => Promise<void>;
+  loadSongs: () => Promise<void>;
   loadSong: (songId: string) => Promise<void>;
   play: () => Promise<void>;
+  pause: () => Promise<void>;
   stop: () => Promise<void>;
   setCompatibilityError: (error: CompatibilityErrorState) => void;
   clearCompatibilityError: () => void;
@@ -60,6 +63,7 @@ export const usePlaybackStore = create<PlaybackStore>((set) => ({
   },
   fixtures: [],
   pois: [],
+  songs: [],
   canvasName: 'default',
 
   loadPlaybackState: async () => {
@@ -70,6 +74,15 @@ export const usePlaybackStore = create<PlaybackStore>((set) => ({
     } catch (error) {
       console.error('Failed to load playback state:', error);
       set({ isLoading: false });
+    }
+  },
+
+  loadSongs: async () => {
+    try {
+      const data = await backendAPI.getSongs();
+      set({ songs: data.songs });
+    } catch (error) {
+      console.error('Failed to load songs:', error);
     }
   },
 
@@ -109,6 +122,25 @@ export const usePlaybackStore = create<PlaybackStore>((set) => ({
       });
     } catch (error) {
       console.error('Failed to play:', error);
+    }
+  },
+
+  pause: async () => {
+    try {
+      await backendAPI.pause();
+      set((state) => {
+        if (state.playbackState) {
+          return {
+            playbackState: {
+              ...state.playbackState,
+              is_playing: false,
+            },
+          };
+        }
+        return state;
+      });
+    } catch (error) {
+      console.error('Failed to pause:', error);
     }
   },
 
