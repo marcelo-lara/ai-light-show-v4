@@ -2,7 +2,7 @@
 
 ### Backend Track
 
-- [ ] 07.B1 Raindrops layer spec: define a POI-aware radial pulse layer named `raindrops`.
+- [ ] 07.B1 Raindrops layer spec: define a POI-aware radial pulse layer named `raindrops` in `backend/shaders/`.
 - [ ] 07.B2 POI source selection: allow pulses to start from one or more configured POIs.
 - [ ] 07.B3 POI transit behavior: allow pulses to pass through configured POIs on the canvas.
 - [ ] 07.B4 POI collision behavior: allow pulses to collide at configured POIs and create a visible interaction.

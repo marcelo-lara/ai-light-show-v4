@@ -31,4 +31,4 @@ A shader can interact continuously with a POI as it travels near it, slowing dow
 
 ## Implementation Rule
 When authoring layers (Epic 04 / Epic 11 / Epic 12), layers should accept a `poi_list` parameter. 
-The `render_frame()` loop for the layer will iterate over these POIs to apply the Start, End, or Pass-Thru mathematics before finalizing the RGB values for the 100x50 grid.
+Backend shader implementations should live in `backend/shaders/`, and the `render_frame()` loop for the layer will iterate over these POIs to apply the Start, End, or Pass-Thru mathematics before finalizing the RGB values for the 100x50 grid.

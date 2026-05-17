@@ -1,5 +1,9 @@
 ## Epic 02: Preview Console
 
+Validation note: preview-console verification should run against the live Dockerized app after `docker compose down` and `docker compose up -d --build`, and the default browser smoke-test song is `data/songs/What a Feeling - Courtney Storm.mp3`.
+
+Interaction note: the console is a client of one shared backend-owned session. Song selection, active canvas, render actions, and playback transport must stay synchronized across all connected frontend clients.
+
 ### Backend Track
 
 - [ ] 02.B1 Song load endpoint: add one backend action that sets the current song and returns the updated current song plus current canvas state.
@@ -11,6 +15,10 @@
 - [ ] 02.B7 Render progress cadence: publish render progress with current and total frame counts at least every `200` frames.
 - [ ] 02.B8 Canvas naming contract: accept a user-provided canvas name and persist exports as `{song_name}.{canvas_name}.json`.
 - [ ] 02.B9 Progress phase payload wiring: extend job status so the API reports analysis vs render phase and enough numeric progress for the frontend progress bar to reflect the active phase.
+- [ ] 02.B10 Song catalog endpoint: expose the available song list derived from `data/songs/` for a frontend dropdown selector.
+- [ ] 02.B11 Playback transport actions: add backend actions for `Play`, `Pause`, and `Stop` against the shared current canvas playback state.
+- [ ] 02.B12 Shared-state fanout: push or broadcast song, canvas, render, and playback-state updates to all connected clients.
+- [ ] 02.B13 Global render-session rule: reject per-client private song or canvas selection semantics and keep one active shared render target at a time.
 
 ### Frontend Track
 
@@ -39,6 +47,10 @@
 - [ ] 02.F21 Canvas name input: add a textbox for the canvas name used when `Render` creates `{song_name}.{canvas_name}.json`.
 - [ ] 02.F22 Header canvas-only title: show only the current canvas name in the header and hide the redundant song-name text there.
 - [ ] 02.F23 Phase-aware progress UI: drive the `Generating...` progress bar from the backend's analysis/render phase payload instead of a generic polling state.
+- [ ] 02.F26 Song loader dropdown: render a single song selector dropdown populated from the backend song catalog sourced from `data/songs/`.
+- [ ] 02.F27 Playback transport controls: add `Play`, `Pause`, and `Stop` buttons for canvas playback in the review console.
+- [ ] 02.F28 Shared-session follow mode: when another client changes the active song, canvas, render, or playback transport state, update this client to match the server-owned session.
+- [ ] 02.F29 Test shader preview flow: allow the `bouncing_ball` render to be previewed cleanly as a renderer-validation look without requiring production-only preset complexity.
 
 ### Validation Track
 
@@ -55,4 +67,9 @@
 - [ ] 02.V11 Progress phase test: prove the UI distinguishes analysis progress from render progress and updates render progress every `200` frames.
 - [ ] 02.V12 Chunk compatibility flow test: prove the preview can still load and play a chunked v2 canvas artifact without changing current-canvas selection semantics.
 - [ ] 02.V13 Preset tab selection flow test: prove the `Main` tab shows overwrite-default `show name` input plus preset checklist, and that selecting presets shows only those preset parameter tabs while unselected preset tabs remain hidden before render.
+- [ ] 02.V14 Docker browser smoke test: run `docker compose down` then `docker compose up -d --build`, open the live preview in a real browser, load `data/songs/What a Feeling - Courtney Storm.mp3`, trigger `Render`, and verify canvas playback, fixture and POI overlays, and the core review flow without mocked services.
+- [ ] 02.V15 Song dropdown test: prove the frontend song loader is a dropdown populated from the backend view of `data/songs/`.
+- [ ] 02.V16 Playback controls test: prove `Play`, `Pause`, and `Stop` drive the shared backend playback state and update the canvas preview accordingly.
+- [ ] 02.V17 Multi-client follow test: prove when one client changes the song, canvas, render, or playback transport state, other connected clients follow the same shared session.
+- [ ] 02.V18 Bouncing ball preview test: prove a rendered `bouncing_ball` canvas displays a single crisp point moving and bouncing at the expected edges in the frontend preview.
 

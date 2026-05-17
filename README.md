@@ -11,7 +11,7 @@ Rather than relying on random noise or basic volume triggers, this engine extrac
 3. **Fixture Mapping & DMX Translation**: 
     * **Static Wash (Parcans)**: Sample specific, fixed coordinates on the canvas.
     * **Moving Heads**: Calculate dynamic 3D vectors targeting the most intense or closest canvas coordinates relative to a physical calibration point (`ref_0_0_0`), translating 2D canvas coordinates into physical DMX Pan/Tilt instructions.
-4. **Preview Console**: A Vite-based web frontend (Port `3400`) connected to a Python backend API (Port `3401`) to playback the MP3, visualize the `100x50` canvas with fixture overlays, tune preset parameters, and approve the final show before exporting to DMX.
+4. **Preview Console**: A Vite-based web frontend (Port `3400`) connected to a Python backend API (Port `3401`) to load songs from `data/songs/` through a backend-driven dropdown, control a shared `Play` or `Pause` or `Stop` transport state, visualize the `100x50` canvas with fixture overlays, tune preset parameters, and approve the final show before exporting to DMX. The frontend behaves as a client of one shared backend-owned song, canvas, and render session rather than keeping private per-browser playback state.
 
 ## Data & Architecture
 

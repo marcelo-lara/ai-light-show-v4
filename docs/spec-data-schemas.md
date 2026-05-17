@@ -3,14 +3,42 @@
 ## Directory Structure
 To maintain a clean separation of concerns:
 
-1. **`data/fixtures/` (Read-Only Configs)**
+1. **`backend/` (Engine Source)**
+  Source of truth for backend APIs, render orchestration, and offline generation logic.
+2. **`backend/shaders/` (Shader Source)**
+  Canonical home for backend shader and layer implementations. New renderable looks defined by the SDD should live here rather than being scattered across unrelated backend modules.
+3. **`backend/presets/` (Preset Source)**
+  Canonical home for authored preset definitions, including layer stacks, parameter schemas, staged math programs, and bounded shared-state declarations.
+4. **`data/songs/` (Read-Only Inputs)**
+  Source of truth for input song assets. The engine may read from this folder, but it must not store analysis caches, renders, metadata, or any other generated outputs here.
+5. **`data/fixtures/` (Read-Only Configs)**
    Source of truth for the physical room layout, POIs, and fixture addressing. The engine reads these to understand the environment.
-2. **`data/artifacts/` (Engine Outputs)**
+6. **`data/artifacts/` (Engine Outputs)**
    Source of truth for generated IR caches, binary canvases, and DMX export manifests. The engine writes these here.
 
 ---
 
-## 1. Fixture & POI Configs (`data/fixtures/`)
+## 1. Preset Definitions (`backend/presets/`)
+
+`backend/presets/` is a read-only authored source directory for versioned preset definitions.
+
+- Presets declare layer stacks, parameters, modulators, staged math blocks, and bounded shared state.
+- Presets are validated before render time.
+- Generated render metadata belongs in `data/artifacts/`, not in this directory.
+
+---
+
+## 2. Song Inputs (`data/songs/`)
+
+`data/songs/` is a read-only input directory for source audio and any user-managed song-side assets that ship with the repository.
+
+- The backend may read song files from this folder.
+- The backend must not write analysis results, render metadata, chunk payloads, previews, exports, or temporary working files into this folder.
+- Any generated data derived from songs belongs in `data/artifacts/`.
+
+---
+
+## 3. Fixture & POI Configs (`data/fixtures/`)
 
 ### `pois.json`
 Defines the Points of Interest in the room. They act as calibration points, targets, and shader anchors.
@@ -68,7 +96,7 @@ Defines the actual lighting hardware, its DMX address, and its calibration data 
 
 ---
 
-## 2. Artifacts (`data/artifacts/`)
+## 4. Artifacts (`data/artifacts/`)
 When a show is analyzed and rendered, the outputs are stored here.
 
 - **`{song_id}.analysis.json`**: The Essentia-extracted Intermediate Representation (IR).

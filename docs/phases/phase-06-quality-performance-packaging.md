@@ -12,6 +12,7 @@ Make the system reliable enough for repeated production use.
 ## Deliverables
 
 - Visual regression tests.
+- Browser-driven visual regression case inventory with named baseline captures.
 - Performance budgets.
 - Cache cleanup tools.
 - Export validation.

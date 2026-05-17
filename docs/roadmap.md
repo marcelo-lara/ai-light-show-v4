@@ -36,6 +36,7 @@ This roadmap is intentionally iterative. Each phase should leave the app more us
 - [Epic 10: Transition System](./epics/10-transition-system.md)
 - [Epic 11: Fixture Mapping And Export](./epics/11-fixture-mapping-and-export.md)
 - [Epic 12: Render Diagnostics](./epics/12-render-diagnostics.md)
+- [Epic 13: Ocean Waves Shader](./epics/13-ocean-waves-shader.md)
 
 ## Recommended Iteration Order
 
@@ -50,3 +51,4 @@ This roadmap is intentionally iterative. Each phase should leave the app more us
 9. Add timeline scenes and beat-synced transitions.
 10. Add physical fixture mapping and export.
 11. Add diagnostics and regression tests.
+12. Add a parcan-first ocean-wave look with large left-to-right swells and inner contrast.

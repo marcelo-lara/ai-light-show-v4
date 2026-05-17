@@ -23,6 +23,12 @@ That means:
 - [Roadmap](./roadmap.md): phases, epics, and iteration order.
 - [Development Handoff Stories](./development-handoff-stories.md): concise implementation stories for delegating epic work.
 - [Glossary](./glossary.md): shared terms for the engine and UI.
+- [Organic Visual Math](./spec-organic-visual-math.md): BeatDrop or MilkDrop-inspired math patterns adapted to this project's deterministic low-res engine.
+- [Preset Math Schema](./spec-preset-math-schema.md): concrete JSON shape for staged preset math, registers, and layer-local state.
+- [Expression Authoring Model](./spec-expression-authoring-model.md): decision to store authored preset math as a structured formula AST instead of a free-form DSL.
+- [Bouncing Ball Test Shader](./spec-bouncing-ball-test-shader.md): deterministic single-point shader spec for verifying backend canvas rendering and frontend preview playback.
+- [Ocean Waves Shader](./spec-ocean-waves-shader.md): parcan-first deep-blue wave shader spec with large left-to-right swells and inner contrast.
+- [Browser Visual Regression](./spec-browser-visual-regression.md): complete browser-driven visual regression case matrix for the live Dockerized preview console.
 - [Phases](./phases): phase-level goals and exit criteria.
 - [Epics](./epics): one file per epic story.
 
@@ -51,16 +57,18 @@ Checked items are done. The list is ordered by recommended implementation sequen
 - [ ] [Epic 10: Transition System](./epics/10-transition-system.md)
 - [ ] [Epic 11: Fixture Mapping And Export](./epics/11-fixture-mapping-and-export.md)
 - [ ] [Epic 12: Render Diagnostics](./epics/12-render-diagnostics.md)
+- [ ] [Epic 13: Ocean Waves Shader](./epics/13-ocean-waves-shader.md)
 
 ## Current Baseline
 
 The current codebase already has useful foundations:
 
 - Full-track audio analysis with beat times, onset, and five normalized frequency bands.
-- A structured separation between read-only room configurations (`data/fixtures/`) and generated outputs (`data/artifacts/`).
+- A structured separation between read-only song and room inputs (`data/songs/`, `data/fixtures/`) and generated outputs (`data/artifacts/`).
 - A precomputed, chunked binary canvas cache.
 - A browser player that synchronizes audio playback with cached frames.
-- Two prototype shader classes: wave and radial pulse.
+- Two prototype shader classes: wave and radial pulse, which should be normalized into `backend/shaders/` as the production backend layout.
+- A simple deterministic `bouncing_ball` shader should be used as the first rendering sanity-check look for backend and preview validation.
 - A small tuning UI for generation parameters.
 
 The main gap is architecture depth. Production quality should come from a richer engine model, better musical analysis, a preset/timeline system, stronger low-res rendering techniques, and a more complete preview workflow.

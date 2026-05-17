@@ -3,7 +3,7 @@
 ### Backend Track
 
 - [ ] 08.B1 Central spectroid signal: define the analysis input for central spectroid, note, or chord-reactive triggering.
-- [ ] 08.B2 Chase layer spec: define a note or chord-reactive shader named `spectroid_chase`.
+- [ ] 08.B2 Chase layer spec: define a note or chord-reactive shader named `spectroid_chase` in `backend/shaders/`.
 - [ ] 08.B3 Parcan anchor selection: use parcan fixture positions as chase origin anchors on the canvas.
 - [ ] 08.B4 Chase path generation: generate outward line motion from parcan anchors toward the canvas.
 - [ ] 08.B5 Moving head follow lines: define line-follow behavior that moving heads can track visually later.

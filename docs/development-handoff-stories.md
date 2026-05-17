@@ -6,14 +6,30 @@ Use these as small implementation handoff units. Each story should fit one focus
 
 - Frontend dev port: `3400`.
 - Backend API port: `3401`.
+- Backend shader implementations live in `backend/shaders/`.
+- Preset source files live in `backend/presets/`.
+- Organic visual behavior should come from deterministic staged math and bounded shared state, not imported BeatDrop runtime code.
+- `data/songs/` is read-only input storage; generated backend outputs must not be written there.
 - Split work into backend, frontend, and validation tracks.
 - Story ids stay stable even if list order changes.
 - Prefer smaller stories over broad multi-surface stories.
 - The server owns `current_song` and `current_canvas` state.
+- The server also owns the current playback transport state and current render session state.
+- There is exactly one active song, one active canvas, and one active render session for the whole system at a time.
 - The frontend should request song changes from the backend instead of loading songs directly.
+- The frontend song loader is a dropdown populated from the backend-visible contents of `data/songs/`.
 - When a new song is loaded, the backend should return or push the updated current song and current canvas state to the frontend.
+- Playback transport uses explicit `Play`, `Pause`, and `Stop` controls driven by backend-owned state.
+- When one client changes the song, canvas, render, or transport state, all other connected clients should follow that shared server state instead of keeping private local playback state.
 - If the current song has no canvas or show yet, the song should still load successfully; canvas creation happens only when the user triggers `Render`.
 - The left control column uses tabs: one `Main` tab with `show name` and `Render`, then one tab per shader or layer property group.
+- Runtime validation must use Docker, not host-local service startup.
+- Before browser validation, run `docker compose down` then `docker compose up -d --build` from the repo root.
+- Browser validation must hit the real app in Docker through the documented ports, not mocked APIs or mocked canvas data.
+- Use `data/songs/What a Feeling - Courtney Storm.mp3` as the default end-to-end preview validation song unless a story explicitly names a different fixture.
+- Use `docs/spec-browser-visual-regression.md` as the named browser-case inventory for visual regression coverage.
+- Use `docs/spec-bouncing-ball-test-shader.md` as the source of truth for the first renderer-calibration shader.
+- Use `docs/spec-ocean-waves-shader.md` as the source of truth for the parcan-first ocean-wave look.
 
 ## Implementation Order
 
@@ -29,6 +45,7 @@ Use these as small implementation handoff units. Each story should fit one focus
 10. Epic 10: Transition System
 11. Epic 11: Fixture Mapping And Export
 12. Epic 12: Render Diagnostics
+13. Epic 13: Ocean Waves Shader
 
 ## Epic 01: Render Contract
 
@@ -41,6 +58,8 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 01.B5 Current song state: add backend-owned `current_song` and `current_canvas` state to the playback contract.
 - [ ] 01.B6 Empty canvas state: define the contract for a loaded song with no current canvas yet.
 - [ ] 01.B7 Chunked binary frames: split v2 frame payloads into short binary chunks stored in `data/artifacts/` instead of one monolithic `.bin` file to reduce memory pressure and enable progressive loading later.
+- [ ] 01.B8 Shared playback state contract: add backend-owned playback transport fields for `stopped`, `paused`, `playing`, current playback time, and playback owner-neutral synchronization semantics.
+- [ ] 01.B9 Singleton session contract: define that `current_song`, `current_canvas`, and the active render job are global shared session state, not per-client selections.
 
 ### Frontend Track
 
@@ -48,6 +67,7 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 01.F2 Frontend compatibility state: reject incompatible artifacts with a clear UI error state.
 - [ ] 01.F3 Metadata display readiness: surface schema version, render id, preset id, and seed in a way the UI can consume.
 - [ ] 01.F4 Current state types: add frontend types for backend-owned `current_song`, `current_canvas`, and empty-canvas states.
+- [ ] 01.F5 Shared playback state types: add frontend types for backend-owned playback transport and shared-session state.
 
 ### Validation Track
 
@@ -56,6 +76,7 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 01.V3 Golden sample fixture: add one short canonical render artifact for regression checks.
 - [ ] 01.V4 Empty canvas contract test: prove a song can load without an existing canvas or show.
 - [ ] 01.V5 v1/v2 parity test: add a regression test that loads a short fixture as both legacy JSON frames and v2 binary frames and proves the decoded pixels match exactly.
+- [ ] 01.V6 Shared session contract test: prove multiple clients receive the same current song, current canvas, render job, and playback transport state.
 
 ## Epic 02: Preview Console
 
@@ -70,6 +91,10 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 02.B7 Render progress cadence: publish render progress with current and total frame counts at least every `200` frames.
 - [ ] 02.B8 Canvas naming contract: accept a user-provided canvas name and persist exports as `{song_name}.{canvas_name}.json`.
 - [ ] 02.B9 Progress phase payload wiring: extend job status so the API reports analysis vs render phase and enough numeric progress for the frontend progress bar to reflect the active phase.
+- [ ] 02.B10 Song catalog endpoint: expose the available song list derived from `data/songs/` for a frontend dropdown selector.
+- [ ] 02.B11 Playback transport actions: add backend actions for `Play`, `Pause`, and `Stop` against the shared current canvas playback state.
+- [ ] 02.B12 Shared-state fanout: push or broadcast song, canvas, render, and playback-state updates to all connected clients.
+- [ ] 02.B13 Global render-session rule: reject per-client private song or canvas selection semantics and keep one active shared render target at a time.
 
 ### Frontend Track
 
@@ -98,6 +123,10 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 02.F21 Canvas name input: add a textbox for the canvas name used when `Render` creates `{song_name}.{canvas_name}.json`.
 - [ ] 02.F22 Header canvas-only title: show only the current canvas name in the header and hide the redundant song-name text there.
 - [ ] 02.F23 Phase-aware progress UI: drive the `Generating...` progress bar from the backend's analysis/render phase payload instead of a generic polling state.
+- [ ] 02.F26 Song loader dropdown: render a single song selector dropdown populated from the backend song catalog sourced from `data/songs/`.
+- [ ] 02.F27 Playback transport controls: add `Play`, `Pause`, and `Stop` buttons for canvas playback in the review console.
+- [ ] 02.F28 Shared-session follow mode: when another client changes the active song, canvas, render, or playback transport state, update this client to match the server-owned session.
+- [ ] 02.F29 Test shader preview flow: allow the `bouncing_ball` render to be previewed cleanly as a renderer-validation look without requiring production-only preset complexity.
 
 ### Validation Track
 
@@ -114,6 +143,11 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 02.V11 Progress phase test: prove the UI distinguishes analysis progress from render progress and updates render progress every `200` frames.
 - [ ] 02.V12 Chunk compatibility flow test: prove the preview can still load and play a chunked v2 canvas artifact without changing current-canvas selection semantics.
 - [ ] 02.V13 Preset tab selection flow test: prove the `Main` tab shows overwrite-default `show name` input plus preset checklist, and that selecting presets shows only those preset parameter tabs while unselected preset tabs remain hidden before render.
+- [ ] 02.V14 Docker browser smoke test: run `docker compose down` then `docker compose up -d --build`, open the live preview in a real browser, load `data/songs/What a Feeling - Courtney Storm.mp3`, trigger `Render`, and verify the resulting canvas, overlays, and review workflow without mocked backend responses.
+- [ ] 02.V15 Song dropdown test: prove the frontend song loader is a dropdown populated from the backend view of `data/songs/`.
+- [ ] 02.V16 Playback controls test: prove `Play`, `Pause`, and `Stop` drive the shared backend playback state and update the canvas preview accordingly.
+- [ ] 02.V17 Multi-client follow test: prove when one client changes the song, canvas, render, or playback transport state, other connected clients follow the same shared session.
+- [ ] 02.V18 Bouncing ball preview test: prove a rendered `bouncing_ball` canvas displays a single crisp point moving and bouncing at the expected edges in the frontend preview.
 
 ## Epic 03: Analysis IR
 
@@ -142,7 +176,7 @@ Use these as small implementation handoff units. Each story should fit one focus
 
 ### Backend Track
 
-- [ ] 04.B1 Layer interface: define a registry-based layer API with deterministic seeded execution.
+- [ ] 04.B1 Layer interface: define a registry-based layer API with deterministic seeded execution and load backend shader modules from `backend/shaders/`.
 - [ ] 04.B2 Wave layer migration: convert wave into a reusable registry-backed layer.
 - [ ] 04.B3 Radial pulse migration: convert radial pulse into a reusable registry-backed layer.
 - [ ] 04.B4 Solid field layer: add a solid fill layer.
@@ -154,17 +188,21 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 04.B10 Mirror transform: add mirror or symmetry transforms.
 - [ ] 04.B11 Blend ops: add `max`, `add`, `alpha`, `multiply`, `screen`, `difference`, and `mask`.
 - [ ] 04.B12 Scroll and zoom transforms: add scroll and zoom transforms.
+- [ ] 04.B13 Bouncing ball test shader: add a deterministic single-point `bouncing_ball` shader in `backend/shaders/` that reflects at canvas bounds for render sanity checks.
 
 ### Frontend Track
 
 - [ ] 04.F1 Layer metadata type: add frontend-readable layer ids, labels, and parameter schemas.
 - [ ] 04.F2 Layer fixture browsing readiness: define a simple UI-facing shape for inspecting available layers later.
+- [ ] 04.F3 Test shader preview readiness: expose `bouncing_ball` in a way the frontend can select and preview it as a render-validation look.
 
 ### Validation Track
 
 - [ ] 04.V1 Registry test: prove layers are registered and loadable by id.
 - [ ] 04.V2 Determinism test: prove seeded layers render reproducibly.
 - [ ] 04.V3 Visual fixture coverage: add at least one fixture or snapshot test per layer.
+- [ ] 04.V4 Bouncing ball path test: prove the point follows a deterministic path and reflects at the expected canvas edges.
+- [ ] 04.V5 Bouncing ball preview test: prove the frontend preview shows the same bounce path and edge collisions as the backend render artifact.
 
 ## Epic 05: Modulation System
 
@@ -177,6 +215,9 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 05.B5 Preset bindings: allow presets to bind modulators to layer parameters without custom Python code.
 - [ ] 05.B6 Deterministic execution: make modulator outputs stable for the same analysis, seed, and time.
 - [ ] 05.B7 Debug output shape: expose resolved modulator values in a structured format.
+- [ ] 05.B8 Staged math contexts: define bounded `preset_init`, `frame`, and optional hot-path `cell` or `point` execution contexts for expression-driven behavior.
+- [ ] 05.B9 Shared state lanes: define deterministic preset-shared registers and layer-local state lanes for passing derived values across stages.
+- [ ] 05.B10 Hot-path guardrails: validate that hot-path math stays bounded, deterministic, and cheap enough for `100x50` precompute rendering.
 
 ### Frontend Track
 
@@ -188,6 +229,8 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 05.V1 Binding test: prove presets can bind modulators to layer parameters without layer-specific code.
 - [ ] 05.V2 Determinism test: prove modulator outputs stay stable for the same inputs.
 - [ ] 05.V3 Mapping test: prove mapping operations apply in the declared order.
+- [ ] 05.V4 Context ordering test: prove staged math contexts execute in the intended `preset_init` then `frame` then hot-path order.
+- [ ] 05.V5 Shared state test: prove register and local state handoff is deterministic and bounded.
 
 ## Epic 06: Preset Schema
 
@@ -199,27 +242,61 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 06.B4 Palette schema: let a preset declare palette and color controls.
 - [ ] 06.B5 Blend schema: let a preset declare blend modes at preset or layer level.
 - [ ] 06.B6 Preset validation: fail invalid presets with actionable errors before render time.
-- [ ] 06.B7 Undersea waves preset: define the first preset `undersea_waves` featuring 3 layered sine waves moving left to right, restricted to parcan chase effects, with a configurable base color (default blue). The wave speed must dynamically respond to beat timing, and the wave intensity/glitter must modulate based on FFT band changes.
+- [ ] 06.B7 Ocean waves preset: define the first preset `ocean_waves` using the `ocean_waves` shader to create large left-to-right swells for parcans, with a configurable deep-blue base color and controllable inner-contrast behavior. The wave speed must dynamically respond to beat timing, and the wave intensity or highlight motion must modulate based on FFT band changes.
 - [ ] 06.B8 Baseline preset migration: represent the current wave plus pulse look as preset `undersea_pulse_01`.
+- [ ] 06.B9 Stage-scoped math schema: allow presets or layers to declare optional `preset_init`, `frame`, and bounded `cell` or `point` programs as AST-backed formula definitions.
+- [ ] 06.B10 Shared state schema: declare preset-shared registers and layer-local state lanes with explicit defaults and bounds.
+- [ ] 06.B11 Validation budgets: reject free-form DSL strings, unsupported stage access, unbounded memory patterns, or hot-path constructs that violate deterministic render budgets.
 
 ### Frontend Track
 
 - [ ] 06.F1 Preset summary type: add frontend types for preset identity, labels, and tags.
 - [ ] 06.F2 Parameter schema type: add frontend types for typed preset parameters and UI groups.
 - [ ] 06.F3 Preset loading readiness: make the UI able to consume schema-defined presets later without hardcoded assumptions.
+- [ ] 06.F4 Math authoring metadata type: add frontend-readable grouped metadata for AST-backed stage programs and shared state definitions.
 
 ### Validation Track
 
 - [ ] 06.V1 Valid preset test: prove a valid preset loads and passes schema validation.
 - [ ] 06.V2 Invalid preset test: prove invalid presets fail with actionable errors.
-- [ ] 06.V3 Undersea waves test: prove `undersea_waves` renders 3 layered sine waves, respects the configurable base color, limits output intensity exclusively to parcan anchor coordinates, and validates that wave speed and glitter respond to beat and FFT signals respectively.
+- [ ] 06.V3 Ocean waves test: prove `ocean_waves` renders readable ocean-like left-to-right swells, respects the configurable deep-blue base color, limits output intensity exclusively to parcan anchor coordinates, and validates that wave speed and inner-contrast motion respond to beat and FFT signals respectively.
 - [ ] 06.V4 Baseline parity test: prove `undersea_pulse_01` reproduces the current baseline look closely enough.
+- [ ] 06.V5 Stage handoff test: prove preset math blocks observe the intended init, frame, and hot-path state handoff.
+- [ ] 06.V6 Budget validation test: prove invalid hot-path constructs fail before render time with actionable errors.
+
+## Epic 13: Ocean Waves Shader
+
+### Backend Track
+
+- [ ] 13.B1 Ocean waves layer spec: define a parcan-oriented shader named `ocean_waves` in `backend/shaders/`.
+- [ ] 13.B2 Left-to-right swell motion: make the dominant wave bodies travel from left to right across the canvas.
+- [ ] 13.B3 Three-field composition: use exactly three layered fields in v1 for primary swell mass, depth contrast, and restrained crest emphasis.
+- [ ] 13.B4 Ocean palette defaults: define deep-blue base, darker troughs, and restrained cyan-highlight behavior.
+- [ ] 13.B5 Contrast shaping: prefer smoothed contrast functions such as `mix`, `smoothstep`, and `clamp` over noisy or hard-thresholded crest logic.
+- [ ] 13.B6 Parcan sampling intent: shape the look so broad swells remain readable when sampled by fixed parcan anchor coordinates.
+- [ ] 13.B7 Parameter schema: define controls for `base_color`, `highlight_color`, `wave_speed`, `wave_scale`, `contrast_depth`, `foam_intensity`, and `parcan_only`.
+- [ ] 13.B8 Preset integration: make the shader usable from the preset and layer system, including the `ocean_waves` preset.
+
+### Frontend Track
+
+- [ ] 13.F1 Shader metadata types: add frontend-readable types for the `ocean_waves` shader and its parameter schema.
+- [ ] 13.F2 Parcan preview readiness: make the UI able to preview ocean-wave output as a parcan-first look.
+- [ ] 13.F3 Contrast review readiness: ensure the preview preserves large swell readability and inner-contrast structure.
+
+### Validation Track
+
+- [ ] 13.V1 Direction test: prove the dominant motion reads left to right.
+- [ ] 13.V2 Swell scale test: prove the output contains large wave bodies rather than high-frequency ripples.
+- [ ] 13.V3 Contrast structure test: prove each swell contains readable interior contrast rather than a flat body fill.
+- [ ] 13.V4 Parcan readability test: prove parcan-sampled output preserves the ocean-wave motion and internal contrast.
+- [ ] 13.V5 Exact preset payload test: prove the canonical `ocean_waves` preset loads with the documented payload and defaults.
+- [ ] 13.V6 Browser regression test: add browser-visible regression coverage for baseline swell readability, left-to-right movement, and inner contrast.
 
 ## Epic 07: Raindrops Shader
 
 ### Backend Track
 
-- [ ] 07.B1 Raindrops layer spec: define a POI-aware radial pulse layer named `raindrops`.
+- [ ] 07.B1 Raindrops layer spec: define a POI-aware radial pulse layer named `raindrops` in `backend/shaders/`.
 - [ ] 07.B2 POI source selection: allow pulses to start from one or more configured POIs.
 - [ ] 07.B3 POI transit behavior: allow pulses to pass through configured POIs on the canvas.
 - [ ] 07.B4 POI collision behavior: allow pulses to collide at configured POIs and create a visible interaction.
@@ -244,7 +321,7 @@ Use these as small implementation handoff units. Each story should fit one focus
 ### Backend Track
 
 - [ ] 08.B1 Central spectroid signal: define the analysis input for central spectroid, note, or chord-reactive triggering.
-- [ ] 08.B2 Chase layer spec: define a note or chord-reactive shader named `spectroid_chase`.
+- [ ] 08.B2 Chase layer spec: define a note or chord-reactive shader named `spectroid_chase` in `backend/shaders/`.
 - [ ] 08.B3 Parcan anchor selection: use parcan fixture positions as chase origin anchors on the canvas.
 - [ ] 08.B4 Chase path generation: generate outward line motion from parcan anchors toward the canvas.
 - [ ] 08.B5 Moving head follow lines: define line-follow behavior that moving heads can track visually later.
@@ -356,3 +433,7 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 12.V1 Blank render test: catch obviously blank renders.
 - [ ] 12.V2 Static render test: catch accidentally static renders.
 - [ ] 12.V3 Regression change test: catch accidental visual output changes.
+- [ ] 12.V4 Browser baseline suite: capture the named browser cases from `spec-browser-visual-regression.md` against the live Dockerized app.
+- [ ] 12.V5 Overlay regression suite: compare fixture and POI overlay baselines separately from raw canvas baselines.
+- [ ] 12.V6 Diagnostics asset regression suite: compare contact sheets, preview strips, and warning states in the browser UI.
+- [ ] 12.V7 Review-console regression suite: compare approval, fullscreen, frame-inspector, timeline, and A/B compare states in the browser UI.
