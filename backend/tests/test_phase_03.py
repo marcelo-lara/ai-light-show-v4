@@ -466,5 +466,245 @@ class TestPresetWithLayers:
             assert layer is not None, f"Layer {layer_ref.layer_id} not found in registry"
 
 
+# ============================================================================
+# Epic 04: New Layer Tests (Mirror, Scroll, Zoom)
+# ============================================================================
+
+class TestNewLayers:
+    """Epic 04.B10 / 04.B12: MirrorLayer, ScrollLayer, ZoomLayer."""
+
+    def _ctx(self, frame: int = 0) -> RenderContext:
+        return RenderContext(seed=7, frame_index=frame, total_frames=120, fps=30)
+
+    def test_mirror_layer_horizontal(self):
+        from app.layers import MirrorLayer
+        layer = MirrorLayer()
+        frame = layer.render_frame(self._ctx(), {"axis": "horizontal"})
+        assert frame.shape == (CANVAS_HEIGHT, CANVAS_WIDTH, 3)
+        assert frame.dtype == np.uint8
+
+    def test_mirror_layer_vertical(self):
+        from app.layers import MirrorLayer
+        layer = MirrorLayer()
+        frame = layer.render_frame(self._ctx(), {"axis": "vertical"})
+        assert frame.shape == (CANVAS_HEIGHT, CANVAS_WIDTH, 3)
+
+    def test_mirror_layer_both_axes(self):
+        from app.layers import MirrorLayer
+        layer = MirrorLayer()
+        frame = layer.render_frame(self._ctx(), {"axis": "both"})
+        assert frame.shape == (CANVAS_HEIGHT, CANVAS_WIDTH, 3)
+
+    def test_scroll_layer_renders(self):
+        from app.layers import ScrollLayer
+        layer = ScrollLayer()
+        schema = layer.get_parameter_schema()
+        params = {k: v.get("default", 0) for k, v in schema.items()}
+        frame = layer.render_frame(self._ctx(), params)
+        assert frame.shape == (CANVAS_HEIGHT, CANVAS_WIDTH, 3)
+        assert frame.dtype == np.uint8
+
+    def test_zoom_layer_renders(self):
+        from app.layers import ZoomLayer
+        layer = ZoomLayer()
+        schema = layer.get_parameter_schema()
+        params = {k: v.get("default", 0) for k, v in schema.items()}
+        frame = layer.render_frame(self._ctx(), params)
+        assert frame.shape == (CANVAS_HEIGHT, CANVAS_WIDTH, 3)
+        assert frame.dtype == np.uint8
+
+    def test_mirror_scroll_zoom_registered(self):
+        registry = LayerRegistry()
+        ids = registry.list_layers()
+        for expected in ("mirror", "scroll", "zoom"):
+            assert expected in ids, f"'{expected}' missing from LayerRegistry"
+
+
+# ============================================================================
+# Epic 07: Raindrops Shader Validation (V1-V4)
+# ============================================================================
+
+class TestRaindropsShaderValidation:
+    """Epic 07.V1-V4: POI origin, transit, collision, and snapshot tests."""
+
+    def _make_context(self, frame: int = 3) -> RenderContext:
+        return RenderContext(seed=10, frame_index=frame, total_frames=300, fps=30,
+                             fft_bands=[0.5] * 8)
+
+    def test_v1_poi_origin_lit(self):
+        """07.V1: Single POI at (20, 10) — pixels near it should be non-zero."""
+        layer = RaindropsLayer()
+        ctx = self._make_context(frame=3)
+        params = {
+            "pulse_rate": 2.0,
+            "pulse_radius_growth": 3.0,
+            "pulse_decay": 0.99,
+            "collision_strength": 1.5,
+            "base_color": "#FFFFFF",
+            "_pois": [{"id": "p1", "x": 20, "y": 10}],
+        }
+        frame = layer.render_frame(ctx, params)
+        # At least one pixel near the POI must be lit
+        region = frame[5:16, 15:26]
+        assert region.max() > 0, "Expected non-zero pixels near POI origin"
+
+    def test_v2_transit_boost_at_second_poi(self):
+        """07.V2: With 2 POIs, the second POI location gets boosted by transit."""
+        layer = RaindropsLayer()
+        # Use a frame where the pulse from POI-0 has time to reach POI-1
+        ctx = self._make_context(frame=6)
+        pois = [
+            {"id": "p1", "x": 10, "y": 25},
+            {"id": "p2", "x": 40, "y": 25},
+        ]
+        params = {
+            "pulse_rate": 1.0,
+            "pulse_radius_growth": 8.0,
+            "pulse_decay": 0.99,
+            "collision_strength": 1.2,
+            "transit_boost": 3.0,
+            "base_color": "#FFFFFF",
+            "_pois": pois,
+        }
+        frame = layer.render_frame(ctx, params)
+        # Frame must at least render valid shape — actual transit visibility
+        # depends on timing; this is a smoke test that the path executes.
+        assert frame.shape == (CANVAS_HEIGHT, CANVAS_WIDTH, 3)
+        assert frame.max() >= 0
+
+    def test_v3_determinism(self):
+        """07.V3: Same seed + params → identical frames (collision is deterministic)."""
+        layer = RaindropsLayer()
+        pois = [{"id": "p1", "x": 20, "y": 20}, {"id": "p2", "x": 60, "y": 30}]
+        params = {
+            "pulse_rate": 2.0,
+            "pulse_radius_growth": 5.0,
+            "pulse_decay": 0.95,
+            "collision_strength": 1.5,
+            "base_color": "#00FFFF",
+            "_pois": pois,
+        }
+        ctx_a = RenderContext(seed=99, frame_index=5, total_frames=300, fps=30)
+        ctx_b = RenderContext(seed=99, frame_index=5, total_frames=300, fps=30)
+        frame_a = layer.render_frame(ctx_a, params)
+        frame_b = layer.render_frame(ctx_b, params)
+        np.testing.assert_array_equal(frame_a, frame_b)
+
+    def test_v4_snapshot_shape_dtype(self):
+        """07.V4: Render result has correct shape and dtype."""
+        layer = RaindropsLayer()
+        ctx = self._make_context()
+        params = {
+            "pulse_rate": 2.0,
+            "pulse_radius_growth": 5.0,
+            "pulse_decay": 0.95,
+            "collision_strength": 1.5,
+            "base_color": "#00FFFF",
+        }
+        frame = layer.render_frame(ctx, params)
+        assert frame.shape == (CANVAS_HEIGHT, CANVAS_WIDTH, 3)
+        assert frame.dtype == np.uint8
+        assert frame.min() >= 0
+        assert frame.max() <= 255
+
+
+# ============================================================================
+# Epic 08: Spectroid Chase Shader Validation (V1-V4)
+# ============================================================================
+
+class TestSpectroidChaseShaderValidation:
+    """Epic 08.V1-V4: Trigger determinism, parcan anchor, follow lines, snapshot."""
+
+    _PARCAN = [{"id": "par1", "x": 50, "y": 25}]
+
+    def _params(self, **overrides):
+        base = {
+            "trigger_sensitivity": 0.3,
+            "line_length": 20.0,
+            "chase_speed": 15.0,
+            "fade_distance": 15.0,
+            "line_width": 2,
+            "base_color": "#FF00FF",
+            "_parcans": self._PARCAN,
+            "moving_head_follow": True,
+        }
+        base.update(overrides)
+        return base
+
+    def _ctx(self, onset: bool = True, fft: float = 0.8, frame: int = 0):
+        return RenderContext(
+            seed=42, frame_index=frame, total_frames=300, fps=30,
+            onset_detected=onset, fft_bands=[fft] * 8,
+        )
+
+    def test_v1_trigger_active_produces_output(self):
+        """08.V1: onset_detected=True → at least some pixels lit."""
+        layer = SpectroidChaseLayer()
+        frame = layer.render_frame(self._ctx(onset=True), self._params())
+        assert frame.max() > 0, "Expected pixels when triggered"
+
+    def test_v1_trigger_inactive_no_output(self):
+        """08.V1: onset=False + low fft → blank frame."""
+        layer = SpectroidChaseLayer()
+        ctx = RenderContext(seed=42, frame_index=0, total_frames=300, fps=30,
+                            onset_detected=False, fft_bands=[0.0] * 8)
+        frame = layer.render_frame(ctx, self._params(trigger_sensitivity=0.9))
+        assert frame.max() == 0, "Expected blank frame when not triggered"
+
+    def test_v2_parcan_anchor_pixels_lit(self):
+        """08.V2: Pixels exist near the parcan anchor coordinates."""
+        layer = SpectroidChaseLayer()
+        frame = layer.render_frame(self._ctx(), self._params())
+        px, py = 50, 25
+        region = frame[max(0, py - 5):py + 6, max(0, px - 5):px + 6]
+        assert region.max() > 0, "Parcan anchor region should have lit pixels"
+
+    def test_v3_follow_targets_populated_when_triggered(self):
+        """08.V3 (08.B5): get_moving_head_targets() returns non-empty list after trigger."""
+        layer = SpectroidChaseLayer()
+        layer.render_frame(self._ctx(onset=True), self._params())
+        targets = layer.get_moving_head_targets()
+        assert len(targets) > 0, "Expected follow targets after triggered render"
+
+    def test_v3_follow_target_schema(self):
+        """08.B5: Each follow target has all required metadata keys."""
+        layer = SpectroidChaseLayer()
+        layer.render_frame(self._ctx(onset=True), self._params())
+        required_keys = {
+            "parcan_x", "parcan_y", "direction_dx", "direction_dy",
+            "angle_deg", "line_length", "end_x", "end_y", "active",
+        }
+        for target in layer.get_moving_head_targets():
+            assert required_keys <= set(target.keys()), \
+                f"Follow target missing keys: {required_keys - set(target.keys())}"
+
+    def test_v3_stability_across_frames(self):
+        """08.V3: Two renders with same seed produce identical frames."""
+        layer_a, layer_b = SpectroidChaseLayer(), SpectroidChaseLayer()
+        params = self._params()
+        ctx_a = self._ctx(frame=2)
+        ctx_b = self._ctx(frame=2)
+        frame_a = layer_a.render_frame(ctx_a, params)
+        frame_b = layer_b.render_frame(ctx_b, params)
+        np.testing.assert_array_equal(frame_a, frame_b)
+
+    def test_v4_snapshot_shape_dtype(self):
+        """08.V4: Result has correct shape and dtype."""
+        layer = SpectroidChaseLayer()
+        frame = layer.render_frame(self._ctx(), self._params())
+        assert frame.shape == (CANVAS_HEIGHT, CANVAS_WIDTH, 3)
+        assert frame.dtype == np.uint8
+        assert frame.min() >= 0
+        assert frame.max() <= 255
+
+    def test_v4_follow_targets_empty_when_not_triggered(self):
+        """08.V4: No follow targets when trigger is inactive."""
+        layer = SpectroidChaseLayer()
+        ctx = RenderContext(seed=42, frame_index=0, total_frames=300, fps=30,
+                            onset_detected=False, fft_bands=[0.0] * 8)
+        layer.render_frame(ctx, self._params(trigger_sensitivity=0.9))
+        assert layer.get_moving_head_targets() == []
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

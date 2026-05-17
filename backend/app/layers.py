@@ -484,6 +484,180 @@ class ScannerLayer(Layer):
         return frame
 
 
+class MirrorLayer(Layer):
+    """
+    Epic 04.B10: Mirror/symmetry transform - produces axis-symmetric output.
+
+    Renders the left (or top) half of a pattern and mirrors it to the other half,
+    producing perfectly symmetric visuals. Pattern is generated internally so the
+    layer is self-contained and registry-compatible.
+    """
+
+    def __init__(self):
+        super().__init__("mirror", "Mirror")
+
+    def get_parameter_schema(self) -> Dict[str, Any]:
+        return {
+            "axis": {"type": "choice", "default": "horizontal",
+                     "choices": ["horizontal", "vertical", "both"]},
+            "pattern": {"type": "choice", "default": "gradient",
+                        "choices": ["gradient", "wave", "bars"]},
+            "color1": {"type": "color", "default": "#000000"},
+            "color2": {"type": "color", "default": "#FFFFFF"},
+            "speed": {"type": "float", "default": 0.5, "min": 0.0, "max": 3.0},
+        }
+
+    def render_frame(
+        self,
+        context: RenderContext,
+        params: Dict[str, Any],
+        width: int = CANVAS_WIDTH,
+        height: int = CANVAS_HEIGHT,
+    ) -> np.ndarray:
+        axis = params.get("axis", "horizontal")
+        pattern = params.get("pattern", "gradient")
+        color1 = np.array(WaveLayer._parse_color(params.get("color1", "#000000")), dtype=np.float32)
+        color2 = np.array(WaveLayer._parse_color(params.get("color2", "#FFFFFF")), dtype=np.float32)
+        speed = params.get("speed", 0.5)
+
+        frame = np.zeros((height, width, 3), dtype=np.float32)
+
+        half_w = max(1, width // 2)
+        half_h = max(1, height // 2)
+
+        # Build left/top half, then mirror
+        if axis in ("horizontal", "both"):
+            xs = np.arange(half_w)
+            if pattern == "gradient":
+                t = xs / half_w
+            elif pattern == "wave":
+                phase = (xs / half_w + context.frame_time * speed) * 2 * math.pi * 2
+                t = 0.5 + 0.5 * np.sin(phase)
+            else:  # bars
+                t = ((xs // 5) % 2).astype(np.float32)
+            # Broadcast: t shape (half_w,) → (height, half_w, 3)
+            t_3d = t[np.newaxis, :, np.newaxis]
+            frame[:, :half_w] = color1 * (1 - t_3d) + color2 * t_3d
+            # Mirror to right half
+            mirrored = frame[:, :half_w][:, ::-1]
+            frame[:, half_w:] = mirrored[:, : width - half_w]
+
+        if axis in ("vertical", "both"):
+            if axis == "vertical":
+                # Generate top half fresh (horizontal gradient across full width)
+                xs = np.arange(width)
+                if pattern == "gradient":
+                    t = xs / width
+                elif pattern == "wave":
+                    phase = (xs / width + context.frame_time * speed) * 2 * math.pi * 2
+                    t = 0.5 + 0.5 * np.sin(phase)
+                else:
+                    t = ((xs // 5) % 2).astype(np.float32)
+                t_3d = t[np.newaxis, :, np.newaxis]
+                frame[:half_h, :] = color1 * (1 - t_3d) + color2 * t_3d
+            # Mirror top half to bottom half
+            mirrored = frame[:half_h, :][::-1]
+            frame[half_h:, :] = mirrored[: height - half_h]
+
+        return np.clip(frame, 0, 255).astype(np.uint8)
+
+
+class ScrollLayer(Layer):
+    """
+    Epic 04.B12: Scroll transform - continuously scrolls a tile pattern over time.
+
+    Renders a tiled gradient that moves in configurable X/Y directions at runtime,
+    creating a looping scroll effect driven by frame time.
+    """
+
+    def __init__(self):
+        super().__init__("scroll", "Scroll")
+
+    def get_parameter_schema(self) -> Dict[str, Any]:
+        return {
+            "scroll_speed_x": {"type": "float", "default": 1.0, "min": -5.0, "max": 5.0},
+            "scroll_speed_y": {"type": "float", "default": 0.0, "min": -5.0, "max": 5.0},
+            "color1": {"type": "color", "default": "#000000"},
+            "color2": {"type": "color", "default": "#FFFFFF"},
+            "tile_size": {"type": "int", "default": 20, "min": 4, "max": 50},
+        }
+
+    def render_frame(
+        self,
+        context: RenderContext,
+        params: Dict[str, Any],
+        width: int = CANVAS_WIDTH,
+        height: int = CANVAS_HEIGHT,
+    ) -> np.ndarray:
+        sx = params.get("scroll_speed_x", 1.0)
+        sy = params.get("scroll_speed_y", 0.0)
+        color1 = np.array(WaveLayer._parse_color(params.get("color1", "#000000")), dtype=np.float32)
+        color2 = np.array(WaveLayer._parse_color(params.get("color2", "#FFFFFF")), dtype=np.float32)
+        tile = max(1, int(params.get("tile_size", 20)))
+
+        offset_x = (context.frame_time * sx * width) % tile
+        offset_y = (context.frame_time * sy * height) % tile
+
+        ys, xs = np.meshgrid(np.arange(height), np.arange(width), indexing="ij")
+        t = (((xs + offset_x) % tile) + ((ys + offset_y) % tile)) / (2 * tile)
+        t = t[:, :, np.newaxis]
+
+        frame = (color1 * (1 - t) + color2 * t).astype(np.uint8)
+        return frame
+
+
+class ZoomLayer(Layer):
+    """
+    Epic 04.B12: Zoom transform - animated zoom-in/out ring pattern from a focal point.
+
+    Creates expanding or contracting concentric rings centred on a configurable focal
+    point, driven by frame time.  Gives the visual illusion of zooming into or out of
+    the canvas.
+    """
+
+    def __init__(self):
+        super().__init__("zoom", "Zoom")
+
+    def get_parameter_schema(self) -> Dict[str, Any]:
+        return {
+            "zoom_speed": {"type": "float", "default": 0.5, "min": -3.0, "max": 3.0},
+            "focal_x": {"type": "float", "default": 0.5, "min": 0.0, "max": 1.0},
+            "focal_y": {"type": "float", "default": 0.5, "min": 0.0, "max": 1.0},
+            "ring_spacing": {"type": "float", "default": 0.15, "min": 0.02, "max": 0.5},
+            "color1": {"type": "color", "default": "#000000"},
+            "color2": {"type": "color", "default": "#FFFFFF"},
+        }
+
+    def render_frame(
+        self,
+        context: RenderContext,
+        params: Dict[str, Any],
+        width: int = CANVAS_WIDTH,
+        height: int = CANVAS_HEIGHT,
+    ) -> np.ndarray:
+        zoom_speed = params.get("zoom_speed", 0.5)
+        cx = params.get("focal_x", 0.5) * width
+        cy = params.get("focal_y", 0.5) * height
+        ring_spacing = max(0.02, params.get("ring_spacing", 0.15))
+        color1 = np.array(WaveLayer._parse_color(params.get("color1", "#000000")), dtype=np.float32)
+        color2 = np.array(WaveLayer._parse_color(params.get("color2", "#FFFFFF")), dtype=np.float32)
+
+        ys, xs = np.meshgrid(np.arange(height), np.arange(width), indexing="ij")
+        # Normalise distance to 0-1 using max possible diagonal
+        max_dist = math.sqrt(max(cx, width - cx) ** 2 + max(cy, height - cy) ** 2)
+        if max_dist == 0:
+            max_dist = 1.0
+        dist = np.sqrt((xs - cx) ** 2 + (ys - cy) ** 2) / max_dist
+
+        # Animate: shift phase by time so rings appear to move inward or outward
+        phase = (dist - context.frame_time * zoom_speed) % (ring_spacing * 2)
+        t = phase / (ring_spacing * 2)
+        t = t[:, :, np.newaxis]
+
+        frame = (color1 * (1 - t) + color2 * t).astype(np.uint8)
+        return frame
+
+
 class BlendMode(ABC):
     """Base class for blend operations."""
     
@@ -607,6 +781,7 @@ class LayerRegistry:
     
     def _register_builtin_layers(self) -> None:
         """Register all built-in layer implementations."""
+        from .shaders import RaindropsLayer, SpectroidChaseLayer  # avoid circular at module level
         builtin_layers = [
             WaveLayer(),
             RadialPulseLayer(),
@@ -616,6 +791,11 @@ class LayerRegistry:
             RingsLayer(),
             BeatFlashLayer(),
             ScannerLayer(),
+            MirrorLayer(),
+            ScrollLayer(),
+            ZoomLayer(),
+            RaindropsLayer(),
+            SpectroidChaseLayer(),
         ]
         for layer in builtin_layers:
             self.layers[layer.layer_id] = layer

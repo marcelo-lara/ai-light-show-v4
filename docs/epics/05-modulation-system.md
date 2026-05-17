@@ -12,12 +12,12 @@
 
 ### Frontend Track
 
-- [ ] 05.F1 Modulator value types: add frontend types for current modulator values and mappings.
-- [ ] 05.F2 Modulator inspection readiness: define a UI-facing shape for viewing live modulator values later.
+- [x] 05.F1 Modulator value types: add frontend types for current modulator values and mappings.
+- [x] 05.F2 Modulator inspection readiness: define a UI-facing shape for viewing live modulator values later.
 
 ### Validation Track
 
-- [ ] 05.V1 Binding test: prove presets can bind modulators to layer parameters without layer-specific code.
-- [ ] 05.V2 Determinism test: prove modulator outputs stay stable for the same inputs.
-- [ ] 05.V3 Mapping test: prove mapping operations apply in the declared order.
+- [x] 05.V1 Binding test: prove presets can bind modulators to layer parameters without layer-specific code.
+- [x] 05.V2 Determinism test: prove modulator outputs stay stable for the same inputs.
+- [x] 05.V3 Mapping test: prove mapping operations apply in the declared order.
 

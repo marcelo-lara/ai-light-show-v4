@@ -170,9 +170,23 @@ async def load_song(song_id: str):
     global _playback_state
     
     try:
+        # Resolve actual song file duration
+        song_duration: Optional[float] = None
+        songs_dir = Path(__file__).resolve().parents[2] / "data" / "songs"
+        song_path = songs_dir / song_id
+        if song_path.is_file():
+            try:
+                from mutagen import File as MutagenFile
+                audio = MutagenFile(str(song_path))
+                if audio is not None and audio.info is not None:
+                    song_duration = float(audio.info.length)
+            except Exception as e:
+                logger.warning(f"Could not read duration for {song_id}: {e}")
+
         # Epic 01.B6: Create empty canvas state for new song
         current_song = CurrentSongState(
             song_id=song_id,
+            duration=song_duration,
             current_canvas=CurrentCanvasState(
                 song_id=song_id,
                 is_empty=True,
@@ -611,6 +625,106 @@ async def get_layer_info(layer_id: str):
         "parameter_schema": schema,
         "blend_modes_supported": list(BLEND_MODES.keys()),
     }
+
+
+@app.get("/api/phase03/layers/{layer_id}/preview-sheet")
+async def get_layer_preview_sheet(
+    layer_id: str,
+    frame_count: int = Query(default=24, ge=1, le=120),
+    fps: float = Query(default=30.0),
+    seed: int = Query(default=42),
+    cols: int = Query(default=8, ge=1, le=24),
+    cell_scale: int = Query(default=3, ge=1, le=8),
+    beat_bpm: float = Query(default=128.0),
+    onset_every: int = Query(default=8),
+):
+    """
+    Render ``frame_count`` frames of a layer and return a PNG contact sheet.
+
+    Useful for visual QA of any layer without needing the full UI render pipeline.
+    Simulates a musical context: beat_bpm drives beat_phase / beat_progress,
+    and onset_detected fires on every ``onset_every``-th frame.
+    """
+    if not _layer_registry:
+        raise HTTPException(status_code=503, detail="Layer registry not initialised")
+
+    layer = _layer_registry.get_layer(layer_id)
+    if not layer:
+        raise HTTPException(status_code=404, detail=f"Layer '{layer_id}' not found")
+
+    from .layers import RenderContext, CANVAS_WIDTH, CANVAS_HEIGHT
+    from .shaders import RaindropsLayer, SpectroidChaseLayer
+    import math as _math
+
+    # Build default params from schema defaults
+    schema = layer.get_parameter_schema()
+    params: dict = {k: v.get("default", 0) for k, v in schema.items()}
+
+    # Inject realistic POIs / parcans for shader layers
+    if isinstance(layer, RaindropsLayer):
+        params["_pois"] = [
+            {"id": "poi_l", "x": 20, "y": 15},
+            {"id": "poi_c", "x": 50, "y": 25},
+            {"id": "poi_r", "x": 80, "y": 35},
+        ]
+    elif isinstance(layer, SpectroidChaseLayer):
+        params["_parcans"] = [
+            {"id": "par_l", "x": 15, "y": 12},
+            {"id": "par_c", "x": 50, "y": 38},
+            {"id": "par_r", "x": 85, "y": 12},
+        ]
+
+    beat_period = 60.0 / beat_bpm  # seconds per beat
+
+    frames = []
+    for fi in range(frame_count):
+        t = fi / fps
+        beat_frac = (t % beat_period) / beat_period
+        bar_frac = (t % (beat_period * 4)) / (beat_period * 4)
+        phrase_frac = (t % (beat_period * 16)) / (beat_period * 16)
+        onset = (fi % onset_every) == 0
+
+        # Simulated FFT: low bands pulse on onset, high bands taper off
+        fft_bands = [
+            min(1.0, 0.3 + 0.7 * _math.exp(-((beat_frac - 0.0) ** 2) / 0.02))
+            if b < 3 else
+            max(0.0, 0.6 - b * 0.05)
+            for b in range(8)
+        ]
+
+        ctx = RenderContext(
+            seed=seed,
+            frame_index=fi,
+            total_frames=frame_count,
+            fps=fps,
+            beat_progress=beat_frac,
+            bar_progress=bar_frac,
+            phrase_progress=phrase_frac,
+            onset_detected=onset,
+            fft_bands=fft_bands,
+        )
+        frames.append(layer.render_frame(ctx, params))
+
+    # Build contact sheet: each cell is the canvas scaled by cell_scale
+    cell_w = CANVAS_WIDTH * cell_scale
+    cell_h = CANVAS_HEIGHT * cell_scale
+    rows = (frame_count + cols - 1) // cols
+    sheet_w = cols * cell_w
+    sheet_h = rows * cell_h
+
+    sheet = Image.new("RGB", (sheet_w, sheet_h), color=(20, 20, 20))
+    for idx, frame_arr in enumerate(frames):
+        col = idx % cols
+        row = idx // cols
+        cell_img = Image.fromarray(frame_arr, "RGB").resize(
+            (cell_w, cell_h), Image.Resampling.NEAREST
+        )
+        sheet.paste(cell_img, (col * cell_w, row * cell_h))
+
+    buf = io.BytesIO()
+    sheet.save(buf, format="PNG")
+    buf.seek(0)
+    return StreamingResponse(buf, media_type="image/png")
 
 
 @app.get("/api/phase03/modulators")

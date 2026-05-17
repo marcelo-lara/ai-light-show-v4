@@ -147,17 +147,22 @@ export const App: React.FC = () => {
     song_id: currentSong?.song_id,
   };
 
+  // Use real song duration if available, otherwise fall back to a visible placeholder
+  const songDuration = currentSong?.duration ?? null;
+  const halfDuration = songDuration !== null ? songDuration / 2 : 150;
+  const fullDuration = songDuration ?? 300;
+
   // Mock timeline
   const mockTimeline: TimelineViewState = {
     scenes: [
-      { scene_id: 'scene_1', start_time: 0, duration: 5, preset_id: 'undersea_pulse_01', intensity: 0.8 },
-      { scene_id: 'scene_2', start_time: 5, duration: 5, preset_id: 'undersea_waves', intensity: 0.6 },
+      { scene_id: 'scene_1', start_time: 0, duration: halfDuration, preset_id: 'undersea_pulse_01', intensity: 0.8 },
+      { scene_id: 'scene_2', start_time: halfDuration, duration: halfDuration, preset_id: 'undersea_waves', intensity: 0.6 },
     ],
     transitions: [
-      { transition_id: 'trans_1', type: 'crossfade', start_time: 5, duration: 0.5, alignment: 'bar' },
+      { transition_id: 'trans_1', type: 'crossfade', start_time: halfDuration, duration: 0.5, alignment: 'bar' },
     ],
     current_time: 0,
-    duration: 10,
+    duration: fullDuration,
     is_playing: false,
   };
 
@@ -229,8 +234,8 @@ export const App: React.FC = () => {
         song_id: currentSong?.song_id ?? selectedSongId,
         analysis_id: `analysis_${Date.now()}`,
         fps: 30,
-        duration: 10,
-        frame_count: 300,
+        duration: fullDuration,
+        frame_count: Math.round(fullDuration * 30),
       };
       setRenderedCanvas({
         song_id: previewMetadata.song_id,
