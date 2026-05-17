@@ -5,20 +5,26 @@ Defines the data schema for rendered light shows following Phase 1 spec.
 """
 
 from datetime import datetime
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, TYPE_CHECKING
 from pydantic import BaseModel, Field
+
+# Avoid circular imports - types are forward-referenced
+if TYPE_CHECKING:
+    from .timeline import SceneTimeline
+    from .transitions import Transition
 
 
 class RenderArtifactMetadata(BaseModel):
     """
-    Epic 01.B1: Versioned canvas JSON schema with required metadata fields.
+    Epic 01.B1, 09.B7, 10.B6: Versioned canvas JSON schema with metadata and timeline.
     
-    Defines the stable metadata contract for all render artifacts.
+    Defines the stable metadata contract for all render artifacts, now including
+    timeline and transition information for Phase 04.
     """
-    schema_version: str = Field("1.0", description="Schema version for compatibility")
+    schema_version: str = Field("1.1", description="Schema version for compatibility")
     render_id: str = Field(..., description="Stable render_id from reproducible inputs")
-    preset_id: str = Field(..., description="ID of the preset used")
-    preset_version: str = Field(..., description="Version of the preset")
+    preset_id: Optional[str] = Field(None, description="ID of the preset used (or None if multi-scene)")
+    preset_version: Optional[str] = Field(None, description="Version of the preset")
     seed: int = Field(..., description="Random seed for deterministic rendering")
     song_id: str = Field(..., description="Source song ID")
     analysis_id: str = Field(..., description="Analysis (IR) ID")
@@ -28,6 +34,10 @@ class RenderArtifactMetadata(BaseModel):
     params: Dict[str, Any] = Field(default_factory=dict, description="Render parameters")
     created_at: datetime = Field(default_factory=datetime.utcnow)
     created_by: Optional[str] = None
+    
+    # Phase 04: Timeline support
+    has_timeline: bool = Field(default=False, description="True if render uses scene timeline")
+    has_transitions: bool = Field(default=False, description="True if render has transitions")
 
 
 class CanvasFrame(BaseModel):
@@ -54,13 +64,25 @@ class ChunkedBinaryFrames(BaseModel):
 
 class RenderArtifact(BaseModel):
     """
-    Epic 01.B1-B3, B7: Complete render artifact contract.
+    Epic 01.B1-B3, B7, 09.B7, 10.B6: Complete render artifact contract.
     
-    Encapsulates the render contract with metadata, frames, and diagnostics.
+    Encapsulates the render contract with metadata, frames, diagnostics, and timeline.
     """
     metadata: RenderArtifactMetadata
     frames: Optional[ChunkedBinaryFrames] = None
     checksum: Optional[str] = None
+    
+    # Phase 04: Timeline and transitions
+    timeline: Optional[Dict[str, Any]] = Field(
+        None, description="Scene timeline data (serialized SceneTimeline)"
+    )
+    transitions: Optional[List[Dict[str, Any]]] = Field(
+        None, description="List of transitions (serialized Transition objects)"
+    )
+    
+    class Config:
+        """Allow arbitrary types for timeline/transitions during serialization."""
+        arbitrary_types_allowed = True
 
 
 class CurrentCanvasState(BaseModel):

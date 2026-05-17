@@ -3,6 +3,8 @@ Main FastAPI Application
 
 Epic 01: Render Contract - Backend implementation
 Epic 02: Preview Console - Backend song/render endpoints
+Epic 09: Timeline Director - Scene and timeline management
+Epic 10: Transition System - Transition management
 """
 
 import logging
@@ -37,6 +39,8 @@ from .preset import PresetRegistry
 from .layers import LayerRegistry
 from .modulation import ModulationSystem, ModulationContext
 from .presets_builtin import get_builtin_presets
+from .timeline import SceneTimeline, TimelineGenerator, Scene
+from .transitions import Transition, TransitionType, TransitionAligner
 
 
 # Global state (in production, use a proper database)
@@ -47,6 +51,8 @@ _fixture_manager: Optional[FixtureManager] = None
 _preset_registry: Optional[PresetRegistry] = None
 _layer_registry: Optional[LayerRegistry] = None
 _modulation_system: Optional[ModulationSystem] = None
+_timeline_generator: Optional[TimelineGenerator] = None
+_current_timeline: Optional[SceneTimeline] = None  # Current song's timeline
 
 # Logging
 logging.basicConfig(level=logging.INFO)
@@ -56,7 +62,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifecycle management."""
-    global _fixture_manager, _preset_registry, _layer_registry, _modulation_system
+    global _fixture_manager, _preset_registry, _layer_registry, _modulation_system, _timeline_generator
     logger.info("AI Light Show Backend starting up")
     _fixture_manager = FixtureManager()
     
@@ -64,6 +70,9 @@ async def lifespan(app: FastAPI):
     _preset_registry = PresetRegistry()
     _layer_registry = LayerRegistry()
     _modulation_system = ModulationSystem()
+    
+    # Phase 04: Initialize timeline generator
+    _timeline_generator = TimelineGenerator(available_presets=["undersea_pulse_01", "undersea_waves"])
     
     # Load built-in presets
     builtin_presets = get_builtin_presets()
@@ -81,8 +90,8 @@ async def lifespan(app: FastAPI):
 # Create FastAPI app
 app = FastAPI(
     title="AI Light Show Backend",
-    description="Phase 1-3: Render Contract, Preview Console & Preset/Layer Engine",
-    version="0.3.0",
+    description="Phase 1-4: Render Contract, Preview Console, Preset/Layer Engine & Timeline/Direction",
+    version="0.4.0",
     lifespan=lifespan,
 )
 
@@ -643,6 +652,272 @@ async def validate_preset(preset_data: dict):
             "is_valid": False,
             "errors": [str(e)],
         }
+
+
+# ============ Phase 04: Timeline and Direction Endpoints ============
+
+@app.post("/api/phase04/timeline/generate-from-sections")
+async def generate_timeline_from_sections(request: dict):
+    """
+    Epic 09.B2: Generate timeline from detected sections.
+    
+    Args:
+        request: dict with song_id, duration, sections list
+        
+    Returns:
+        Generated SceneTimeline
+    """
+    if not _timeline_generator:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Timeline generator not initialized",
+        )
+    
+    try:
+        song_id = request.get("song_id")
+        duration = request.get("duration", 0.0)
+        sections = request.get("sections", [])
+        base_seed = request.get("base_seed", 0)
+        
+        if not song_id:
+            raise ValueError("song_id is required")
+        
+        timeline = _timeline_generator.generate_from_sections(
+            song_id=song_id,
+            duration=duration,
+            sections=sections,
+            base_seed=base_seed,
+        )
+        
+        return timeline.model_dump()
+    
+    except Exception as e:
+        logger.error(f"Failed to generate timeline from sections: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to generate timeline: {str(e)}",
+        )
+
+
+@app.post("/api/phase04/timeline/generate-from-phrases")
+async def generate_timeline_from_phrases(request: dict):
+    """
+    Epic 09.B3: Generate timeline from detected phrases.
+    
+    Args:
+        request: dict with song_id, duration, phrases list
+        
+    Returns:
+        Generated SceneTimeline
+    """
+    if not _timeline_generator:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Timeline generator not initialized",
+        )
+    
+    try:
+        song_id = request.get("song_id")
+        duration = request.get("duration", 0.0)
+        phrases = request.get("phrases", [])
+        base_seed = request.get("base_seed", 0)
+        
+        if not song_id:
+            raise ValueError("song_id is required")
+        
+        timeline = _timeline_generator.generate_from_phrases(
+            song_id=song_id,
+            duration=duration,
+            phrases=phrases,
+            base_seed=base_seed,
+        )
+        
+        return timeline.model_dump()
+    
+    except Exception as e:
+        logger.error(f"Failed to generate timeline from phrases: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to generate timeline: {str(e)}",
+        )
+
+
+@app.post("/api/phase04/timeline/generate-from-beats")
+async def generate_timeline_from_beats(request: dict):
+    """
+    Epic 09.B3: Generate timeline from beat grouping.
+    
+    Args:
+        request: dict with song_id, duration, beat_times, scenes_per_beat_group
+        
+    Returns:
+        Generated SceneTimeline
+    """
+    if not _timeline_generator:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Timeline generator not initialized",
+        )
+    
+    try:
+        song_id = request.get("song_id")
+        duration = request.get("duration", 0.0)
+        beat_times = request.get("beat_times", [])
+        scenes_per_beat_group = request.get("scenes_per_beat_group", 4)
+        base_seed = request.get("base_seed", 0)
+        
+        if not song_id:
+            raise ValueError("song_id is required")
+        
+        timeline = _timeline_generator.generate_from_beats(
+            song_id=song_id,
+            duration=duration,
+            beat_times=beat_times,
+            scenes_per_beat_group=scenes_per_beat_group,
+            base_seed=base_seed,
+        )
+        
+        return timeline.model_dump()
+    
+    except Exception as e:
+        logger.error(f"Failed to generate timeline from beats: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to generate timeline: {str(e)}",
+        )
+
+
+@app.post("/api/phase04/timeline/validate")
+async def validate_timeline(timeline_data: dict):
+    """
+    Epic 09: Validate a timeline for consistency.
+    
+    Returns validation errors if invalid.
+    """
+    try:
+        timeline = SceneTimeline(**timeline_data)
+        is_valid, errors = timeline.validate()
+        
+        return {
+            "is_valid": is_valid,
+            "errors": errors,
+        }
+    except Exception as e:
+        logger.error(f"Failed to validate timeline: {str(e)}")
+        return {
+            "is_valid": False,
+            "errors": [str(e)],
+        }
+
+
+@app.get("/api/phase04/timeline/current")
+async def get_current_timeline():
+    """
+    Get the current timeline for the loaded song.
+    
+    Returns the timeline or 404 if none exists.
+    """
+    global _current_timeline
+    
+    if _current_timeline is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No timeline generated for current song",
+        )
+    
+    return _current_timeline.model_dump()
+
+
+@app.post("/api/phase04/timeline/set-current")
+async def set_current_timeline(timeline_data: dict):
+    """
+    Set the current timeline for the loaded song.
+    
+    Used to load or override a timeline.
+    """
+    global _current_timeline
+    
+    try:
+        timeline = SceneTimeline(**timeline_data)
+        is_valid, errors = timeline.validate()
+        
+        if not is_valid:
+            raise ValueError(f"Timeline validation failed: {errors}")
+        
+        _current_timeline = timeline
+        logger.info(f"Set current timeline: {timeline.timeline_id}")
+        
+        return {
+            "status": "success",
+            "timeline_id": timeline.timeline_id,
+        }
+    except Exception as e:
+        logger.error(f"Failed to set current timeline: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to set timeline: {str(e)}",
+        )
+
+
+@app.post("/api/phase04/transitions/align-to-beat")
+async def align_transition_to_beat(request: dict):
+    """
+    Epic 10.B5: Align transition time to nearest beat.
+    
+    Args:
+        request: dict with transition_time and beat_times list
+        
+    Returns:
+        Aligned time
+    """
+    try:
+        transition_time = request.get("transition_time", 0.0)
+        beat_times = request.get("beat_times", [])
+        
+        aligned_time = TransitionAligner.align_to_beat(transition_time, beat_times)
+        
+        return {
+            "requested_time": transition_time,
+            "aligned_time": aligned_time,
+        }
+    except Exception as e:
+        logger.error(f"Failed to align transition: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to align transition: {str(e)}",
+        )
+
+
+@app.post("/api/phase04/transitions/align-to-bar")
+async def align_transition_to_bar(request: dict):
+    """
+    Epic 10.B5: Align transition time to nearest bar boundary.
+    
+    Args:
+        request: dict with transition_time, beat_times, beats_per_bar
+        
+    Returns:
+        Aligned time
+    """
+    try:
+        transition_time = request.get("transition_time", 0.0)
+        beat_times = request.get("beat_times", [])
+        beats_per_bar = request.get("beats_per_bar", 4)
+        
+        aligned_time = TransitionAligner.align_to_bar(
+            transition_time, beat_times, beats_per_bar
+        )
+        
+        return {
+            "requested_time": transition_time,
+            "aligned_time": aligned_time,
+        }
+    except Exception as e:
+        logger.error(f"Failed to align transition: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to align transition: {str(e)}",
+        )
 
 
 # Import BLEND_MODES for list endpoint
