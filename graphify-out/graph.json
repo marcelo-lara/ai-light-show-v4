@@ -1,1853 +1,2578 @@
 {
   "directed": false,
   "multigraph": false,
-  "graph": {},
+  "graph": {
+    "hyperedges": [
+      {
+        "id": "core_light_show_pipeline",
+        "label": "Core Light Show Pipeline",
+        "nodes": [
+          "concept_musical_analysis_ir",
+          "concept_virtual_canvas_100x50",
+          "concept_fixture_mapping_dmx",
+          "concept_preview_console"
+        ],
+        "relation": "form",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "README.md"
+      },
+      {
+        "id": "preset_authoring_surface",
+        "label": "Preset Authoring Surface",
+        "nodes": [
+          "concept_staged_evaluation",
+          "concept_formula_ast",
+          "concept_preset_schema"
+        ],
+        "relation": "form",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "docs/spec-expression-authoring-model.md"
+      },
+      {
+        "id": "browser_regression_named_baselines",
+        "label": "Browser Regression Named Baselines",
+        "nodes": [
+          "concept_browser_visual_regression",
+          "preset_bouncing_ball_reference_v1",
+          "preset_ocean_waves"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "docs/spec-browser-visual-regression.md"
+      },
+      {
+        "id": "phase_03_preset_engine_stack",
+        "label": "Phase 3 Preset Engine Stack",
+        "nodes": [
+          "phase_03",
+          "epic_04",
+          "epic_06"
+        ],
+        "relation": "form",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "docs/phases/phase-03-preset-and-layer-engine.md"
+      },
+      {
+        "id": "shared_preview_session",
+        "label": "Shared Preview Session",
+        "nodes": [
+          "epic_01",
+          "epic_02",
+          "concept_shared_session"
+        ],
+        "relation": "form",
+        "confidence": "INFERRED",
+        "confidence_score": 0.85,
+        "source_file": "docs/epics/02-preview-console.md"
+      },
+      {
+        "id": "ocean_waves_stack",
+        "label": "Ocean Waves Stack",
+        "nodes": [
+          "epic_13",
+          "preset_ocean_waves",
+          "shader_ocean_waves"
+        ],
+        "relation": "implement",
+        "confidence": "INFERRED",
+        "confidence_score": 0.9,
+        "source_file": "docs/epics/06-preset-schema.md"
+      }
+    ]
+  },
   "nodes": [
     {
-      "label": "Render Contract",
-      "file_type": "concept",
-      "source_file": "docs/epics/01-render-contract.md",
+      "label": "AI Light Show Engine",
+      "file_type": "document",
+      "source_file": "README.md",
       "source_location": null,
-      "note": "Defines versioned schema for render artifacts including metadata, seed, params, and deterministic output",
-      "id": "concept_render_contract",
-      "community": 2,
-      "norm_label": "render contract"
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_ai_light_show_engine",
+      "community": 1,
+      "norm_label": "ai light show engine"
     },
     {
-      "label": "Analysis IR (Intermediate Representation)",
-      "file_type": "concept",
-      "source_file": "docs/epics/03-analysis-ir.md",
+      "label": "100x50 Virtual Canvas",
+      "file_type": "document",
+      "source_file": "README.md",
       "source_location": null,
-      "note": "Musical direction signals extracted from audio analysis including beat phase, bar phase, sections, energy curves",
-      "id": "concept_analysis_ir",
-      "community": 4,
-      "norm_label": "analysis ir (intermediate representation)"
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_virtual_canvas_100x50",
+      "community": 1,
+      "norm_label": "100x50 virtual canvas"
     },
     {
-      "label": "Layer Library",
-      "file_type": "concept",
-      "source_file": "docs/epics/04-layer-library.md",
+      "label": "Musical Analysis IR",
+      "file_type": "document",
+      "source_file": "README.md",
       "source_location": null,
-      "note": "Registry of reusable visual layers with deterministic seeded execution and blend operations",
-      "id": "concept_layer_library",
-      "community": 3,
-      "norm_label": "layer library"
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_musical_analysis_ir",
+      "community": 1,
+      "norm_label": "musical analysis ir"
     },
     {
-      "label": "Modulation System",
-      "file_type": "concept",
-      "source_file": "docs/epics/05-modulation-system.md",
+      "label": "Fixture Mapping and DMX Translation",
+      "file_type": "document",
+      "source_file": "README.md",
       "source_location": null,
-      "note": "System for binding audio and procedural sources to layer parameters via mapping operations",
-      "id": "concept_modulation_system",
-      "community": 0,
-      "norm_label": "modulation system"
-    },
-    {
-      "label": "Preset Schema",
-      "file_type": "concept",
-      "source_file": "docs/epics/06-preset-schema.md",
-      "source_location": null,
-      "note": "Versioned preset format composing layers, palettes, blends, and modulator bindings",
-      "id": "concept_preset_schema",
-      "community": 5,
-      "norm_label": "preset schema"
-    },
-    {
-      "label": "Timeline Director",
-      "file_type": "concept",
-      "source_file": "docs/epics/09-timeline-director.md",
-      "source_location": null,
-      "note": "System for arranging scenes across song sections with intensity automation",
-      "id": "concept_timeline_director",
-      "community": 5,
-      "norm_label": "timeline director"
-    },
-    {
-      "label": "Transition System",
-      "file_type": "concept",
-      "source_file": "docs/epics/10-transition-system.md",
-      "source_location": null,
-      "note": "Defines transition types (hard cut, crossfade, beat flash) aligned to musical boundaries",
-      "id": "concept_transition_system",
-      "community": 5,
-      "norm_label": "transition system"
-    },
-    {
-      "label": "Fixture Mapping & Export",
-      "file_type": "concept",
-      "source_file": "docs/epics/11-fixture-mapping-and-export.md",
-      "source_location": null,
-      "note": "Maps canvas pixels to physical fixtures with gamma correction and brightness limiting",
-      "id": "concept_fixture_mapping",
-      "community": 2,
-      "norm_label": "fixture mapping & export"
-    },
-    {
-      "label": "Render Diagnostics",
-      "file_type": "concept",
-      "source_file": "docs/epics/12-render-diagnostics.md",
-      "source_location": null,
-      "note": "Metrics for brightness, color, variety, and regression detection with contact sheets",
-      "id": "concept_render_diagnostics",
-      "community": 2,
-      "norm_label": "render diagnostics"
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_fixture_mapping_dmx",
+      "community": 1,
+      "norm_label": "fixture mapping and dmx translation"
     },
     {
       "label": "Preview Console",
-      "file_type": "concept",
-      "source_file": "docs/epics/02-preview-console.md",
+      "file_type": "document",
+      "source_file": "README.md",
       "source_location": null,
-      "note": "Frontend UI for generation, tuning, inspection, and approval workflows",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
       "id": "concept_preview_console",
-      "community": 2,
+      "community": 3,
       "norm_label": "preview console"
     },
     {
-      "label": "Wave Layer",
-      "file_type": "layer",
-      "source_file": "docs/epics/04-layer-library.md",
+      "label": "Shared Backend Session State",
+      "file_type": "document",
+      "source_file": "docs/development-handoff-stories.md",
       "source_location": null,
-      "note": "Sine wave or traveling wave layer responding to beat timing and FFT bands",
-      "id": "layer_wave",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_shared_backend_session",
       "community": 3,
-      "norm_label": "wave layer"
+      "norm_label": "shared backend session state"
     },
     {
-      "label": "Radial Pulse Layer",
-      "file_type": "layer",
-      "source_file": "docs/epics/04-layer-library.md",
+      "label": "Shared Playback Transport",
+      "file_type": "document",
+      "source_file": "docs/development-handoff-stories.md",
       "source_location": null,
-      "note": "Expanding pulse from origin responding to beats",
-      "id": "layer_radial_pulse",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_playback_transport",
       "community": 3,
-      "norm_label": "radial pulse layer"
+      "norm_label": "shared playback transport"
     },
     {
-      "label": "Solid Field Layer",
-      "file_type": "layer",
-      "source_file": "docs/epics/04-layer-library.md",
+      "label": "Render Contract",
+      "file_type": "document",
+      "source_file": "docs/development-handoff-stories.md",
       "source_location": null,
-      "note": "Solid color fill layer",
-      "id": "layer_solid_field",
-      "community": 3,
-      "norm_label": "solid field layer"
-    },
-    {
-      "label": "Gradient Field Layer",
-      "file_type": "layer",
-      "source_file": "docs/epics/04-layer-library.md",
-      "source_location": null,
-      "note": "Gradient-based fill layer",
-      "id": "layer_gradient",
-      "community": 3,
-      "norm_label": "gradient field layer"
-    },
-    {
-      "label": "Bars Layer",
-      "file_type": "layer",
-      "source_file": "docs/epics/04-layer-library.md",
-      "source_location": null,
-      "note": "Horizontal or vertical bar patterns",
-      "id": "layer_bars",
-      "community": 3,
-      "norm_label": "bars layer"
-    },
-    {
-      "label": "Rings Layer",
-      "file_type": "layer",
-      "source_file": "docs/epics/04-layer-library.md",
-      "source_location": null,
-      "note": "Concentric ring or expanding pulse patterns",
-      "id": "layer_rings",
-      "community": 3,
-      "norm_label": "rings layer"
-    },
-    {
-      "label": "Beat Flash Layer",
-      "file_type": "layer",
-      "source_file": "docs/epics/04-layer-library.md",
-      "source_location": null,
-      "note": "Flash effect triggered on beats",
-      "id": "layer_beat_flash",
-      "community": 3,
-      "norm_label": "beat flash layer"
-    },
-    {
-      "label": "Scanner Layer",
-      "file_type": "layer",
-      "source_file": "docs/epics/04-layer-library.md",
-      "source_location": null,
-      "note": "Scanning or sweep line effect",
-      "id": "layer_scanner",
-      "community": 1,
-      "norm_label": "scanner layer"
-    },
-    {
-      "label": "Raindrops Shader",
-      "file_type": "shader",
-      "source_file": "docs/epics/07-raindrops-shader.md",
-      "source_location": null,
-      "note": "POI-aware radial pulses spawning from, transiting through, or colliding at POIs",
-      "id": "shader_raindrops",
-      "community": 1,
-      "norm_label": "raindrops shader"
-    },
-    {
-      "label": "Spectroid Chase Shader",
-      "file_type": "shader",
-      "source_file": "docs/epics/08-spectroid-chase-shader.md",
-      "source_location": null,
-      "note": "Note/chord-reactive chase lines expanding from parcan anchors toward moving heads",
-      "id": "shader_spectroid_chase",
-      "community": 1,
-      "norm_label": "spectroid chase shader"
-    },
-    {
-      "label": "Canvas (100x50)",
-      "file_type": "entity",
-      "source_file": "docs/product-principles.md",
-      "source_location": null,
-      "note": "Fixed 100x50 pixel output grid as creative constraint and product definition",
-      "id": "entity_canvas",
-      "community": 1,
-      "norm_label": "canvas (100x50)"
-    },
-    {
-      "label": "Point of Interest (POI)",
-      "file_type": "entity",
-      "source_file": "docs/glossary.md",
-      "source_location": null,
-      "note": "Defined physical and canvas coordinate acting as gravity well, collision target, calibration anchor",
-      "id": "entity_poi",
-      "community": 1,
-      "norm_label": "point of interest (poi)"
-    },
-    {
-      "label": "Fixture",
-      "file_type": "entity",
-      "source_file": "docs/spec-data-schemas.md",
-      "source_location": null,
-      "note": "Physical lighting hardware with DMX addressing and calibration data",
-      "id": "entity_fixture",
-      "community": 1,
-      "norm_label": "fixture"
-    },
-    {
-      "label": "Preset",
-      "file_type": "entity",
-      "source_file": "docs/epics/06-preset-schema.md",
-      "source_location": null,
-      "note": "Named composition of layers, palettes, blends, and modulator bindings",
-      "id": "entity_preset",
-      "community": 7,
-      "norm_label": "preset"
-    },
-    {
-      "label": "Scene",
-      "file_type": "entity",
-      "source_file": "docs/epics/09-timeline-director.md",
-      "source_location": null,
-      "note": "Temporal region in a song with preset, params, seed, and intensity",
-      "id": "entity_scene",
-      "community": 7,
-      "norm_label": "scene"
-    },
-    {
-      "label": "Transition",
-      "file_type": "entity",
-      "source_file": "docs/glossary.md",
-      "source_location": null,
-      "note": "Visual bridge between scenes (crossfade, wipe, hard cut, beat cut)",
-      "id": "entity_transition",
-      "community": 7,
-      "norm_label": "transition"
-    },
-    {
-      "label": "Look",
-      "file_type": "entity",
-      "source_file": "docs/glossary.md",
-      "source_location": null,
-      "note": "Visible result of a preset or scene, nameable and recognizable",
-      "id": "entity_look",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_render_contract",
       "community": 10,
-      "norm_label": "look"
-    },
-    {
-      "label": "Parameter",
-      "file_type": "entity",
-      "source_file": "docs/epics/06-preset-schema.md",
-      "source_location": null,
-      "note": "Typed preset or layer control with defaults, bounds, step size, and UI grouping",
-      "id": "entity_parameter",
-      "community": 7,
-      "norm_label": "parameter"
-    },
-    {
-      "label": "Blend Mode",
-      "file_type": "entity",
-      "source_file": "docs/epics/04-layer-library.md",
-      "source_location": null,
-      "note": "Layer composition operation (max, add, alpha, multiply, screen, difference, mask)",
-      "id": "entity_blend_mode",
-      "community": 7,
-      "norm_label": "blend mode"
-    },
-    {
-      "label": "Modulator",
-      "file_type": "entity",
-      "source_file": "docs/epics/05-modulation-system.md",
-      "source_location": null,
-      "note": "Source binding layer parameters to audio or procedural signals",
-      "id": "entity_modulator",
-      "community": 7,
-      "norm_label": "modulator"
+      "norm_label": "render contract"
     },
     {
       "label": "Render Artifact",
-      "file_type": "entity",
+      "file_type": "document",
       "source_file": "docs/glossary.md",
       "source_location": null,
-      "note": "Generated output stored in data/artifacts (analysis cache, binary frames, DMX export)",
-      "id": "entity_render_artifact",
-      "community": 2,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_render_artifact",
+      "community": 12,
       "norm_label": "render artifact"
     },
     {
-      "label": "Moving Head",
-      "file_type": "fixture_type",
+      "label": "data/artifacts Directory",
+      "file_type": "document",
+      "source_file": "docs/spec-data-schemas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_data_artifacts",
+      "community": 5,
+      "norm_label": "data/artifacts directory"
+    },
+    {
+      "label": "data/songs Directory",
+      "file_type": "document",
+      "source_file": "docs/spec-data-schemas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_data_songs",
+      "community": 1,
+      "norm_label": "data/songs directory"
+    },
+    {
+      "label": "data/fixtures Directory",
+      "file_type": "document",
+      "source_file": "docs/spec-data-schemas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_data_fixtures",
+      "community": 0,
+      "norm_label": "data/fixtures directory"
+    },
+    {
+      "label": "Point of Interest",
+      "file_type": "document",
+      "source_file": "docs/glossary.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "entity_poi",
+      "community": 1,
+      "norm_label": "point of interest"
+    },
+    {
+      "label": "ref_0_0_0 Calibration Reference",
+      "file_type": "document",
+      "source_file": "docs/glossary.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_ref_0_0_0",
+      "community": 1,
+      "norm_label": "ref_0_0_0 calibration reference"
+    },
+    {
+      "label": "Moving Head Pan/Tilt Translation",
+      "file_type": "document",
       "source_file": "docs/spec-moving-head-math.md",
       "source_location": null,
-      "note": "Controllable directional fixture with Pan/Tilt DMX targeting via calibration",
-      "id": "fixture_type_moving_head",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_moving_head_translation",
       "community": 1,
-      "norm_label": "moving head"
+      "norm_label": "moving head pan/tilt translation"
     },
     {
-      "label": "Mini Beam Prism",
-      "file_type": "fixture_type",
-      "source_file": "data/fixtures/fixtures.json",
+      "label": "Deterministic Rendering",
+      "file_type": "document",
+      "source_file": "docs/product-principles.md",
       "source_location": null,
-      "note": "Specific moving head type deployed in left and right positions",
-      "id": "fixture_type_moving_head_mini_beam",
-      "community": 8,
-      "norm_label": "mini beam prism"
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_deterministic_rendering",
+      "community": 10,
+      "norm_label": "deterministic rendering"
     },
     {
-      "label": "Head EL-150",
-      "file_type": "fixture_type",
-      "source_file": "data/fixtures/fixtures.json",
+      "label": "Staged Evaluation",
+      "file_type": "document",
+      "source_file": "docs/spec-organic-visual-math.md",
       "source_location": null,
-      "note": "Specific moving head type for center positioning",
-      "id": "fixture_type_moving_head_el150",
-      "community": 9,
-      "norm_label": "head el-150"
-    },
-    {
-      "label": "ParCan (RGB)",
-      "file_type": "fixture_type",
-      "source_file": "docs/epics/08-spectroid-chase-shader.md",
-      "source_location": null,
-      "note": "Static RGB wash fixture used as chase origin anchors",
-      "id": "fixture_type_parcan",
-      "community": 1,
-      "norm_label": "parcan (rgb)"
-    },
-    {
-      "label": "Head EL-150 Instance",
-      "file_type": "fixture_instance",
-      "source_file": "data/fixtures/fixtures.json",
-      "source_location": null,
-      "note": "Physical fixture instance at channel 1",
-      "id": "fixture_instance_head_el150",
-      "community": 9,
-      "norm_label": "head el-150 instance"
-    },
-    {
-      "label": "Mini Beam Prism (L) Instance",
-      "file_type": "fixture_instance",
-      "source_file": "data/fixtures/fixtures.json",
-      "source_location": null,
-      "note": "Physical fixture instance at channel 42",
-      "id": "fixture_instance_mini_beam_l",
-      "community": 8,
-      "norm_label": "mini beam prism (l) instance"
-    },
-    {
-      "label": "Mini Beam Prism (R) Instance",
-      "file_type": "fixture_instance",
-      "source_file": "data/fixtures/fixtures.json",
-      "source_location": null,
-      "note": "Physical fixture instance at channel 54",
-      "id": "fixture_instance_mini_beam_r",
-      "community": 8,
-      "norm_label": "mini beam prism (r) instance"
-    },
-    {
-      "label": "ParCan L Instance",
-      "file_type": "fixture_instance",
-      "source_file": "data/fixtures/fixtures.json",
-      "source_location": null,
-      "note": "Physical fixture instance at channel 16",
-      "id": "fixture_instance_parcan_l",
-      "community": 1,
-      "norm_label": "parcan l instance"
-    },
-    {
-      "label": "ParCan R Instance",
-      "file_type": "fixture_instance",
-      "source_file": "data/fixtures/fixtures.json",
-      "source_location": null,
-      "note": "Physical fixture instance at channel 22",
-      "id": "fixture_instance_parcan_r",
-      "community": 1,
-      "norm_label": "parcan r instance"
-    },
-    {
-      "label": "Calibration Reference (ref_0_0_0)",
-      "file_type": "poi",
-      "source_file": "docs/spec-moving-head-math.md",
-      "source_location": null,
-      "note": "Physical origin [0,0,0] used for moving head Pan/Tilt calibration baseline",
-      "id": "poi_ref_0_0_0",
-      "community": 1,
-      "norm_label": "calibration reference (ref_0_0_0)"
-    },
-    {
-      "label": "Server POI",
-      "file_type": "poi",
-      "source_file": "data/fixtures/pois.json",
-      "source_location": null,
-      "note": "Room POI at relative location (0.06, 0.08, 0)",
-      "id": "poi_server",
-      "community": 11,
-      "norm_label": "server poi"
-    },
-    {
-      "label": "TV POI",
-      "file_type": "poi",
-      "source_file": "data/fixtures/pois.json",
-      "source_location": null,
-      "note": "Room POI at relative location (0.22, 0.01, 0)",
-      "id": "poi_tv",
-      "community": 12,
-      "norm_label": "tv poi"
-    },
-    {
-      "label": "Mic POI",
-      "file_type": "poi",
-      "source_file": "data/fixtures/pois.json",
-      "source_location": null,
-      "note": "Room POI at relative location (0.39, 0.08, 0)",
-      "id": "poi_mic",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_staged_evaluation",
       "community": 13,
-      "norm_label": "mic poi"
+      "norm_label": "staged evaluation"
     },
     {
-      "label": "Beat Phase",
-      "file_type": "analysis_component",
-      "source_file": "docs/epics/03-analysis-ir.md",
+      "label": "Structured Formula AST",
+      "file_type": "document",
+      "source_file": "docs/spec-expression-authoring-model.md",
       "source_location": null,
-      "note": "Normalized phase within beat cycle for temporal alignment",
-      "id": "analysis_beat_phase",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_formula_ast",
+      "community": 13,
+      "norm_label": "structured formula ast"
+    },
+    {
+      "label": "Preset Math Schema",
+      "file_type": "document",
+      "source_file": "docs/spec-preset-math-schema.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_preset_schema",
       "community": 4,
-      "norm_label": "beat phase"
+      "norm_label": "preset math schema"
     },
     {
-      "label": "Bar Phase",
-      "file_type": "analysis_component",
-      "source_file": "docs/epics/03-analysis-ir.md",
+      "label": "Bouncing Ball Shader",
+      "file_type": "document",
+      "source_file": "docs/spec-bouncing-ball-test-shader.md",
       "source_location": null,
-      "note": "Normalized phase within bar cycle for meter-aware effects",
-      "id": "analysis_bar_phase",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "shader_bouncing_ball",
+      "community": 5,
+      "norm_label": "bouncing ball shader"
+    },
+    {
+      "label": "Bouncing Ball Reference V1",
+      "file_type": "document",
+      "source_file": "docs/spec-bouncing-ball-test-shader.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "preset_bouncing_ball_reference_v1",
+      "community": 5,
+      "norm_label": "bouncing ball reference v1"
+    },
+    {
+      "label": "Browser Visual Regression Suite",
+      "file_type": "document",
+      "source_file": "docs/spec-browser-visual-regression.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_browser_visual_regression",
+      "community": 5,
+      "norm_label": "browser visual regression suite"
+    },
+    {
+      "label": "Ocean Waves Shader",
+      "file_type": "document",
+      "source_file": "docs/spec-ocean-waves-shader.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "shader_ocean_waves",
       "community": 4,
-      "norm_label": "bar phase"
+      "norm_label": "ocean waves shader"
     },
     {
-      "label": "Smoothed Band Envelope",
-      "file_type": "analysis_component",
-      "source_file": "docs/epics/03-analysis-ir.md",
+      "label": "Ocean Waves Preset",
+      "file_type": "document",
+      "source_file": "docs/spec-ocean-waves-shader.md",
       "source_location": null,
-      "note": "Per-frequency-band smoothed envelope for reactive effects",
-      "id": "analysis_band_envelope",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "preset_ocean_waves",
       "community": 4,
-      "norm_label": "smoothed band envelope"
+      "norm_label": "ocean waves preset"
     },
     {
-      "label": "Global Energy",
-      "file_type": "analysis_component",
-      "source_file": "docs/epics/03-analysis-ir.md",
+      "label": "Parcan Sampling Intent",
+      "file_type": "document",
+      "source_file": "docs/spec-ocean-waves-shader.md",
       "source_location": null,
-      "note": "Normalized global energy curve across song",
-      "id": "analysis_global_energy",
-      "community": 4,
-      "norm_label": "global energy"
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_parcan_sampling",
+      "community": 1,
+      "norm_label": "parcan sampling intent"
     },
     {
-      "label": "Section Labels",
-      "file_type": "analysis_component",
-      "source_file": "docs/epics/03-analysis-ir.md",
+      "label": "Shader-POI Interaction Model",
+      "file_type": "document",
+      "source_file": "docs/spec-shader-poi-interaction.md",
       "source_location": null,
-      "note": "Detected downbeat, phrase, and section boundaries with confidence",
-      "id": "analysis_section_labels",
-      "community": 4,
-      "norm_label": "section labels"
-    },
-    {
-      "label": "Onset",
-      "file_type": "analysis_component",
-      "source_file": "docs/epics/05-modulation-system.md",
-      "source_location": null,
-      "note": "Detected transient or note onset event",
-      "id": "analysis_onset",
-      "community": 4,
-      "norm_label": "onset"
-    },
-    {
-      "label": "Audio Modulator: Band Envelope",
-      "file_type": "modulator_source",
-      "source_file": "docs/epics/05-modulation-system.md",
-      "source_location": null,
-      "note": "Binds frequency band envelope to layer parameters",
-      "id": "modulator_audio_band",
-      "community": 4,
-      "norm_label": "audio modulator: band envelope"
-    },
-    {
-      "label": "Audio Modulator: Onset",
-      "file_type": "modulator_source",
-      "source_file": "docs/epics/05-modulation-system.md",
-      "source_location": null,
-      "note": "Triggers on detected note onsets",
-      "id": "modulator_audio_onset",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_shader_poi_interaction",
       "community": 0,
-      "norm_label": "audio modulator: onset"
+      "norm_label": "shader-poi interaction model"
     },
     {
-      "label": "Audio Modulator: Beat Pulse",
-      "file_type": "modulator_source",
-      "source_file": "docs/epics/05-modulation-system.md",
+      "label": "Transition",
+      "file_type": "document",
+      "source_file": "docs/glossary.md",
       "source_location": null,
-      "note": "Triggers on beat boundaries",
-      "id": "modulator_audio_beat_pulse",
-      "community": 0,
-      "norm_label": "audio modulator: beat pulse"
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_transition",
+      "community": 6,
+      "norm_label": "transition"
     },
     {
-      "label": "Audio Modulator: Beat Phase",
-      "file_type": "modulator_source",
-      "source_file": "docs/epics/05-modulation-system.md",
+      "label": "Render Approval Workflow",
+      "file_type": "document",
+      "source_file": "docs/development-handoff-stories.md",
       "source_location": null,
-      "note": "Continuous phase within beat cycle",
-      "id": "modulator_audio_beat_phase",
-      "community": 4,
-      "norm_label": "audio modulator: beat phase"
-    },
-    {
-      "label": "Audio Modulator: Bar Phase",
-      "file_type": "modulator_source",
-      "source_file": "docs/epics/05-modulation-system.md",
-      "source_location": null,
-      "note": "Continuous phase within bar cycle",
-      "id": "modulator_audio_bar_phase",
-      "community": 4,
-      "norm_label": "audio modulator: bar phase"
-    },
-    {
-      "label": "Audio Modulator: Phrase Progress",
-      "file_type": "modulator_source",
-      "source_file": "docs/epics/05-modulation-system.md",
-      "source_location": null,
-      "note": "Progress through detected phrase",
-      "id": "modulator_audio_phrase_progress",
-      "community": 0,
-      "norm_label": "audio modulator: phrase progress"
-    },
-    {
-      "label": "Procedural Modulator: LFO",
-      "file_type": "modulator_source",
-      "source_file": "docs/epics/05-modulation-system.md",
-      "source_location": null,
-      "note": "Low-frequency oscillator for continuous variation",
-      "id": "modulator_lfo",
-      "community": 0,
-      "norm_label": "procedural modulator: lfo"
-    },
-    {
-      "label": "Procedural Modulator: Seeded Random",
-      "file_type": "modulator_source",
-      "source_file": "docs/epics/05-modulation-system.md",
-      "source_location": null,
-      "note": "Deterministic randomness based on seed",
-      "id": "modulator_random",
-      "community": 0,
-      "norm_label": "procedural modulator: seeded random"
-    },
-    {
-      "label": "Mapping Operation: Scale",
-      "file_type": "mapping_op",
-      "source_file": "docs/epics/05-modulation-system.md",
-      "source_location": null,
-      "note": "Scale modulator value by factor",
-      "id": "mapping_scale",
-      "community": 0,
-      "norm_label": "mapping operation: scale"
-    },
-    {
-      "label": "Mapping Operation: Clamp",
-      "file_type": "mapping_op",
-      "source_file": "docs/epics/05-modulation-system.md",
-      "source_location": null,
-      "note": "Restrict modulator value to bounds",
-      "id": "mapping_clamp",
-      "community": 0,
-      "norm_label": "mapping operation: clamp"
-    },
-    {
-      "label": "Mapping Operation: Invert",
-      "file_type": "mapping_op",
-      "source_file": "docs/epics/05-modulation-system.md",
-      "source_location": null,
-      "note": "Invert modulator polarity",
-      "id": "mapping_invert",
-      "community": 0,
-      "norm_label": "mapping operation: invert"
-    },
-    {
-      "label": "Mapping Operation: Curve",
-      "file_type": "mapping_op",
-      "source_file": "docs/epics/05-modulation-system.md",
-      "source_location": null,
-      "note": "Apply non-linear curve to modulator",
-      "id": "mapping_curve",
-      "community": 0,
-      "norm_label": "mapping operation: curve"
-    },
-    {
-      "label": "Mapping Operation: Smooth",
-      "file_type": "mapping_op",
-      "source_file": "docs/epics/05-modulation-system.md",
-      "source_location": null,
-      "note": "Smooth modulator transitions",
-      "id": "mapping_smooth",
-      "community": 0,
-      "norm_label": "mapping operation: smooth"
-    },
-    {
-      "label": "Mapping Operation: Lag",
-      "file_type": "mapping_op",
-      "source_file": "docs/epics/05-modulation-system.md",
-      "source_location": null,
-      "note": "Delay modulator response",
-      "id": "mapping_lag",
-      "community": 0,
-      "norm_label": "mapping operation: lag"
-    },
-    {
-      "label": "Mapping Operation: Quantize",
-      "file_type": "mapping_op",
-      "source_file": "docs/epics/05-modulation-system.md",
-      "source_location": null,
-      "note": "Quantize modulator to discrete steps",
-      "id": "mapping_quantize",
-      "community": 0,
-      "norm_label": "mapping operation: quantize"
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_review_approval",
+      "community": 5,
+      "norm_label": "render approval workflow"
     },
     {
       "label": "Phase 1: Baseline And Contracts",
-      "file_type": "phase",
-      "source_file": "docs/phases/phase-01-baseline-and-contracts.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Stabilize render contract, cache format, parameter behavior, preview expectations",
-      "id": "phase_1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "phase_1_baseline_and_contracts",
       "community": 2,
       "norm_label": "phase 1: baseline and contracts"
     },
     {
       "label": "Phase 2: Musical Analysis IR",
-      "file_type": "phase",
-      "source_file": "docs/phases/phase-02-musical-analysis-ir.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Expand audio analysis into show-ready musical signals",
-      "id": "phase_2",
-      "community": 6,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "phase_2_musical_analysis_ir",
+      "community": 2,
       "norm_label": "phase 2: musical analysis ir"
     },
     {
       "label": "Phase 3: Preset And Layer Engine",
-      "file_type": "phase",
-      "source_file": "docs/phases/phase-03-preset-and-layer-engine.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Replace hardcoded shaders with composable presets, layers, modulators",
-      "id": "phase_3",
-      "community": 6,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "phase_3_preset_and_layer_engine",
+      "community": 2,
       "norm_label": "phase 3: preset and layer engine"
     },
     {
       "label": "Phase 4: Timeline And Direction",
-      "file_type": "phase",
-      "source_file": "docs/phases/phase-04-timeline-and-direction.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Arrange visuals by song sections with transitions and intensity curves",
-      "id": "phase_4",
-      "community": 5,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "phase_4_timeline_and_direction",
+      "community": 2,
       "norm_label": "phase 4: timeline and direction"
     },
     {
       "label": "Phase 5: Production Console",
-      "file_type": "phase",
-      "source_file": "docs/phases/phase-05-production-console.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Upgrade frontend to generation, tuning, inspection, and approval console",
-      "id": "phase_5",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "phase_5_production_console",
       "community": 2,
       "norm_label": "phase 5: production console"
     },
     {
       "label": "Phase 6: Quality, Performance, And Packaging",
-      "file_type": "phase",
-      "source_file": "docs/phases/phase-06-quality-performance-packaging.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Add validation, regression checks, diagnostics, cache management, deployment",
-      "id": "phase_6",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "phase_6_quality_performance_packaging",
       "community": 2,
       "norm_label": "phase 6: quality, performance, and packaging"
     },
     {
       "label": "Epic 01: Render Contract",
-      "file_type": "epic",
-      "source_file": "docs/epics/01-render-contract.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Backend, Frontend, and Validation tracks for artifact schema versioning",
-      "id": "epic_01",
-      "community": 2,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_01_render_contract",
+      "community": 10,
       "norm_label": "epic 01: render contract"
     },
     {
       "label": "Epic 02: Preview Console",
-      "file_type": "epic",
-      "source_file": "docs/epics/02-preview-console.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Full frontend UI for generation, progression, inspection, approval workflows",
-      "id": "epic_02",
-      "community": 2,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_02_preview_console",
+      "community": 10,
       "norm_label": "epic 02: preview console"
     },
     {
       "label": "Epic 03: Analysis IR",
-      "file_type": "epic",
-      "source_file": "docs/epics/03-analysis-ir.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Musical analysis backend expanding beat/bar/section/energy/envelope signals",
-      "id": "epic_03",
-      "community": 6,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_03_analysis_ir",
+      "community": 0,
       "norm_label": "epic 03: analysis ir"
     },
     {
       "label": "Epic 04: Layer Library",
-      "file_type": "epic",
-      "source_file": "docs/epics/04-layer-library.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Registry of reusable layers with transforms and blend operations",
-      "id": "epic_04",
-      "community": 6,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_04_layer_library",
+      "community": 0,
       "norm_label": "epic 04: layer library"
     },
     {
       "label": "Epic 05: Modulation System",
-      "file_type": "epic",
-      "source_file": "docs/epics/05-modulation-system.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Audio and procedural modulator sources with mapping operations",
-      "id": "epic_05",
-      "community": 6,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_05_modulation_system",
+      "community": 0,
       "norm_label": "epic 05: modulation system"
     },
     {
       "label": "Epic 06: Preset Schema",
-      "file_type": "epic",
-      "source_file": "docs/epics/06-preset-schema.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Preset format composing layers, palettes, blends, parameters; undersea_waves and undersea_pulse_01 presets",
-      "id": "epic_06",
-      "community": 6,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_06_preset_schema",
+      "community": 0,
       "norm_label": "epic 06: preset schema"
     },
     {
       "label": "Epic 07: Raindrops Shader",
-      "file_type": "epic",
-      "source_file": "docs/epics/07-raindrops-shader.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "POI-aware raindrop pulses with start, transit, and collision behaviors",
-      "id": "epic_07",
-      "community": 6,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_07_raindrops_shader",
+      "community": 0,
       "norm_label": "epic 07: raindrops shader"
     },
     {
       "label": "Epic 08: Spectroid Chase Shader",
-      "file_type": "epic",
-      "source_file": "docs/epics/08-spectroid-chase-shader.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Parcan-anchored chase lines expanding toward moving heads",
-      "id": "epic_08",
-      "community": 6,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_08_spectroid_chase_shader",
+      "community": 0,
       "norm_label": "epic 08: spectroid chase shader"
     },
     {
       "label": "Epic 09: Timeline Director",
-      "file_type": "epic",
-      "source_file": "docs/epics/09-timeline-director.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Multi-scene timeline with auto-generation from sections and parameter automation",
-      "id": "epic_09",
-      "community": 5,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_09_timeline_director",
+      "community": 0,
       "norm_label": "epic 09: timeline director"
     },
     {
       "label": "Epic 10: Transition System",
-      "file_type": "epic",
-      "source_file": "docs/epics/10-transition-system.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Transition types aligned to beat/bar/phrase/section boundaries",
-      "id": "epic_10",
-      "community": 5,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_10_transition_system",
+      "community": 0,
       "norm_label": "epic 10: transition system"
     },
     {
       "label": "Epic 11: Fixture Mapping And Export",
-      "file_type": "epic",
-      "source_file": "docs/epics/11-fixture-mapping-and-export.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Physical fixture mapping with linear/serpentine ordering, gamma, brightness limiting",
-      "id": "epic_11",
-      "community": 2,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_11_fixture_mapping_and_export",
+      "community": 0,
       "norm_label": "epic 11: fixture mapping and export"
     },
     {
       "label": "Epic 12: Render Diagnostics",
-      "file_type": "epic",
-      "source_file": "docs/epics/12-render-diagnostics.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
       "source_location": null,
-      "note": "Diagnostics metrics, variety signals, contact sheets, regression detection",
-      "id": "epic_12",
-      "community": 2,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_12_render_diagnostics",
+      "community": 0,
       "norm_label": "epic 12: render diagnostics"
     },
     {
-      "label": "Undersea Waves Preset",
-      "file_type": "preset",
+      "label": "Epic 13: Ocean Waves Shader",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_13_ocean_waves_shader",
+      "community": 0,
+      "norm_label": "epic 13: ocean waves shader"
+    },
+    {
+      "label": "Epic 01: Render Contract",
+      "file_type": "document",
+      "source_file": "docs/epics/01-render-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_01",
+      "community": 12,
+      "norm_label": "epic 01: render contract"
+    },
+    {
+      "label": "Epic 02: Preview Console",
+      "file_type": "document",
+      "source_file": "docs/epics/02-preview-console.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_02",
+      "community": 3,
+      "norm_label": "epic 02: preview console"
+    },
+    {
+      "label": "Epic 03: Analysis IR",
+      "file_type": "document",
+      "source_file": "docs/epics/03-analysis-ir.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_03",
+      "community": 8,
+      "norm_label": "epic 03: analysis ir"
+    },
+    {
+      "label": "Epic 04: Layer Library",
+      "file_type": "document",
+      "source_file": "docs/epics/04-layer-library.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_04",
+      "community": 7,
+      "norm_label": "epic 04: layer library"
+    },
+    {
+      "label": "Epic 05: Modulation System",
+      "file_type": "document",
+      "source_file": "docs/epics/05-modulation-system.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_05",
+      "community": 8,
+      "norm_label": "epic 05: modulation system"
+    },
+    {
+      "label": "Epic 06: Preset Schema",
+      "file_type": "document",
       "source_file": "docs/epics/06-preset-schema.md",
       "source_location": null,
-      "note": "3 layered sine waves responding to beat and FFT bands, configurable base color",
-      "id": "preset_undersea_waves",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_06",
+      "community": 4,
+      "norm_label": "epic 06: preset schema"
+    },
+    {
+      "label": "Epic 07: Raindrops Shader",
+      "file_type": "document",
+      "source_file": "docs/epics/07-raindrops-shader.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_07",
+      "community": 7,
+      "norm_label": "epic 07: raindrops shader"
+    },
+    {
+      "label": "Epic 08: Spectroid Chase Shader",
+      "file_type": "document",
+      "source_file": "docs/epics/08-spectroid-chase-shader.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_08",
+      "community": 14,
+      "norm_label": "epic 08: spectroid chase shader"
+    },
+    {
+      "label": "Epic 09: Timeline Director",
+      "file_type": "document",
+      "source_file": "docs/epics/09-timeline-director.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_09",
+      "community": 6,
+      "norm_label": "epic 09: timeline director"
+    },
+    {
+      "label": "Epic 10: Transition System",
+      "file_type": "document",
+      "source_file": "docs/epics/10-transition-system.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_10",
+      "community": 6,
+      "norm_label": "epic 10: transition system"
+    },
+    {
+      "label": "Epic 11: Fixture Mapping And Export",
+      "file_type": "document",
+      "source_file": "docs/epics/11-fixture-mapping-and-export.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_11",
+      "community": 9,
+      "norm_label": "epic 11: fixture mapping and export"
+    },
+    {
+      "label": "Epic 12: Render Diagnostics",
+      "file_type": "document",
+      "source_file": "docs/epics/12-render-diagnostics.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_12",
+      "community": 11,
+      "norm_label": "epic 12: render diagnostics"
+    },
+    {
+      "label": "Epic 13: Ocean Waves Shader",
+      "file_type": "document",
+      "source_file": "docs/epics/13-ocean-waves-shader.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "epic_13",
+      "community": 4,
+      "norm_label": "epic 13: ocean waves shader"
+    },
+    {
+      "label": "Phase 1: Baseline And Contracts",
+      "file_type": "document",
+      "source_file": "docs/phases/phase-01-baseline-and-contracts.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "phase_01",
+      "community": 12,
+      "norm_label": "phase 1: baseline and contracts"
+    },
+    {
+      "label": "Phase 2: Musical Analysis IR",
+      "file_type": "document",
+      "source_file": "docs/phases/phase-02-musical-analysis-ir.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "phase_02",
+      "community": 8,
+      "norm_label": "phase 2: musical analysis ir"
+    },
+    {
+      "label": "Phase 3: Preset And Layer Engine",
+      "file_type": "document",
+      "source_file": "docs/phases/phase-03-preset-and-layer-engine.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "phase_03",
+      "community": 7,
+      "norm_label": "phase 3: preset and layer engine"
+    },
+    {
+      "label": "Phase 4: Timeline And Direction",
+      "file_type": "document",
+      "source_file": "docs/phases/phase-04-timeline-and-direction.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "phase_04",
+      "community": 6,
+      "norm_label": "phase 4: timeline and direction"
+    },
+    {
+      "label": "Phase 5: Production Console",
+      "file_type": "document",
+      "source_file": "docs/phases/phase-05-production-console.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "phase_05",
+      "community": 11,
+      "norm_label": "phase 5: production console"
+    },
+    {
+      "label": "Phase 6: Quality, Performance, And Packaging",
+      "file_type": "document",
+      "source_file": "docs/phases/phase-06-quality-performance-packaging.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "phase_06",
+      "community": 9,
+      "norm_label": "phase 6: quality, performance, and packaging"
+    },
+    {
+      "label": "Shared Backend Session",
+      "file_type": "document",
+      "source_file": "docs/epics/01-render-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The backend owns current song, current canvas, active render job, and synchronization state for all clients rather than per-client selections.",
+      "id": "concept_shared_session",
       "community": 3,
-      "norm_label": "undersea waves preset"
+      "norm_label": "shared backend session"
+    },
+    {
+      "label": "Analysis Intermediate Representation",
+      "file_type": "document",
+      "source_file": "docs/epics/03-analysis-ir.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_analysis_ir",
+      "community": 8,
+      "norm_label": "analysis intermediate representation"
+    },
+    {
+      "label": "Reusable Modulation Sources",
+      "file_type": "document",
+      "source_file": "docs/epics/05-modulation-system.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_modulation_sources",
+      "community": 8,
+      "norm_label": "reusable modulation sources"
+    },
+    {
+      "label": "Layer Registry",
+      "file_type": "document",
+      "source_file": "docs/epics/04-layer-library.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_layer_registry",
+      "community": 7,
+      "norm_label": "layer registry"
+    },
+    {
+      "label": "Fixture and POI Overlay",
+      "file_type": "document",
+      "source_file": "docs/epics/02-preview-console.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_fixture_overlay",
+      "community": 3,
+      "norm_label": "fixture and poi overlay"
+    },
+    {
+      "label": "Scene Timeline Metadata",
+      "file_type": "document",
+      "source_file": "docs/epics/09-timeline-director.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_timeline",
+      "community": 6,
+      "norm_label": "scene timeline metadata"
+    },
+    {
+      "label": "Fixture Mapping",
+      "file_type": "document",
+      "source_file": "docs/epics/11-fixture-mapping-and-export.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_fixture_mapping",
+      "community": 9,
+      "norm_label": "fixture mapping"
+    },
+    {
+      "label": "Export Manifest",
+      "file_type": "document",
+      "source_file": "docs/epics/11-fixture-mapping-and-export.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_export_manifest",
+      "community": 9,
+      "norm_label": "export manifest"
+    },
+    {
+      "label": "Render Diagnostics",
+      "file_type": "document",
+      "source_file": "docs/epics/12-render-diagnostics.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_render_diagnostics",
+      "community": 11,
+      "norm_label": "render diagnostics"
+    },
+    {
+      "label": "Raindrops Shader",
+      "file_type": "document",
+      "source_file": "docs/epics/07-raindrops-shader.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "shader_raindrops",
+      "community": 7,
+      "norm_label": "raindrops shader"
+    },
+    {
+      "label": "Spectroid Chase Shader",
+      "file_type": "document",
+      "source_file": "docs/epics/08-spectroid-chase-shader.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "shader_spectroid_chase",
+      "community": 14,
+      "norm_label": "spectroid chase shader"
     },
     {
       "label": "Undersea Pulse 01 Preset",
-      "file_type": "preset",
+      "file_type": "document",
       "source_file": "docs/epics/06-preset-schema.md",
       "source_location": null,
-      "note": "Current baseline wave and pulse look migrated to preset format",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
       "id": "preset_undersea_pulse_01",
-      "community": 3,
+      "community": 4,
       "norm_label": "undersea pulse 01 preset"
-    },
-    {
-      "label": "Hard Cut Transition",
-      "file_type": "transition_type",
-      "source_file": "docs/epics/10-transition-system.md",
-      "source_location": null,
-      "note": "Immediate scene change",
-      "id": "transition_hard_cut",
-      "community": 5,
-      "norm_label": "hard cut transition"
-    },
-    {
-      "label": "Crossfade Transition",
-      "file_type": "transition_type",
-      "source_file": "docs/epics/10-transition-system.md",
-      "source_location": null,
-      "note": "Alpha blend between scenes over duration",
-      "id": "transition_crossfade",
-      "community": 5,
-      "norm_label": "crossfade transition"
-    },
-    {
-      "label": "Beat Flash Cut Transition",
-      "file_type": "transition_type",
-      "source_file": "docs/epics/10-transition-system.md",
-      "source_location": null,
-      "note": "Flash cut synchronized to beat",
-      "id": "transition_beat_flash_cut",
-      "community": 5,
-      "norm_label": "beat flash cut transition"
-    },
-    {
-      "label": "Armin - Revolution",
-      "file_type": "music_track",
-      "source_file": "graphify-out/transcripts/Armin - Revolution.txt",
-      "source_location": null,
-      "note": "Electronic dance music track",
-      "id": "track_armin_revolution",
-      "community": 14,
-      "norm_label": "armin - revolution"
-    },
-    {
-      "label": "Best Friend - Sofi Tukker",
-      "file_type": "music_track",
-      "source_file": "graphify-out/transcripts/Best Friend - Sofi Tukker.txt",
-      "source_location": null,
-      "note": "Electronic pop music track",
-      "id": "track_sofi_tukker_best_friend",
-      "community": 15,
-      "norm_label": "best friend - sofi tukker"
-    },
-    {
-      "label": "Chimera - Hana",
-      "file_type": "music_track",
-      "source_file": "graphify-out/transcripts/Chimera - Hana.txt",
-      "source_location": null,
-      "note": "Electronic music track",
-      "id": "track_hana_chimera",
-      "community": 16,
-      "norm_label": "chimera - hana"
-    },
-    {
-      "label": "Cinderella - Ella Lee",
-      "file_type": "music_track",
-      "source_file": "graphify-out/transcripts/Cinderella - Ella Lee.txt",
-      "source_location": null,
-      "note": "Music track for choreography",
-      "id": "track_ella_lee_cinderella",
-      "community": 17,
-      "norm_label": "cinderella - ella lee"
-    },
-    {
-      "label": "CruelSummer - Malvina",
-      "file_type": "music_track",
-      "source_file": "graphify-out/transcripts/CruelSummer - Malvina.txt",
-      "source_location": null,
-      "note": "Pop music track",
-      "id": "track_malvina_cruel_summer",
-      "community": 18,
-      "norm_label": "cruelsummer - malvina"
-    },
-    {
-      "label": "Tutta L'Italia - Gabry Ponte",
-      "file_type": "music_track",
-      "source_file": "graphify-out/transcripts/Gabry Ponte - Tutta L'Italia.txt",
-      "source_location": null,
-      "note": "Italian electronic music track",
-      "id": "track_gabry_ponte_tutta_l_italia",
-      "community": 19,
-      "norm_label": "tutta l'italia - gabry ponte"
-    },
-    {
-      "label": "Hideaway - Kiesza",
-      "file_type": "music_track",
-      "source_file": "graphify-out/transcripts/Hideaway - Kiesza.txt",
-      "source_location": null,
-      "note": "Electronic dance pop track",
-      "id": "track_kiesza_hideaway",
-      "community": 20,
-      "norm_label": "hideaway - kiesza"
-    },
-    {
-      "label": "Only This Moment - R\u00f6yksopp",
-      "file_type": "music_track",
-      "source_file": "graphify-out/transcripts/Only this moment - royksopp.txt",
-      "source_location": null,
-      "note": "Electronic music track",
-      "id": "track_royksopp_only_this_moment",
-      "community": 21,
-      "norm_label": "only this moment - royksopp"
-    },
-    {
-      "label": "I'm Not Scared - Pet Shop Boys",
-      "file_type": "music_track",
-      "source_file": "graphify-out/transcripts/Pet Shop Boys - I'm not scared.txt",
-      "source_location": null,
-      "note": "Synth-pop music track",
-      "id": "track_psb_im_not_scared",
-      "community": 22,
-      "norm_label": "i'm not scared - pet shop boys"
-    },
-    {
-      "label": "Queen of Kings - Alessandra",
-      "file_type": "music_track",
-      "source_file": "graphify-out/transcripts/Queen of Kings - Alessandra.txt",
-      "source_location": null,
-      "note": "Pop music track",
-      "id": "track_alessandra_queen_of_kings",
-      "community": 23,
-      "norm_label": "queen of kings - alessandra"
-    },
-    {
-      "label": "Rapture - Nadia Ali",
-      "file_type": "music_track",
-      "source_file": "graphify-out/transcripts/Rapture - Nadia Ali.txt",
-      "source_location": null,
-      "note": "Electronic dance pop track",
-      "id": "track_nadia_ali_rapture",
-      "community": 24,
-      "norm_label": "rapture - nadia ali"
-    },
-    {
-      "label": "Raindrops - Sash!",
-      "file_type": "music_track",
-      "source_file": "graphify-out/transcripts/Sash - Raindrops.txt",
-      "source_location": null,
-      "note": "Electronic dance track (theme aligns with raindrops shader)",
-      "id": "track_sash_raindrops",
-      "community": 1,
-      "norm_label": "raindrops - sash!"
-    },
-    {
-      "label": "Born Slippy - Underworld",
-      "file_type": "music_track",
-      "source_file": "graphify-out/transcripts/Underworld - Born Slippy.txt",
-      "source_location": null,
-      "note": "Techno music track",
-      "id": "track_underworld_born_slippy",
-      "community": 25,
-      "norm_label": "born slippy - underworld"
-    },
-    {
-      "label": "What a Feeling - Courtney Storm",
-      "file_type": "music_track",
-      "source_file": "graphify-out/transcripts/What a Feeling - Courtney Storm.txt",
-      "source_location": null,
-      "note": "Pop music track",
-      "id": "track_courtney_storm_what_a_feeling",
-      "community": 26,
-      "norm_label": "what a feeling - courtney storm"
-    },
-    {
-      "label": "Seize the Power - Yonaka",
-      "file_type": "music_track",
-      "source_file": "graphify-out/transcripts/Yonaka - Seize the Power.txt",
-      "source_location": null,
-      "note": "Electronic music track",
-      "id": "track_yonaka_seize_the_power",
-      "community": 27,
-      "norm_label": "seize the power - yonaka"
     }
   ],
   "links": [
     {
-      "relation": "implements",
+      "relation": "uses",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "epic_01",
-      "target": "concept_render_contract"
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_ai_light_show_engine",
+      "target": "concept_musical_analysis_ir"
     },
     {
-      "relation": "consumes",
+      "relation": "uses",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.9,
-      "source": "concept_fixture_mapping",
-      "target": "concept_render_contract"
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_ai_light_show_engine",
+      "target": "concept_virtual_canvas_100x50"
     },
     {
-      "relation": "consumes",
+      "relation": "uses",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.9,
-      "source": "concept_render_diagnostics",
-      "target": "concept_render_contract"
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_ai_light_show_engine",
+      "target": "concept_fixture_mapping_dmx"
     },
     {
-      "relation": "references",
+      "relation": "uses",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_ai_light_show_engine",
+      "target": "concept_preview_console"
+    },
+    {
+      "relation": "reads_from",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_ai_light_show_engine",
+      "target": "concept_data_songs"
+    },
+    {
+      "relation": "reads_from",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_ai_light_show_engine",
+      "target": "concept_data_fixtures"
+    },
+    {
+      "relation": "writes_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_ai_light_show_engine",
+      "target": "concept_data_artifacts"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
       "source": "concept_preview_console",
-      "target": "concept_render_contract"
+      "target": "concept_virtual_canvas_100x50"
     },
     {
-      "relation": "conforms_to",
+      "relation": "based_on",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "entity_render_artifact",
-      "target": "concept_render_contract"
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-moving-head-math.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_moving_head_translation",
+      "target": "concept_virtual_canvas_100x50"
     },
     {
-      "relation": "implements",
+      "relation": "based_on",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "epic_03",
-      "target": "concept_analysis_ir"
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-shader-poi-interaction.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_shader_poi_interaction",
+      "target": "concept_virtual_canvas_100x50"
     },
     {
       "relation": "uses",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "concept_timeline_director",
-      "target": "concept_analysis_ir"
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-ocean-waves-shader.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_parcan_sampling",
+      "target": "concept_virtual_canvas_100x50"
+    },
+    {
+      "relation": "reads_from",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_musical_analysis_ir",
+      "target": "concept_data_songs"
     },
     {
       "relation": "uses",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.9,
-      "source": "concept_transition_system",
-      "target": "concept_analysis_ir"
-    },
-    {
-      "relation": "component_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "analysis_beat_phase",
-      "target": "concept_analysis_ir"
-    },
-    {
-      "relation": "component_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "analysis_bar_phase",
-      "target": "concept_analysis_ir"
-    },
-    {
-      "relation": "component_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "analysis_band_envelope",
-      "target": "concept_analysis_ir"
-    },
-    {
-      "relation": "component_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "analysis_global_energy",
-      "target": "concept_analysis_ir"
-    },
-    {
-      "relation": "component_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "analysis_section_labels",
-      "target": "concept_analysis_ir"
-    },
-    {
-      "relation": "component_of",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source": "analysis_onset",
-      "target": "concept_analysis_ir"
-    },
-    {
-      "relation": "implements",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "epic_04",
-      "target": "concept_layer_library"
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-organic-visual-math.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_staged_evaluation",
+      "target": "concept_musical_analysis_ir"
     },
     {
       "relation": "uses",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "concept_preset_schema",
-      "target": "concept_layer_library"
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-ocean-waves-shader.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "preset_ocean_waves",
+      "target": "concept_musical_analysis_ir"
     },
     {
-      "relation": "member_of",
+      "relation": "targets",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "layer_wave",
-      "target": "concept_layer_library"
-    },
-    {
-      "relation": "member_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "layer_radial_pulse",
-      "target": "concept_layer_library"
-    },
-    {
-      "relation": "member_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "layer_solid_field",
-      "target": "concept_layer_library"
-    },
-    {
-      "relation": "member_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "layer_gradient",
-      "target": "concept_layer_library"
-    },
-    {
-      "relation": "member_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "layer_bars",
-      "target": "concept_layer_library"
-    },
-    {
-      "relation": "member_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "layer_rings",
-      "target": "concept_layer_library"
-    },
-    {
-      "relation": "member_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "layer_beat_flash",
-      "target": "concept_layer_library"
-    },
-    {
-      "relation": "member_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "layer_scanner",
-      "target": "concept_layer_library"
-    },
-    {
-      "relation": "implements",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "epic_05",
-      "target": "concept_modulation_system"
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_03_analysis_ir",
+      "target": "concept_musical_analysis_ir"
     },
     {
       "relation": "uses",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "concept_preset_schema",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "member_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "modulator_audio_band",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "member_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "modulator_audio_onset",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "member_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "modulator_audio_beat_pulse",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "member_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "modulator_audio_beat_phase",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "member_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "modulator_audio_bar_phase",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "member_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "modulator_audio_phrase_progress",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "member_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "modulator_lfo",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "member_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "modulator_random",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "operation_in",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "mapping_scale",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "operation_in",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "mapping_clamp",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "operation_in",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "mapping_invert",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "operation_in",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "mapping_curve",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "operation_in",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "mapping_smooth",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "operation_in",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "mapping_lag",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "operation_in",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "mapping_quantize",
-      "target": "concept_modulation_system"
-    },
-    {
-      "relation": "implements",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "epic_06",
-      "target": "concept_preset_schema"
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_fixture_mapping_dmx",
+      "target": "concept_moving_head_translation"
     },
     {
       "relation": "uses",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "concept_timeline_director",
-      "target": "concept_preset_schema"
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_fixture_mapping_dmx",
+      "target": "entity_poi"
     },
     {
-      "relation": "references",
+      "relation": "depends_on",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
       "source": "concept_preview_console",
-      "target": "concept_preset_schema"
-    },
-    {
-      "relation": "implements",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "epic_09",
-      "target": "concept_timeline_director"
+      "target": "concept_shared_backend_session"
     },
     {
       "relation": "uses",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.9,
-      "source": "concept_transition_system",
-      "target": "concept_timeline_director"
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_preview_console",
+      "target": "concept_playback_transport"
     },
     {
-      "relation": "implements",
+      "relation": "uses",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "epic_10",
-      "target": "concept_transition_system"
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-browser-visual-regression.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_browser_visual_regression",
+      "target": "concept_preview_console"
     },
     {
-      "relation": "member_of",
+      "relation": "targets",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "transition_hard_cut",
-      "target": "concept_transition_system"
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_02_preview_console",
+      "target": "concept_preview_console"
     },
     {
-      "relation": "member_of",
+      "relation": "targets",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "transition_crossfade",
-      "target": "concept_transition_system"
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-05-production-console.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_05",
+      "target": "concept_preview_console"
     },
     {
-      "relation": "member_of",
+      "relation": "describes",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "transition_beat_flash_cut",
-      "target": "concept_transition_system"
-    },
-    {
-      "relation": "implements",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "epic_11",
-      "target": "concept_fixture_mapping"
-    },
-    {
-      "relation": "implements",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "epic_12",
-      "target": "concept_render_diagnostics"
-    },
-    {
-      "relation": "implements",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/02-preview-console.md",
+      "source_location": null,
+      "weight": 1.0,
       "source": "epic_02",
       "target": "concept_preview_console"
     },
     {
       "relation": "uses",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "preset_undersea_waves",
-      "target": "layer_wave"
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_shared_backend_session",
+      "target": "concept_playback_transport"
     },
     {
       "relation": "uses",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.9,
-      "source": "preset_undersea_pulse_01",
-      "target": "layer_wave"
-    },
-    {
-      "relation": "based_on",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source": "shader_raindrops",
-      "target": "layer_radial_pulse"
-    },
-    {
-      "relation": "uses",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.9,
-      "source": "preset_undersea_pulse_01",
-      "target": "layer_radial_pulse"
-    },
-    {
-      "relation": "related_to",
-      "confidence": "INFERRED",
-      "confidence_score": 0.75,
-      "source": "shader_spectroid_chase",
-      "target": "layer_scanner"
-    },
-    {
-      "relation": "implements",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "epic_07",
-      "target": "shader_raindrops"
-    },
-    {
-      "relation": "uses",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "shader_raindrops",
-      "target": "entity_poi"
-    },
-    {
-      "relation": "thematic_match",
-      "confidence": "INFERRED",
-      "confidence_score": 0.7,
-      "source": "track_sash_raindrops",
-      "target": "shader_raindrops"
-    },
-    {
-      "relation": "implements",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "epic_08",
-      "target": "shader_spectroid_chase"
-    },
-    {
-      "relation": "uses",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "shader_spectroid_chase",
-      "target": "entity_fixture"
-    },
-    {
-      "relation": "uses",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "shader_spectroid_chase",
-      "target": "fixture_type_parcan"
-    },
-    {
-      "relation": "located_on",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "entity_poi",
-      "target": "entity_canvas"
-    },
-    {
-      "relation": "targets",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "fixture_type_moving_head",
-      "target": "entity_poi"
-    },
-    {
-      "relation": "is_a",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "fixture_type_moving_head",
-      "target": "entity_fixture"
-    },
-    {
-      "relation": "is_a",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "fixture_type_parcan",
-      "target": "entity_fixture"
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_render_contract",
+      "target": "concept_playback_transport"
     },
     {
       "relation": "references",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "entity_scene",
-      "target": "entity_preset"
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-browser-visual-regression.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_browser_visual_regression",
+      "target": "concept_playback_transport"
     },
     {
-      "relation": "composed_of",
+      "relation": "defines",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "entity_preset",
-      "target": "entity_parameter"
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/01-render-contract.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_01",
+      "target": "concept_playback_transport"
     },
     {
       "relation": "uses",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "entity_preset",
-      "target": "entity_blend_mode"
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/02-preview-console.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_02",
+      "target": "concept_playback_transport"
     },
     {
-      "relation": "connects",
+      "relation": "constrains",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "entity_transition",
-      "target": "entity_scene"
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_render_contract",
+      "target": "concept_render_artifact"
     },
     {
-      "relation": "binds_to",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "entity_modulator",
-      "target": "entity_parameter"
-    },
-    {
-      "relation": "calibration_for",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "poi_ref_0_0_0",
-      "target": "fixture_type_moving_head"
-    },
-    {
-      "relation": "instance_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "fixture_instance_mini_beam_l",
-      "target": "fixture_type_moving_head_mini_beam"
-    },
-    {
-      "relation": "instance_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "fixture_instance_mini_beam_r",
-      "target": "fixture_type_moving_head_mini_beam"
-    },
-    {
-      "relation": "instance_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "fixture_instance_head_el150",
-      "target": "fixture_type_moving_head_el150"
-    },
-    {
-      "relation": "instance_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "fixture_instance_parcan_l",
-      "target": "fixture_type_parcan"
-    },
-    {
-      "relation": "instance_of",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "fixture_instance_parcan_r",
-      "target": "fixture_type_parcan"
-    },
-    {
-      "relation": "consumes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "modulator_audio_beat_phase",
-      "target": "analysis_beat_phase"
-    },
-    {
-      "relation": "consumes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "modulator_audio_bar_phase",
-      "target": "analysis_bar_phase"
-    },
-    {
-      "relation": "consumes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "modulator_audio_band",
-      "target": "analysis_band_envelope"
-    },
-    {
-      "relation": "precedes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_1",
-      "target": "phase_2"
-    },
-    {
-      "relation": "includes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_1",
-      "target": "epic_01"
-    },
-    {
-      "relation": "includes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_1",
-      "target": "epic_12"
-    },
-    {
-      "relation": "precedes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_2",
-      "target": "phase_3"
-    },
-    {
-      "relation": "includes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_2",
-      "target": "epic_03"
-    },
-    {
-      "relation": "includes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_2",
-      "target": "epic_05"
-    },
-    {
-      "relation": "precedes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_3",
-      "target": "phase_4"
-    },
-    {
-      "relation": "includes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_3",
-      "target": "epic_06"
-    },
-    {
-      "relation": "includes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_3",
-      "target": "epic_04"
-    },
-    {
-      "relation": "includes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_3",
-      "target": "epic_05"
-    },
-    {
-      "relation": "includes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_3",
-      "target": "epic_07"
-    },
-    {
-      "relation": "includes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_3",
-      "target": "epic_08"
-    },
-    {
-      "relation": "precedes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_4",
-      "target": "phase_5"
-    },
-    {
-      "relation": "includes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_4",
-      "target": "epic_09"
-    },
-    {
-      "relation": "includes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_4",
-      "target": "epic_10"
-    },
-    {
-      "relation": "precedes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_5",
-      "target": "phase_6"
-    },
-    {
-      "relation": "includes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_5",
-      "target": "epic_02"
-    },
-    {
-      "relation": "includes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_5",
-      "target": "epic_12"
-    },
-    {
-      "relation": "includes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_6",
-      "target": "epic_12"
-    },
-    {
-      "relation": "includes",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source": "phase_6",
-      "target": "epic_11"
+      "relation": "constrains",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "docs/product-principles.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_deterministic_rendering",
+      "target": "concept_render_contract"
     },
     {
       "relation": "depends_on",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.9,
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_11_fixture_mapping_and_export",
+      "target": "concept_render_contract"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_01_render_contract",
+      "target": "concept_render_contract"
+    },
+    {
+      "relation": "stores_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/glossary.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_render_artifact",
+      "target": "concept_data_artifacts"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-01-baseline-and-contracts.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_01",
+      "target": "concept_render_artifact"
+    },
+    {
+      "relation": "describes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/01-render-contract.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_01",
+      "target": "concept_render_artifact"
+    },
+    {
+      "relation": "based_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/11-fixture-mapping-and-export.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_export_manifest",
+      "target": "concept_render_artifact"
+    },
+    {
+      "relation": "writes_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-browser-visual-regression.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_browser_visual_regression",
+      "target": "concept_data_artifacts"
+    },
+    {
+      "relation": "stores_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_review_approval",
+      "target": "concept_data_artifacts"
+    },
+    {
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_11_fixture_mapping_and_export",
+      "target": "concept_data_fixtures"
+    },
+    {
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_13_ocean_waves_shader",
+      "target": "concept_data_fixtures"
+    },
+    {
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_07_raindrops_shader",
+      "target": "concept_data_fixtures"
+    },
+    {
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_08_spectroid_chase_shader",
+      "target": "concept_data_fixtures"
+    },
+    {
+      "relation": "instance_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/glossary.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_ref_0_0_0",
+      "target": "entity_poi"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-moving-head-math.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_moving_head_translation",
+      "target": "entity_poi"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-shader-poi-interaction.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_shader_poi_interaction",
+      "target": "entity_poi"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-moving-head-math.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_moving_head_translation",
+      "target": "concept_ref_0_0_0"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-expression-authoring-model.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_formula_ast",
+      "target": "concept_staged_evaluation"
+    },
+    {
+      "relation": "constrains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-expression-authoring-model.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_formula_ast",
+      "target": "concept_preset_schema"
+    },
+    {
+      "relation": "based_on",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/spec-ocean-waves-shader.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "preset_ocean_waves",
+      "target": "concept_preset_schema"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_06_preset_schema",
+      "target": "concept_preset_schema"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-03-preset-and-layer-engine.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_03",
+      "target": "concept_preset_schema"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/06-preset-schema.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_06",
+      "target": "concept_preset_schema"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-bouncing-ball-test-shader.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "preset_bouncing_ball_reference_v1",
+      "target": "shader_bouncing_ball"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-browser-visual-regression.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_browser_visual_regression",
+      "target": "shader_bouncing_ball"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/04-layer-library.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_04",
+      "target": "shader_bouncing_ball"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-browser-visual-regression.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_browser_visual_regression",
+      "target": "preset_bouncing_ball_reference_v1"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-browser-visual-regression.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_browser_visual_regression",
+      "target": "preset_ocean_waves"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-browser-visual-regression.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_browser_visual_regression",
+      "target": "concept_review_approval"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_12_render_diagnostics",
+      "target": "concept_browser_visual_regression"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-ocean-waves-shader.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "shader_ocean_waves",
+      "target": "concept_parcan_sampling"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/06-preset-schema.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "preset_ocean_waves",
+      "target": "shader_ocean_waves"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_13_ocean_waves_shader",
+      "target": "shader_ocean_waves"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/13-ocean-waves-shader.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_13",
+      "target": "shader_ocean_waves"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/06-preset-schema.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_06",
+      "target": "preset_ocean_waves"
+    },
+    {
+      "relation": "consumes",
+      "confidence": "INFERRED",
+      "confidence_score": 0.82,
+      "source_file": "docs/epics/06-preset-schema.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "preset_ocean_waves",
+      "target": "concept_analysis_ir"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "docs/spec-shader-poi-interaction.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_07_raindrops_shader",
+      "target": "concept_shader_poi_interaction"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "docs/spec-shader-poi-interaction.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_08_spectroid_chase_shader",
+      "target": "concept_shader_poi_interaction"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_10_transition_system",
+      "target": "concept_transition"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-04-timeline-and-direction.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_04",
+      "target": "concept_transition"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/10-transition-system.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_10",
+      "target": "concept_transition"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_02_preview_console",
+      "target": "concept_review_approval"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/roadmap.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_1_baseline_and_contracts",
+      "target": "phase_2_musical_analysis_ir"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/roadmap.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_2_musical_analysis_ir",
+      "target": "phase_3_preset_and_layer_engine"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/roadmap.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_3_preset_and_layer_engine",
+      "target": "phase_4_timeline_and_direction"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/roadmap.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_4_timeline_and_direction",
+      "target": "phase_5_production_console"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/roadmap.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_5_production_console",
+      "target": "phase_6_quality_performance_packaging"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_01_render_contract",
+      "target": "epic_02_preview_console"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_02_preview_console",
+      "target": "epic_03_analysis_ir"
+    },
+    {
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_05_modulation_system",
+      "target": "epic_03_analysis_ir"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_03_analysis_ir",
+      "target": "epic_04_layer_library"
+    },
+    {
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_13_ocean_waves_shader",
+      "target": "epic_04_layer_library"
+    },
+    {
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_06_preset_schema",
+      "target": "epic_04_layer_library"
+    },
+    {
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_07_raindrops_shader",
+      "target": "epic_04_layer_library"
+    },
+    {
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_08_spectroid_chase_shader",
+      "target": "epic_04_layer_library"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_04_layer_library",
+      "target": "epic_05_modulation_system"
+    },
+    {
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_13_ocean_waves_shader",
+      "target": "epic_05_modulation_system"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_05_modulation_system",
+      "target": "epic_06_preset_schema"
+    },
+    {
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_13_ocean_waves_shader",
+      "target": "epic_06_preset_schema"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_06_preset_schema",
+      "target": "epic_07_raindrops_shader"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_07_raindrops_shader",
+      "target": "epic_08_spectroid_chase_shader"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_08_spectroid_chase_shader",
+      "target": "epic_09_timeline_director"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_09_timeline_director",
+      "target": "epic_10_transition_system"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_10_transition_system",
+      "target": "epic_11_fixture_mapping_and_export"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_11_fixture_mapping_and_export",
+      "target": "epic_12_render_diagnostics"
+    },
+    {
+      "relation": "precedes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/development-handoff-stories.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_12_render_diagnostics",
+      "target": "epic_13_ocean_waves_shader"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-01-baseline-and-contracts.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_01",
+      "target": "epic_01"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/01-render-contract.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_01",
+      "target": "concept_shared_session"
+    },
+    {
+      "relation": "depends_on",
+      "confidence": "INFERRED",
+      "confidence_score": 0.89,
+      "source_file": "docs/epics/02-preview-console.md",
+      "source_location": null,
+      "weight": 1.0,
       "source": "epic_02",
       "target": "epic_01"
     },
     {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-05-production-console.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_05",
+      "target": "epic_02"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/02-preview-console.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_02",
+      "target": "concept_fixture_overlay"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/02-preview-console.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_02",
+      "target": "concept_shared_session"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-02-musical-analysis-ir.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_02",
+      "target": "epic_03"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/03-analysis-ir.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_03",
+      "target": "concept_analysis_ir"
+    },
+    {
       "relation": "depends_on",
       "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source": "epic_04",
-      "target": "epic_01"
-    },
-    {
-      "relation": "depends_on",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source": "epic_11",
-      "target": "epic_01"
-    },
-    {
-      "relation": "depends_on",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.9,
-      "source": "epic_12",
-      "target": "epic_01"
-    },
-    {
-      "relation": "depends_on",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.9,
+      "confidence_score": 0.84,
+      "source_file": "docs/phases/phase-02-musical-analysis-ir.md",
+      "source_location": null,
+      "weight": 1.0,
       "source": "epic_05",
       "target": "epic_03"
     },
     {
-      "relation": "depends_on",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source": "epic_09",
-      "target": "epic_03"
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-03-preset-and-layer-engine.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_03",
+      "target": "epic_04"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/04-layer-library.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_04",
+      "target": "concept_layer_registry"
     },
     {
       "relation": "depends_on",
       "confidence": "INFERRED",
-      "confidence_score": 0.85,
+      "confidence_score": 0.83,
+      "source_file": "docs/phases/phase-03-preset-and-layer-engine.md",
+      "source_location": null,
+      "weight": 1.0,
       "source": "epic_06",
       "target": "epic_04"
     },
     {
-      "relation": "depends_on",
+      "relation": "includes",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.9,
-      "source": "epic_07",
-      "target": "epic_04"
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-02-musical-analysis-ir.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_02",
+      "target": "epic_05"
     },
     {
-      "relation": "depends_on",
+      "relation": "includes",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.9,
-      "source": "epic_08",
-      "target": "epic_04"
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-03-preset-and-layer-engine.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_03",
+      "target": "epic_05"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/05-modulation-system.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_05",
+      "target": "concept_modulation_sources"
     },
     {
       "relation": "depends_on",
       "confidence": "INFERRED",
-      "confidence_score": 0.85,
+      "confidence_score": 0.8,
+      "source_file": "docs/phases/phase-03-preset-and-layer-engine.md",
+      "source_location": null,
+      "weight": 1.0,
       "source": "epic_06",
       "target": "epic_05"
     },
     {
-      "relation": "depends_on",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source": "epic_07",
-      "target": "epic_05"
-    },
-    {
-      "relation": "depends_on",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source": "epic_08",
-      "target": "epic_05"
-    },
-    {
-      "relation": "depends_on",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source": "epic_09",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-03-preset-and-layer-engine.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_03",
       "target": "epic_06"
     },
     {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/06-preset-schema.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_06",
+      "target": "preset_undersea_pulse_01"
+    },
+    {
       "relation": "depends_on",
       "confidence": "INFERRED",
-      "confidence_score": 0.85,
+      "confidence_score": 0.92,
+      "source_file": "docs/epics/06-preset-schema.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_06",
+      "target": "epic_13"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-03-preset-and-layer-engine.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_03",
+      "target": "epic_07"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/07-raindrops-shader.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_07",
+      "target": "shader_raindrops"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-03-preset-and-layer-engine.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_03",
+      "target": "epic_08"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/08-spectroid-chase-shader.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_08",
+      "target": "shader_spectroid_chase"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-04-timeline-and-direction.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_04",
+      "target": "epic_09"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/09-timeline-director.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_09",
+      "target": "concept_timeline"
+    },
+    {
+      "relation": "depends_on",
+      "confidence": "INFERRED",
+      "confidence_score": 0.86,
+      "source_file": "docs/phases/phase-04-timeline-and-direction.md",
+      "source_location": null,
+      "weight": 1.0,
       "source": "epic_10",
       "target": "epic_09"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-04-timeline-and-direction.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_04",
+      "target": "epic_10"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-06-quality-performance-packaging.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_06",
+      "target": "epic_11"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/11-fixture-mapping-and-export.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_11",
+      "target": "concept_fixture_mapping"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/11-fixture-mapping-and-export.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_11",
+      "target": "concept_export_manifest"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-01-baseline-and-contracts.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_01",
+      "target": "epic_12"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-05-production-console.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_05",
+      "target": "epic_12"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-06-quality-performance-packaging.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_06",
+      "target": "epic_12"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/epics/12-render-diagnostics.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "epic_12",
+      "target": "concept_render_diagnostics"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-03-preset-and-layer-engine.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_03",
+      "target": "epic_13"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-01-baseline-and-contracts.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_01",
+      "target": "concept_render_diagnostics"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-02-musical-analysis-ir.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_02",
+      "target": "concept_analysis_ir"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-02-musical-analysis-ir.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_02",
+      "target": "concept_modulation_sources"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-03-preset-and-layer-engine.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_03",
+      "target": "concept_layer_registry"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-04-timeline-and-direction.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_04",
+      "target": "concept_timeline"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-05-production-console.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_05",
+      "target": "concept_render_diagnostics"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-06-quality-performance-packaging.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_06",
+      "target": "concept_fixture_mapping"
+    },
+    {
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-06-quality-performance-packaging.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "phase_06",
+      "target": "concept_render_diagnostics"
+    },
+    {
+      "relation": "consumes",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "docs/epics/08-spectroid-chase-shader.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "shader_spectroid_chase",
+      "target": "concept_analysis_ir"
     }
   ],
-  "hyperedges": [],
-  "built_at_commit": "8a68d5d09e5517994e9eca7857dd3e128ae9db03"
+  "hyperedges": [
+    {
+      "id": "core_light_show_pipeline",
+      "label": "Core Light Show Pipeline",
+      "nodes": [
+        "concept_musical_analysis_ir",
+        "concept_virtual_canvas_100x50",
+        "concept_fixture_mapping_dmx",
+        "concept_preview_console"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md"
+    },
+    {
+      "id": "preset_authoring_surface",
+      "label": "Preset Authoring Surface",
+      "nodes": [
+        "concept_staged_evaluation",
+        "concept_formula_ast",
+        "concept_preset_schema"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-expression-authoring-model.md"
+    },
+    {
+      "id": "browser_regression_named_baselines",
+      "label": "Browser Regression Named Baselines",
+      "nodes": [
+        "concept_browser_visual_regression",
+        "preset_bouncing_ball_reference_v1",
+        "preset_ocean_waves"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/spec-browser-visual-regression.md"
+    },
+    {
+      "id": "phase_03_preset_engine_stack",
+      "label": "Phase 3 Preset Engine Stack",
+      "nodes": [
+        "phase_03",
+        "epic_04",
+        "epic_06"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/phases/phase-03-preset-and-layer-engine.md"
+    },
+    {
+      "id": "shared_preview_session",
+      "label": "Shared Preview Session",
+      "nodes": [
+        "epic_01",
+        "epic_02",
+        "concept_shared_session"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/epics/02-preview-console.md"
+    },
+    {
+      "id": "ocean_waves_stack",
+      "label": "Ocean Waves Stack",
+      "nodes": [
+        "epic_13",
+        "preset_ocean_waves",
+        "shader_ocean_waves"
+      ],
+      "relation": "implement",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "docs/epics/06-preset-schema.md"
+    }
+  ],
+  "built_at_commit": "4388014340f54118397dc1be3e8c2e9ce85ad7a3"
 }

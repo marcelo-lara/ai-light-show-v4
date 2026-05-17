@@ -2,27 +2,37 @@
 
 Use these as small implementation handoff units. Each story should fit one focused PR or one focused LLM task.
 
+Treat this file as the implementation router, not the full spec. Before starting a story, read the dependency notes and the linked source-of-truth docs for that slice.
+
 ## Handoff Spec
 
 - Frontend dev port: `3400`.
 - Backend API port: `3401`.
-- Backend shader implementations live in `backend/shaders/`.
-- Preset source files live in `backend/presets/`.
+- Backend shader implementations target `backend/shaders/`.
+- Preset source files target `backend/presets/`.
+- Implementation should happen in this repo. If the backend or frontend trees do not exist yet, scaffold them here before feature stories.
 - Organic visual behavior should come from deterministic staged math and bounded shared state, not imported BeatDrop runtime code.
 - `data/songs/` is read-only input storage; generated backend outputs must not be written there.
+- All generated artifacts and persistent render metadata live under `data/artifacts/`.
+- Persistent review, approval, and other non-transient render status must be stored in artifact metadata under `data/artifacts/`.
 - Split work into backend, frontend, and validation tracks.
 - Story ids stay stable even if list order changes.
 - Prefer smaller stories over broad multi-surface stories.
+- Use `show name` as the UI label, but persist it as `canvas_name`; unless a story says otherwise, `show` and `canvas` refer to the same saved render selection.
 - The server owns `current_song` and `current_canvas` state.
+- The server also owns the available canvas list for the current song.
 - The server also owns the current playback transport state and current render session state.
 - There is exactly one active song, one active canvas, and one active render session for the whole system at a time.
 - The frontend should request song changes from the backend instead of loading songs directly.
 - The frontend song loader is a dropdown populated from the backend-visible contents of `data/songs/`.
-- When a new song is loaded, the backend should return or push the updated current song and current canvas state to the frontend.
+- When a new song is loaded, the backend should return or push the updated current song, current canvas, and available canvas list to the frontend.
+- When a song has no saved canvases, `current_canvas` is `null` and the canvas dropdown is empty.
+- When a song has saved canvases, the frontend displays a backend-driven canvas dropdown and any selection change must go through the shared backend session.
 - Playback transport uses explicit `Play`, `Pause`, and `Stop` controls driven by backend-owned state.
+- Shared-session fanout uses WebSocket transport.
 - When one client changes the song, canvas, render, or transport state, all other connected clients should follow that shared server state instead of keeping private local playback state.
 - If the current song has no canvas or show yet, the song should still load successfully; canvas creation happens only when the user triggers `Render`.
-- The left control column uses tabs: one `Main` tab with `show name` and `Render`, then one tab per shader or layer property group.
+- The left control column uses tabs: one `Main` tab for render-scoped controls (`show name`, preset checklist, and `Render`), then one tab per active shader or layer property group.
 - Runtime validation must use Docker, not host-local service startup.
 - Before browser validation, run `docker compose down` then `docker compose up -d --build` from the repo root.
 - Browser validation must hit the real app in Docker through the documented ports, not mocked APIs or mocked canvas data.
@@ -30,6 +40,42 @@ Use these as small implementation handoff units. Each story should fit one focus
 - Use `docs/spec-browser-visual-regression.md` as the named browser-case inventory for visual regression coverage.
 - Use `docs/spec-bouncing-ball-test-shader.md` as the source of truth for the first renderer-calibration shader.
 - Use `docs/spec-ocean-waves-shader.md` as the source of truth for the parcan-first ocean-wave look.
+- The epic order below is roadmap order. If a story-level dependency note below conflicts with the epic order, follow the story-level dependency note.
+
+## Read Before Starting
+
+- Render contract and artifact layout: [phase-01-baseline-and-contracts.md](./phases/phase-01-baseline-and-contracts.md), [01-render-contract.md](./epics/01-render-contract.md), and [spec-data-schemas.md](./spec-data-schemas.md).
+- Preview console and browser validation: [02-preview-console.md](./epics/02-preview-console.md), [phase-05-production-console.md](./phases/phase-05-production-console.md), and [spec-browser-visual-regression.md](./spec-browser-visual-regression.md).
+- Analysis and reusable modulation signals: [phase-02-musical-analysis-ir.md](./phases/phase-02-musical-analysis-ir.md), [03-analysis-ir.md](./epics/03-analysis-ir.md), and [05-modulation-system.md](./epics/05-modulation-system.md).
+- Preset and layer engine: [phase-03-preset-and-layer-engine.md](./phases/phase-03-preset-and-layer-engine.md), [04-layer-library.md](./epics/04-layer-library.md), [06-preset-schema.md](./epics/06-preset-schema.md), [spec-expression-authoring-model.md](./spec-expression-authoring-model.md), and [spec-preset-math-schema.md](./spec-preset-math-schema.md).
+- Renderer-calibration and ocean-wave features: [spec-bouncing-ball-test-shader.md](./spec-bouncing-ball-test-shader.md) and [spec-ocean-waves-shader.md](./spec-ocean-waves-shader.md).
+- Timeline and transitions: [phase-04-timeline-and-direction.md](./phases/phase-04-timeline-and-direction.md), [09-timeline-director.md](./epics/09-timeline-director.md), and [10-transition-system.md](./epics/10-transition-system.md).
+
+## Current Repo Reality
+
+- The current workspace snapshot contains docs and data, but not a checked-in `backend/` or `frontend/` implementation tree.
+- Build the implementation in this repo; do not split these stories into a separate codebase.
+- If no implementation tree exists yet, add one bootstrap task in this repo for backend, frontend, Docker wiring, and shared API scaffolding before feature stories. Do not create those foundations ad hoc inside unrelated stories.
+
+## Story-Level Dependency Rules
+
+- Epic 01 is the contract floor for shared song, canvas, render, and playback state. Do not build client-specific state semantics that bypass it.
+- Epic 02 is not one indivisible batch. Start with song loading, render triggering, shared-session flow, canvas-dropdown selection, overlays, and progress basics. Defer preset-driven tabs until Epic 06, timeline UI until Epics 09 and 10, chunked-artifact preview until 01.B7, and `bouncing_ball` preview validation until 04.B13 and 04.F3.
+- Epic 03 supplies the musical signals consumed by Epic 05. Do not implement beat, bar, phrase, or section-driven modulators before 03.B2 through 03.B6 land.
+- Epic 04 supplies the shader registry and reusable layer ids consumed by Epic 06. Do not implement production presets against ad hoc shader wiring.
+- Epic 05 and Epic 06 share one authored-math design surface. Read [spec-expression-authoring-model.md](./spec-expression-authoring-model.md) and [spec-preset-math-schema.md](./spec-preset-math-schema.md) before touching 05.B8 through 05.B10 or 06.B9 through 06.B11.
+- 06.B7 and 06.V3 depend on the `ocean_waves` shader behavior from Epic 13 plus modulation signals from Epics 03 and 05. Implement those stories with Epic 13, not before it.
+- Epics 07, 08, and 13 depend on Epic 04 registry integration, Epic 05 modulation behavior, Epic 06 preset/schema wiring, and fixture or POI definitions from `data/fixtures/`.
+- Epic 10 depends on Epic 09 scene and timeline metadata. Do not invent standalone transition storage that later has to be migrated.
+- Epic 11 depends on the artifact contract from Epic 01 and the fixture or POI file shapes from [spec-data-schemas.md](./spec-data-schemas.md).
+- Epic 12 should lock baselines only after the underlying surface is stable enough to be deterministic. Do not start regression capture on stories that are still changing their payload shape or UI layout every pass.
+
+## Locked Decisions
+
+- Implementation location: build the backend and frontend in this repo.
+- Shared-session transport: use WebSocket for backend fanout and multi-client follow behavior.
+- Canvas selection model: expose the current song's available canvases as a dropdown list; when none exist, keep the list empty and `current_canvas` null.
+- Persistent status model: store approval and other non-transient render-status metadata under `data/artifacts/` as artifact metadata.
 
 ## Implementation Order
 
@@ -51,12 +97,12 @@ Use these as small implementation handoff units. Each story should fit one focus
 
 ### Backend Track
 
-- [ ] 01.B1 Artifact schema v1: add `schema_version`, `render_id`, `preset_id`, `preset_version`, `seed`, `params`, `song_id`, `analysis_id`, `fps`, `duration`, and `frame_count` to the render artifact.
+- [ ] 01.B1 Artifact schema v1: add `schema_version`, `render_id`, `preset_id`, `preset_version`, `seed`, `params`, `song_id`, `analysis_id`, `fps`, `duration`, `frame_count`, and a persistent `status` block to the render artifact metadata.
 - [ ] 01.B2 Render id rules: generate a stable `render_id` from reproducible inputs instead of a random export id.
 - [ ] 01.B3 Seed rules: make seed handling explicit and required in the render contract.
 - [ ] 01.B4 Backend compatibility checks: reject missing required fields and unsupported schema versions.
-- [ ] 01.B5 Current song state: add backend-owned `current_song` and `current_canvas` state to the playback contract.
-- [ ] 01.B6 Empty canvas state: define the contract for a loaded song with no current canvas yet.
+- [ ] 01.B5 Current song state: add backend-owned `current_song`, `current_canvas`, and `available_canvases` state to the playback contract.
+- [ ] 01.B6 Empty canvas state: define the contract for a loaded song with no current canvas yet, including `current_canvas: null` and an empty available-canvas list.
 - [ ] 01.B7 Chunked binary frames: split v2 frame payloads into short binary chunks stored in `data/artifacts/` instead of one monolithic `.bin` file to reduce memory pressure and enable progressive loading later.
 - [ ] 01.B8 Shared playback state contract: add backend-owned playback transport fields for `stopped`, `paused`, `playing`, current playback time, and playback owner-neutral synchronization semantics.
 - [ ] 01.B9 Singleton session contract: define that `current_song`, `current_canvas`, and the active render job are global shared session state, not per-client selections.
@@ -65,8 +111,8 @@ Use these as small implementation handoff units. Each story should fit one focus
 
 - [ ] 01.F1 Shared artifact type: define frontend types that match the backend render artifact contract.
 - [ ] 01.F2 Frontend compatibility state: reject incompatible artifacts with a clear UI error state.
-- [ ] 01.F3 Metadata display readiness: surface schema version, render id, preset id, and seed in a way the UI can consume.
-- [ ] 01.F4 Current state types: add frontend types for backend-owned `current_song`, `current_canvas`, and empty-canvas states.
+- [ ] 01.F3 Metadata display readiness: surface schema version, render id, preset id, seed, and persistent status in a way the UI can consume.
+- [ ] 01.F4 Current state types: add frontend types for backend-owned `current_song`, `current_canvas`, `available_canvases`, and empty-canvas states.
 - [ ] 01.F5 Shared playback state types: add frontend types for backend-owned playback transport and shared-session state.
 
 ### Validation Track
@@ -74,18 +120,18 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 01.V1 Deterministic render test: prove the same song, preset, params, and seed produce identical frames.
 - [ ] 01.V2 Stable render id test: prove the same inputs produce the same `render_id`.
 - [ ] 01.V3 Golden sample fixture: add one short canonical render artifact for regression checks.
-- [ ] 01.V4 Empty canvas contract test: prove a song can load without an existing canvas or show.
+- [ ] 01.V4 Empty canvas contract test: prove a song can load without an existing canvas or show and returns `current_canvas: null` plus an empty available-canvas list.
 - [ ] 01.V5 v1/v2 parity test: add a regression test that loads a short fixture as both legacy JSON frames and v2 binary frames and proves the decoded pixels match exactly.
-- [ ] 01.V6 Shared session contract test: prove multiple clients receive the same current song, current canvas, render job, and playback transport state.
+- [ ] 01.V6 Shared session contract test: prove multiple clients receive the same current song, current canvas, available canvas list, render job, and playback transport state over WebSocket.
 
 ## Epic 02: Preview Console
 
 ### Backend Track
 
-- [ ] 02.B1 Song load endpoint: add one backend action that sets the current song and returns the updated current song plus current canvas state.
-- [ ] 02.B2 Missing canvas on load: make song-load succeed even when no show exists for that song.
+- [ ] 02.B1 Song load endpoint: add one backend action that sets the current song and returns the updated current song, current canvas, and available canvas list.
+- [ ] 02.B2 Missing canvas on load: make song-load succeed even when no show exists for that song, returning `current_canvas: null` and an empty canvas list.
 - [ ] 02.B3 Render action contract: make `Render` create or replace the current canvas for the already loaded song.
-- [ ] 02.B4 Metadata payload support: expose artifact metadata needed by the console without UI-only assumptions.
+- [ ] 02.B4 Metadata payload support: expose artifact metadata needed by the console, including persistent status fields, without UI-only assumptions.
 - [ ] 02.B5 Generation status payload: expose render job status, progress, and failure details through the API.
 - [ ] 02.B6 Analysis phase progress: expose analysis-stage progress and status text before frame rendering begins.
 - [ ] 02.B7 Render progress cadence: publish render progress with current and total frame counts at least every `200` frames.
@@ -93,17 +139,19 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 02.B9 Progress phase payload wiring: extend job status so the API reports analysis vs render phase and enough numeric progress for the frontend progress bar to reflect the active phase.
 - [ ] 02.B10 Song catalog endpoint: expose the available song list derived from `data/songs/` for a frontend dropdown selector.
 - [ ] 02.B11 Playback transport actions: add backend actions for `Play`, `Pause`, and `Stop` against the shared current canvas playback state.
-- [ ] 02.B12 Shared-state fanout: push or broadcast song, canvas, render, and playback-state updates to all connected clients.
+- [ ] 02.B12 Shared-state fanout: push or broadcast song, available canvas list, canvas, render, and playback-state updates to all connected clients over WebSocket.
 - [ ] 02.B13 Global render-session rule: reject per-client private song or canvas selection semantics and keep one active shared render target at a time.
+- [ ] 02.B14 Canvas selection action: add one backend action that sets the shared `current_canvas` from the current song's available canvas list.
+- [ ] 02.B15 Approval metadata persistence: store and update render approval state in artifact metadata under `data/artifacts/`.
 
 ### Frontend Track
 
 - [ ] 02.F1 Console network spec: update the frontend to target port `3400` and the backend API on port `3401`.
 - [ ] 02.F2 Server-owned song flow: request song changes from the backend instead of loading song files directly in the frontend.
-- [ ] 02.F3 Song-loaded UI update: update the frontend when the backend reports a new current song and current canvas.
-- [ ] 02.F4 Empty canvas state UI: allow a song to be loaded and preview-ready even when no show exists yet.
-- [ ] 02.F5 Main tab: add a `Main` tab in the left column with only `show name` input and a `Render` button.
-- [ ] 02.F6 Shader tabs: add one left-column tab per shader or layer property group.
+- [ ] 02.F3 Song-loaded UI update: update the frontend when the backend reports a new current song, current canvas, and available canvas list.
+- [ ] 02.F4 Empty canvas state UI: allow a song to be loaded and preview-ready even when no show exists yet, with an empty canvas dropdown.
+- [ ] 02.F5 Main tab shell: add a `Main` tab in the left column as the home for render-scoped controls.
+- [ ] 02.F6 Shader tabs: add one left-column tab per active shader or layer property group.
 - [ ] 02.F24 Main tab preset checklist: in the `Main` tab, add a `show name` input that defaults to overwrite mode and a checklist of presets to include in the render.
 - [ ] 02.F25 Preset tab visibility control: show one preset-parameter tab per checked preset and hide tabs for unchecked presets before applying to the canvas.
 - [ ] 02.F7 Fixture overlay load: load fixture references from `data/fixtures/fixtures.json`.
@@ -127,6 +175,7 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 02.F27 Playback transport controls: add `Play`, `Pause`, and `Stop` buttons for canvas playback in the review console.
 - [ ] 02.F28 Shared-session follow mode: when another client changes the active song, canvas, render, or playback transport state, update this client to match the server-owned session.
 - [ ] 02.F29 Test shader preview flow: allow the `bouncing_ball` render to be previewed cleanly as a renderer-validation look without requiring production-only preset complexity.
+- [ ] 02.F30 Canvas dropdown: show the current song's available canvases in a dropdown, keep it empty when none exist, and route selection changes through the backend-owned shared session.
 
 ### Validation Track
 
@@ -134,7 +183,7 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 02.V2 Schema error state test: prove incompatible artifacts show a clear UI state.
 - [ ] 02.V3 Song load flow test: prove the frontend asks the backend to load a song and updates when the backend confirms the new current song.
 - [ ] 02.V4 Missing canvas flow test: prove a song with no canvas still loads and only creates a show on `Render`.
-- [ ] 02.V5 Left-tab layout test: prove the left column shows one `Main` tab and one tab per shader or layer group.
+- [ ] 02.V5 Left-tab layout test: prove the left column shows one `Main` tab and one tab per active shader or layer group.
 - [ ] 02.V6 Overlay load test: prove fixtures and POIs load from their JSON files and render as overlay references.
 - [ ] 02.V7 Overlay alignment test: prove fixture and POI markers stay aligned to canvas coordinates.
 - [ ] 02.V8 Review workflow test: prove a user can load a song, render a show, inspect it, and approve it from the UI.
@@ -146,8 +195,10 @@ Use these as small implementation handoff units. Each story should fit one focus
 - [ ] 02.V14 Docker browser smoke test: run `docker compose down` then `docker compose up -d --build`, open the live preview in a real browser, load `data/songs/What a Feeling - Courtney Storm.mp3`, trigger `Render`, and verify the resulting canvas, overlays, and review workflow without mocked backend responses.
 - [ ] 02.V15 Song dropdown test: prove the frontend song loader is a dropdown populated from the backend view of `data/songs/`.
 - [ ] 02.V16 Playback controls test: prove `Play`, `Pause`, and `Stop` drive the shared backend playback state and update the canvas preview accordingly.
-- [ ] 02.V17 Multi-client follow test: prove when one client changes the song, canvas, render, or playback transport state, other connected clients follow the same shared session.
+- [ ] 02.V17 Multi-client follow test: prove when one client changes the song, canvas, render, or playback transport state, other connected clients follow the same shared session over WebSocket.
 - [ ] 02.V18 Bouncing ball preview test: prove a rendered `bouncing_ball` canvas displays a single crisp point moving and bouncing at the expected edges in the frontend preview.
+- [ ] 02.V19 Canvas dropdown selection test: prove when a song has multiple canvases the dropdown shows the available list, when none exist it stays empty, and selecting a canvas updates the shared `current_canvas` across WebSocket-connected clients.
+- [ ] 02.V20 Approval metadata test: prove approval state changes persist in artifact metadata under `data/artifacts/` and render correctly in the console.
 
 ## Epic 03: Analysis IR
 
@@ -259,7 +310,7 @@ Use these as small implementation handoff units. Each story should fit one focus
 
 - [ ] 06.V1 Valid preset test: prove a valid preset loads and passes schema validation.
 - [ ] 06.V2 Invalid preset test: prove invalid presets fail with actionable errors.
-- [ ] 06.V3 Ocean waves test: prove `ocean_waves` renders readable ocean-like left-to-right swells, respects the configurable deep-blue base color, limits output intensity exclusively to parcan anchor coordinates, and validates that wave speed and inner-contrast motion respond to beat and FFT signals respectively.
+- [ ] 06.V3 Ocean waves test: prove `ocean_waves` renders readable ocean-like left-to-right swells, respects the configurable deep-blue base color, preserves the parcan-first sampling behavior defined in [spec-ocean-waves-shader.md](./spec-ocean-waves-shader.md), and validates that wave speed and inner-contrast motion respond to beat and FFT signals respectively.
 - [ ] 06.V4 Baseline parity test: prove `undersea_pulse_01` reproduces the current baseline look closely enough.
 - [ ] 06.V5 Stage handoff test: prove preset math blocks observe the intended init, frame, and hot-path state handoff.
 - [ ] 06.V6 Budget validation test: prove invalid hot-path constructs fail before render time with actionable errors.
@@ -425,7 +476,7 @@ Use these as small implementation handoff units. Each story should fit one focus
 ### Frontend Track
 
 - [ ] 12.F1 Diagnostics types: add frontend types for diagnostics summaries and warnings.
-- [ ] 12.F2 Diagnostics view: surface diagnostics summaries and warnings in the console UI.
+- [ ] 12.F2 Diagnostics view: surface diagnostics summaries, warnings, and persistent artifact-status metadata in the console UI.
 - [ ] 12.F3 Diagnostics asset view: surface contact sheets and preview assets in the UI.
 
 ### Validation Track

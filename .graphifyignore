@@ -1,0 +1,6 @@
+# Exclude generated inputs and runtime data from graphify corpus scans.
+/data
+
+# Exclude graphify temp, cache, and output artifacts.
+/graphify-out
+/.graphify_*

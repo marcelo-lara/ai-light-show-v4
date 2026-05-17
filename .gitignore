@@ -226,3 +226,7 @@ data/
 .graphify/
 graphify_output/
 *.graphify
+.graphify_*
+graphify-out/.graphify_*
+graphify-out/cache/
+graphify-out/.needs_update
