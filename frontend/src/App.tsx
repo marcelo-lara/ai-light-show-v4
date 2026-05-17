@@ -13,6 +13,9 @@ import FullscreenPreview from './components/FullscreenPreview';
 import { RenderPhase } from './types/phase05';
 import type { RenderJobStatus, TimelineViewState, ABCompareState, DiagnosticsPanel as DiagnosticsPanelType } from './types/phase05';
 import type { CurrentCanvasState, RenderArtifactMetadata } from './types/renderContract';
+import backendAPI from './api/backend';
+
+const MAX_PREVIEW_FPS = 12;
 
 /**
  * Main app component for Phase 5: Production Console
@@ -46,6 +49,8 @@ export const App: React.FC = () => {
   const [isRendering, setIsRendering] = useState(false);
   const [renderProgress, setRenderProgress] = useState<RenderJobStatus | null>(null);
   const [renderedCanvas, setRenderedCanvas] = useState<CurrentCanvasState | null>(null);
+  const [previewFrameIndex, setPreviewFrameIndex] = useState(0);
+  const [previewFrameUrl, setPreviewFrameUrl] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showFrameInspector, setShowFrameInspector] = useState(false);
   const [showDiagnostics, setShowDiagnostics] = useState(false);
@@ -73,21 +78,10 @@ export const App: React.FC = () => {
     }
   }, [playbackState?.current_song?.song_id, selectedSongId, songs]);
 
-  if (isLoading) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-        <div>Loading...</div>
-      </div>
-    );
-  }
-
-  if (compatibilityError.has_error) {
-    return <CompatibilityError error={compatibilityError} onDismiss={clearCompatibilityError} />;
-  }
-
   // Get current song - Epic 02.F2: Server-owned song state
   const currentSong = playbackState?.current_song;
   const currentCanvas = renderedCanvas ?? currentSong?.current_canvas ?? null;
+  const currentCanvasMetadata = currentCanvas?.render_artifact?.metadata;
   const overlayFixtures = fixtures.flatMap((fixture) => {
     const fixtureId = typeof fixture.fixture_id === 'string'
       ? fixture.fixture_id
@@ -152,6 +146,44 @@ export const App: React.FC = () => {
   const halfDuration = songDuration !== null ? songDuration / 2 : 150;
   const fullDuration = songDuration ?? 300;
 
+  useEffect(() => {
+    if (!currentCanvasMetadata) {
+      setPreviewFrameUrl(null);
+      return;
+    }
+
+    const boundedFrameIndex = currentCanvasMetadata.frame_count > 0
+      ? previewFrameIndex % currentCanvasMetadata.frame_count
+      : 0;
+
+    setPreviewFrameUrl(backendAPI.getPresetPreviewUrl(currentCanvasMetadata.preset_id, {
+      version: currentCanvasMetadata.preset_version,
+      frameIndex: boundedFrameIndex,
+      fps: currentCanvasMetadata.fps,
+      totalFrames: currentCanvasMetadata.frame_count,
+      seed: currentCanvasMetadata.seed,
+      cacheBuster: boundedFrameIndex,
+    }));
+  }, [currentCanvasMetadata, previewFrameIndex]);
+
+  useEffect(() => {
+    if (!currentCanvasMetadata || !playbackState?.is_playing) {
+      return;
+    }
+
+    const frameCount = Math.max(1, currentCanvasMetadata.frame_count);
+    const sourceFps = Math.max(1, currentCanvasMetadata.fps);
+    const previewFps = Math.min(sourceFps, MAX_PREVIEW_FPS);
+    const tickMs = 1000 / previewFps;
+    const frameStep = Math.max(1, Math.round(sourceFps / previewFps));
+
+    const timerId = window.setInterval(() => {
+      setPreviewFrameIndex((currentIndex) => (currentIndex + frameStep) % frameCount);
+    }, tickMs);
+
+    return () => window.clearInterval(timerId);
+  }, [currentCanvasMetadata, playbackState?.is_playing]);
+
   // Mock timeline
   const mockTimeline: TimelineViewState = {
     scenes: [
@@ -195,6 +227,8 @@ export const App: React.FC = () => {
     setSelectedPresets(new Set(params.selected_presets));
     setIsRendering(true);
     setRenderedCanvas(null);
+    setPreviewFrameIndex(0);
+    setPreviewFrameUrl(null);
 
     // Mock progress
     setRenderProgress({
@@ -212,23 +246,51 @@ export const App: React.FC = () => {
 
     // Simulate progress
     setTimeout(() => {
-      setRenderProgress((prev) => prev ? { ...prev, analysis_current: 50, analysis_percent: 50 } : null);
+      setRenderProgress((prev) => prev ? {
+        ...prev,
+        status_text: 'Analyzing audio...',
+        analysis_current: 50,
+        analysis_percent: 50,
+        overall_percent: 25,
+      } : null);
     }, 1000);
 
     setTimeout(() => {
-      setRenderProgress((prev) => prev ? { ...prev, phase: RenderPhase.RENDERING, analysis_current: 100, analysis_percent: 100, render_total: 300 } : null);
+      setRenderProgress((prev) => prev ? {
+        ...prev,
+        phase: RenderPhase.RENDERING,
+        status_text: 'Rendering frames...',
+        analysis_current: 100,
+        analysis_percent: 100,
+        render_total: 300,
+        overall_percent: 50,
+      } : null);
     }, 2000);
 
     setTimeout(() => {
-      setRenderProgress((prev) => prev ? { ...prev, render_current: 150, render_percent: 50, overall_percent: 65 } : null);
+      setRenderProgress((prev) => prev ? {
+        ...prev,
+        status_text: 'Rendering frames...',
+        render_current: 150,
+        render_percent: 50,
+        overall_percent: 75,
+      } : null);
     }, 3000);
 
     setTimeout(() => {
-      setRenderProgress((prev) => prev ? { ...prev, render_current: 300, render_percent: 100, phase: RenderPhase.COMPLETED, overall_percent: 100 } : null);
+      setRenderProgress((prev) => prev ? {
+        ...prev,
+        status_text: 'Render complete',
+        render_current: 300,
+        render_percent: 100,
+        phase: RenderPhase.COMPLETED,
+        overall_percent: 100,
+      } : null);
+      const selectedPresetId = params.selected_presets[0] ?? 'undersea_pulse_01';
       const previewMetadata: RenderArtifactMetadata = {
         schema_version: '1.1',
         render_id: `render_${Date.now()}`,
-        preset_id: params.selected_presets[0] ?? 'undersea_pulse_01',
+        preset_id: selectedPresetId,
         preset_version: '1.0',
         seed: 12345,
         song_id: currentSong?.song_id ?? selectedSongId,
@@ -245,6 +307,7 @@ export const App: React.FC = () => {
         },
         is_empty: false,
       });
+      setPreviewFrameIndex(0);
       setIsRendering(false);
       setShowDiagnostics(true);
     }, 5000);
@@ -256,10 +319,37 @@ export const App: React.FC = () => {
     }
 
     setRenderedCanvas(null);
+    setPreviewFrameIndex(0);
+    setPreviewFrameUrl(null);
     setShowDiagnostics(false);
     setRenderProgress(null);
     await loadSong(selectedSongId);
   };
+
+  const handlePlay = async () => {
+    await play();
+  };
+
+  const handlePause = async () => {
+    await pause();
+  };
+
+  const handleStop = async () => {
+    await stop();
+    setPreviewFrameIndex(0);
+  };
+
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <div>Loading...</div>
+      </div>
+    );
+  }
+
+  if (compatibilityError.has_error) {
+    return <CompatibilityError error={compatibilityError} onDismiss={clearCompatibilityError} />;
+  }
 
   return (
     <div
@@ -415,6 +505,7 @@ export const App: React.FC = () => {
                 metadata={currentCanvas.render_artifact?.metadata}
                 fixtures={overlayFixtures}
                 pois={overlayPOIs}
+                frameImageUrl={previewFrameUrl ?? undefined}
               />
             ) : (
               <div style={{ color: '#555', fontSize: '14px', textAlign: 'center' }}>
@@ -442,21 +533,21 @@ export const App: React.FC = () => {
             }}
           >
             <button
-              onClick={() => void play()}
+              onClick={() => void handlePlay()}
               disabled={!currentCanvas || currentCanvas.is_empty || playbackState?.is_playing}
               style={playbackButtonStyle(!currentCanvas || currentCanvas.is_empty || !!playbackState?.is_playing)}
             >
               Play
             </button>
             <button
-              onClick={() => void pause()}
+              onClick={() => void handlePause()}
               disabled={!currentCanvas || currentCanvas.is_empty || !playbackState?.is_playing}
               style={playbackButtonStyle(!currentCanvas || currentCanvas.is_empty || !playbackState?.is_playing)}
             >
               Pause
             </button>
             <button
-              onClick={() => void stop()}
+              onClick={() => void handleStop()}
               disabled={!currentCanvas || currentCanvas.is_empty}
               style={playbackButtonStyle(!currentCanvas || currentCanvas.is_empty)}
             >
@@ -535,6 +626,7 @@ export const App: React.FC = () => {
               metadata={currentCanvas.render_artifact?.metadata}
               fixtures={overlayFixtures}
               pois={overlayPOIs}
+              frameImageUrl={previewFrameUrl ?? undefined}
             />
           ) : undefined
         }

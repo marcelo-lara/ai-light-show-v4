@@ -11,6 +11,7 @@ interface CanvasDisplayProps {
   metadata?: RenderArtifactMetadata;
   fixtures?: Array<{ fixture_id: string; canvas_anchor?: { x: number; y: number } }>;
   pois?: Array<{ poi_id: string; canvas_pos: { x: number; y: number } }>;
+  frameImageUrl?: string;
   showGrid?: boolean;
   showOverlay?: boolean;
 }
@@ -22,11 +23,13 @@ export const CanvasDisplay: React.FC<CanvasDisplayProps> = ({
   metadata,
   fixtures = [],
   pois = [],
+  frameImageUrl,
   showGrid = true,
   showOverlay = true,
 }) => {
   const CANVAS_WIDTH = 100;
   const CANVAS_HEIGHT = 50;
+  const shouldShowGrid = showGrid && !frameImageUrl;
 
   return (
     <div
@@ -79,8 +82,23 @@ export const CanvasDisplay: React.FC<CanvasDisplayProps> = ({
             backgroundColor: '#111',
           }}
         >
+          {frameImageUrl && (
+            <img
+              src={frameImageUrl}
+              alt="Rendered canvas preview"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'fill',
+                imageRendering: 'pixelated',
+              }}
+            />
+          )}
+
           {/* Grid overlay */}
-          {showGrid && (
+          {shouldShowGrid && (
             <svg
               style={{
                 position: 'absolute',

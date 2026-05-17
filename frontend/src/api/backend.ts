@@ -20,8 +20,10 @@ const defaultBackendURL = (() => {
 
 class BackendAPI {
   private client: AxiosInstance;
+  private readonly baseURL: string;
 
   constructor(baseURL: string = defaultBackendURL) {
+    this.baseURL = baseURL;
     this.client = axios.create({
       baseURL,
       headers: {
@@ -111,6 +113,42 @@ class BackendAPI {
   }> {
     const response = await this.client.get('/api/pois');
     return response.data;
+  }
+
+  getPresetPreviewUrl(
+    presetId: string,
+    options?: {
+      version?: string;
+      frameIndex?: number;
+      fps?: number;
+      totalFrames?: number;
+      seed?: number;
+      cacheBuster?: number;
+    }
+  ): string {
+    const params = new URLSearchParams();
+
+    if (options?.version) {
+      params.set('version', options.version);
+    }
+    if (typeof options?.frameIndex === 'number') {
+      params.set('frame_index', String(options.frameIndex));
+    }
+    if (typeof options?.fps === 'number') {
+      params.set('fps', String(options.fps));
+    }
+    if (typeof options?.totalFrames === 'number') {
+      params.set('total_frames', String(options.totalFrames));
+    }
+    if (typeof options?.seed === 'number') {
+      params.set('seed', String(options.seed));
+    }
+    if (typeof options?.cacheBuster === 'number') {
+      params.set('v', String(options.cacheBuster));
+    }
+
+    const query = params.toString();
+    return `${this.baseURL}/api/phase05/preset-preview/${encodeURIComponent(presetId)}${query ? `?${query}` : ''}`;
   }
 
   // Epic 02: Render job management

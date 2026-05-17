@@ -45,6 +45,7 @@ from .modulation import ModulationSystem, ModulationContext
 from .presets_builtin import get_builtin_presets
 from .timeline import SceneTimeline, TimelineGenerator, Scene
 from .transitions import Transition, TransitionType, TransitionAligner
+from .layers import RenderContext, CANVAS_WIDTH, CANVAS_HEIGHT, BLEND_MODES
 
 
 # Global state (in production, use a proper database)
@@ -61,6 +62,106 @@ _current_timeline: Optional[SceneTimeline] = None  # Current song's timeline
 # Logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+def _build_preview_render_context(frame_index: int, fps: int, total_frames: int, seed: int) -> RenderContext:
+    """Create a deterministic musical context for preview rendering."""
+    beat_bpm = 128.0
+    beat_period = 60.0 / beat_bpm
+    frame_time = frame_index / max(1, fps)
+    beat_progress = (frame_time % beat_period) / beat_period
+    bar_progress = (frame_time % (beat_period * 4)) / (beat_period * 4)
+    phrase_progress = (frame_time % (beat_period * 16)) / (beat_period * 16)
+
+    fft_bands = [
+        min(1.0, 0.3 + 0.7 * np.exp(-((beat_progress - 0.0) ** 2) / 0.02))
+        if band < 3 else
+        max(0.0, 0.6 - band * 0.05)
+        for band in range(8)
+    ]
+
+    return RenderContext(
+        seed=seed,
+        frame_index=frame_index,
+        total_frames=total_frames,
+        fps=fps,
+        beat_progress=beat_progress,
+        bar_progress=bar_progress,
+        phrase_progress=phrase_progress,
+        onset_detected=(frame_index % 8) == 0,
+        fft_bands=fft_bands,
+    )
+
+
+def _inject_preview_fixture_params(params: dict) -> dict:
+    """Provide live POI and fixture anchors to shader layers during preview rendering."""
+    preview_params = dict(params)
+
+    if _fixture_manager:
+        preview_params.setdefault("_pois", [
+            {
+                "id": poi.poi_id,
+                "x": poi.canvas_pos.x,
+                "y": poi.canvas_pos.y,
+            }
+            for poi in _fixture_manager.pois.values()
+        ])
+        preview_params.setdefault("_parcans", [
+            {
+                "id": fixture.fixture_id,
+                "x": fixture.canvas_anchor.x,
+                "y": fixture.canvas_anchor.y,
+            }
+            for fixture in _fixture_manager.fixtures.values()
+            if fixture.canvas_anchor is not None
+        ])
+
+    return preview_params
+
+
+def _render_preset_preview_frame(
+    preset_id: str,
+    version: str = "latest",
+    frame_index: int = 0,
+    fps: int = 30,
+    total_frames: int = 300,
+    seed: int = 12345,
+) -> np.ndarray:
+    """Render a single composited frame for a preset preview."""
+    if not _preset_registry or not _layer_registry:
+        raise HTTPException(status_code=503, detail="Preview renderer not initialised")
+
+    preset = _preset_registry.get_preset(preset_id, version)
+    if not preset:
+        raise HTTPException(status_code=404, detail=f"Preset {preset_id}:{version} not found")
+
+    context = _build_preview_render_context(
+        frame_index=frame_index,
+        fps=fps,
+        total_frames=total_frames,
+        seed=seed,
+    )
+    composited = np.zeros((CANVAS_HEIGHT, CANVAS_WIDTH, 3), dtype=np.uint8)
+
+    for layer_ref in sorted(preset.layers, key=lambda layer: layer.order):
+        if not layer_ref.enabled:
+            continue
+
+        layer = _layer_registry.get_layer(layer_ref.layer_id)
+        if not layer:
+            continue
+
+        layer_frame = layer.render_frame(
+            context,
+            _inject_preview_fixture_params(layer_ref.params),
+            CANVAS_WIDTH,
+            CANVAS_HEIGHT,
+        )
+        blend_mode_key = str(layer_ref.blend_mode.value if hasattr(layer_ref.blend_mode, "value") else layer_ref.blend_mode)
+        blend_mode = BLEND_MODES.get(blend_mode_key, BLEND_MODES["alpha"])
+        composited = blend_mode.blend(composited, layer_frame, layer_ref.opacity)
+
+    return composited
 
 
 @asynccontextmanager
@@ -1144,6 +1245,33 @@ async def get_current_canvas_phase05():
         "diagnostics": None,  # Would be loaded separately
         "timeline": current_canvas.render_artifact.timeline if current_canvas.render_artifact else None,
     }
+
+
+@app.get("/api/phase05/preset-preview/{preset_id}")
+async def get_preset_preview_frame_phase05(
+    preset_id: str,
+    version: str = Query(default="latest"),
+    frame_index: int = Query(default=0, ge=0),
+    fps: int = Query(default=30, ge=1, le=120),
+    total_frames: int = Query(default=300, ge=1, le=18000),
+    seed: int = Query(default=12345),
+):
+    """Return a single rendered preset frame as PNG for the preview console."""
+    frame = _render_preset_preview_frame(
+        preset_id=preset_id,
+        version=version,
+        frame_index=frame_index,
+        fps=fps,
+        total_frames=total_frames,
+        seed=seed,
+    )
+
+    renderer = CanvasRenderer(scale=8)
+    img = renderer.frame_to_image(frame)
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    buf.seek(0)
+    return StreamingResponse(buf, media_type="image/png")
 
 
 @app.post("/api/phase05/canvas/name")
