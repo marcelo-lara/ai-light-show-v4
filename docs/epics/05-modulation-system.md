@@ -2,13 +2,13 @@
 
 ### Backend Track
 
-- [ ] 05.B1 Audio modulator sources: support band envelopes, onset, beat pulse, beat phase, bar phase, and phrase progress.
-- [ ] 05.B2 Procedural modulator sources: support LFO and seeded random sources.
-- [ ] 05.B3 Mapping ops part 1: support scale, clamp, and invert.
-- [ ] 05.B4 Mapping ops part 2: support curve, smooth, lag, and quantize.
-- [ ] 05.B5 Preset bindings: allow presets to bind modulators to layer parameters without custom Python code.
-- [ ] 05.B6 Deterministic execution: make modulator outputs stable for the same analysis, seed, and time.
-- [ ] 05.B7 Debug output shape: expose resolved modulator values in a structured format.
+- [x] 05.B1 Audio modulator sources: support band envelopes, onset, beat pulse, beat phase, bar phase, and phrase progress.
+- [x] 05.B2 Procedural modulator sources: support LFO and seeded random sources.
+- [x] 05.B3 Mapping ops part 1: support scale, clamp, and invert.
+- [x] 05.B4 Mapping ops part 2: support curve, smooth, lag, and quantize.
+- [x] 05.B5 Preset bindings: allow presets to bind modulators to layer parameters without custom Python code.
+- [x] 05.B6 Deterministic execution: make modulator outputs stable for the same analysis, seed, and time.
+- [x] 05.B7 Debug output shape: expose resolved modulator values in a structured format.
 
 ### Frontend Track
 

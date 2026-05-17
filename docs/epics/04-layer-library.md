@@ -2,17 +2,17 @@
 
 ### Backend Track
 
-- [ ] 04.B1 Layer interface: define a registry-based layer API with deterministic seeded execution.
-- [ ] 04.B2 Wave layer migration: convert wave into a reusable registry-backed layer.
-- [ ] 04.B3 Radial pulse migration: convert radial pulse into a reusable registry-backed layer.
-- [ ] 04.B4 Solid field layer: add a solid fill layer.
-- [ ] 04.B5 Gradient field layer: add a gradient layer.
-- [ ] 04.B6 Bars layer: add horizontal or vertical bars.
-- [ ] 04.B7 Rings layer: add ring or expanding pulse output.
-- [ ] 04.B8 Beat flash layer: add a beat flash layer.
-- [ ] 04.B9 Scanner layer: add a scanner or sweep layer.
+- [x] 04.B1 Layer interface: define a registry-based layer API with deterministic seeded execution.
+- [x] 04.B2 Wave layer migration: convert wave into a reusable registry-backed layer.
+- [x] 04.B3 Radial pulse migration: convert radial pulse into a reusable registry-backed layer.
+- [x] 04.B4 Solid field layer: add a solid fill layer.
+- [x] 04.B5 Gradient field layer: add a gradient layer.
+- [x] 04.B6 Bars layer: add horizontal or vertical bars.
+- [x] 04.B7 Rings layer: add ring or expanding pulse output.
+- [x] 04.B8 Beat flash layer: add a beat flash layer.
+- [x] 04.B9 Scanner layer: add a scanner or sweep layer.
 - [ ] 04.B10 Mirror transform: add mirror or symmetry transforms.
-- [ ] 04.B11 Blend ops: add `max`, `add`, `alpha`, `multiply`, `screen`, `difference`, and `mask`.
+- [x] 04.B11 Blend ops: add `max`, `add`, `alpha`, `multiply`, `screen`, `difference`, and `mask`.
 - [ ] 04.B12 Scroll and zoom transforms: add scroll and zoom transforms.
 
 ### Frontend Track
