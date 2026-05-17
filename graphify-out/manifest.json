@@ -1,7 +1,231 @@
 {
+  "/home/darkangel/ai-light-show-v4/frontend/vite.config.ts": {
+    "mtime": 1778980674.3193161,
+    "hash": "2231e44acb319bc4985202c971e8e03c"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/App.tsx": {
+    "mtime": 1778982931.8011465,
+    "hash": "5599991b1d1a03110a109fc546b0e68f"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/main.tsx": {
+    "mtime": 1778815282.713322,
+    "hash": "a139616b161d9be1635831c3c9cfd701"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/components/PresetBrowser.tsx": {
+    "mtime": 1778982402.6997306,
+    "hash": "0a07c9ae66d6574314ed29d5e35328b4"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/components/TimelineView.tsx": {
+    "mtime": 1778982402.6997306,
+    "hash": "7d09951e2b275ca5b0211fa146a37b75"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/components/CanvasDisplay.tsx": {
+    "mtime": 1778983064.4400008,
+    "hash": "f987020e62dca5f6784af1efadc687a1"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/components/CompatibilityError.tsx": {
+    "mtime": 1778815282.713322,
+    "hash": "5231650b1cb638c3af6dabae243ab663"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/components/MetadataDisplay.tsx": {
+    "mtime": 1778982402.6987307,
+    "hash": "89eea021dcdc02f3665847db832fdf44"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/components/FrameInspector.tsx": {
+    "mtime": 1778978126.8543653,
+    "hash": "155a7fc3b4eca44efef806de51386570"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/components/ProgressTracking.tsx": {
+    "mtime": 1778815878.8943157,
+    "hash": "f79911190fc7ec30c2ac56b49f1f8bf2"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/components/ABCompare.tsx": {
+    "mtime": 1778978126.8543653,
+    "hash": "a03698137452b14ddca2edc204eb8cac"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/components/ControlPanel.tsx": {
+    "mtime": 1778815878.8943157,
+    "hash": "32a2501a5fadda7a0a6f44899c1a1b70"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/components/FullscreenPreview.tsx": {
+    "mtime": 1778978126.8543653,
+    "hash": "627841bc6b4488950489e6cf0475aba0"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/components/DiagnosticsPanel.tsx": {
+    "mtime": 1778978126.8543653,
+    "hash": "0aa4322eadb2f4bc81169d3ea25eb9b9"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/components/MainTab.tsx": {
+    "mtime": 1778982402.6997306,
+    "hash": "c2d132d97a9c135da594b41291cfed92"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/__tests__/renderContract.test.ts": {
+    "mtime": 1778982402.6997306,
+    "hash": "b03e772ffc423823b19a2c213941e027"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/__tests__/__init__.py": {
+    "mtime": 1778815282.713322,
+    "hash": "5d4c7fd33a4f0a940eb2a952a73a0a51"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/api/backend.ts": {
+    "mtime": 1778982931.8021464,
+    "hash": "d93e910ad6709d11a78583ad72e331f3"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/types/phase03.ts": {
+    "mtime": 1778975609.7759633,
+    "hash": "0f4fdb7d1105e39293fee726d1511dcb"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/types/renderContract.ts": {
+    "mtime": 1778815282.713322,
+    "hash": "3185a5e006c8d124fb1c4f1d5da36d68"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/types/phase06.ts": {
+    "mtime": 1778982402.6997306,
+    "hash": "9f3e827e41882003df105a82f0704f07"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/types/phase05.ts": {
+    "mtime": 1778978126.8543653,
+    "hash": "74352fa69d732aa4d9aa549a7cee2045"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/types/phase04.ts": {
+    "mtime": 1778976716.8366244,
+    "hash": "82ddf3e27aca691762ec85bab1e9525d"
+  },
+  "/home/darkangel/ai-light-show-v4/frontend/src/store/playback.ts": {
+    "mtime": 1778982931.8021464,
+    "hash": "40585381b637ebdf28360c24ac1c254d"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/test_patterns.py": {
+    "mtime": 1778980440.1615124,
+    "hash": "d193057a01f5d5705b9131ef69919247"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/timeline.py": {
+    "mtime": 1778976716.8366244,
+    "hash": "40614220b40f9ccdc61dafac62bfea6a"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/diagnostics.py": {
+    "mtime": 1778815282.713322,
+    "hash": "68bb344667ad500f073ad60d91c9d9be"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/preset.py": {
+    "mtime": 1778975609.7759633,
+    "hash": "b13b69e41547ad03857d92e582182219"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/render_job.py": {
+    "mtime": 1778815878.8943157,
+    "hash": "81cc5afadd81776f158cad2cfe9674d1"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/transitions.py": {
+    "mtime": 1778976716.8366244,
+    "hash": "3d29e3ec3a721edfca9059e70aed8ddb"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/main.py": {
+    "mtime": 1778982931.8021464,
+    "hash": "9edd07581f215cfe36d1c51b45dae964"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/presets_builtin.py": {
+    "mtime": 1778975609.7759633,
+    "hash": "3caee64a29f2c90e451d019af9f62ac2"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/chunked_frames.py": {
+    "mtime": 1778815282.713322,
+    "hash": "2941124d6a83ef1c5f2ca968821161e8"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/layers.py": {
+    "mtime": 1778975609.7759633,
+    "hash": "a67a2cf9eaab96ee9f31c6110b067cdf"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/models.py": {
+    "mtime": 1778976716.8366244,
+    "hash": "7e38eedfb6fbc1335f4246d069e0f32b"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/fixture_mapping.py": {
+    "mtime": 1778980440.1615124,
+    "hash": "7388669189aa1509ed0c84fb899e1471"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/canvas.py": {
+    "mtime": 1778815878.8943157,
+    "hash": "1ca290a5f326c5f4d1275b22413d3533"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/fixtures.py": {
+    "mtime": 1778983290.503347,
+    "hash": "69bd5ade3196952e8387732bacc9548f"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/render_contract.py": {
+    "mtime": 1778815282.713322,
+    "hash": "55cb272d1e8151a2fb2bd4a334d52caa"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/__init__.py": {
+    "mtime": 1778815282.713322,
+    "hash": "9846c1cbf6f78327945e7e1dddd8a880"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/shaders.py": {
+    "mtime": 1778975609.7759633,
+    "hash": "5d7bac457a8d48557290af97b7f1e546"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/app/modulation.py": {
+    "mtime": 1778975609.7759633,
+    "hash": "a6ce3bd0a74ba2e1fe6d2e28eb6ede92"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/tests/test_chunked_frames.py": {
+    "mtime": 1778815282.713322,
+    "hash": "42c1099188ee084ce7595dbbb6a3e1b9"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/tests/test_phase_04.py": {
+    "mtime": 1778976716.8376243,
+    "hash": "6bb95f6ac5b0a3fc771b01b336d41921"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/tests/test_render_contract.py": {
+    "mtime": 1778815282.713322,
+    "hash": "f9daa175391e12fed6761e5a04ff7650"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/tests/test_diagnostics.py": {
+    "mtime": 1778815282.713322,
+    "hash": "eed1f286c1991f888929cdb225f9afc5"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/tests/test_phase_06.py": {
+    "mtime": 1778980440.1615124,
+    "hash": "faead54196fc1e8cc555c67324af7744"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/tests/__init__.py": {
+    "mtime": 1778815282.713322,
+    "hash": "5708c595df04b92fda67b8e2bc423d63"
+  },
+  "/home/darkangel/ai-light-show-v4/backend/tests/test_phase_03.py": {
+    "mtime": 1778975609.7769632,
+    "hash": "e7bbbb2d98cbcb5418ea49c4d415edb0"
+  },
+  "/home/darkangel/ai-light-show-v4/PHASE_5_IMPLEMENTATION.md": {
+    "mtime": 1778978126.8543653,
+    "hash": "a8257f1a2212c78e32a4fb2682ad77e9"
+  },
   "/home/darkangel/ai-light-show-v4/README.md": {
-    "mtime": 1778726252.4781933,
-    "hash": "333fe5678be675985ba4954b0ea87440"
+    "mtime": 1778815282.713322,
+    "hash": "79bf398d78bfdcacb82eb2eb56ff8e71"
+  },
+  "/home/darkangel/ai-light-show-v4/PHASE_4_IMPLEMENTATION.md": {
+    "mtime": 1778976716.8366244,
+    "hash": "2ca322985ead1876ad850160a70affde"
+  },
+  "/home/darkangel/ai-light-show-v4/docker-compose.yml": {
+    "mtime": 1778815878.8943157,
+    "hash": "73133e7e62948d43449a0e523d1f3199"
+  },
+  "/home/darkangel/ai-light-show-v4/PHASE_6_IMPLEMENTATION.md": {
+    "mtime": 1778980440.1615124,
+    "hash": "4f2d67123aa448e6414b23477fea4659"
+  },
+  "/home/darkangel/ai-light-show-v4/PHASE_2_IMPLEMENTATION.md": {
+    "mtime": 1778815878.8943157,
+    "hash": "93441f56c6dbb312c71bf70b435f7584"
+  },
+  "/home/darkangel/ai-light-show-v4/PHASE_1_IMPLEMENTATION.md": {
+    "mtime": 1778815282.713322,
+    "hash": "a25dd474d520371cf47886d22c85eb45"
+  },
+  "/home/darkangel/ai-light-show-v4/PHASE_3_IMPLEMENTATION.md": {
+    "mtime": 1778975609.7769632,
+    "hash": "2d2ad2fefa542febabf74645a9ae967b"
   },
   "/home/darkangel/ai-light-show-v4/docs/glossary.md": {
     "mtime": 1778723249.9143076,
@@ -107,144 +331,8 @@
     "mtime": 1778725218.838081,
     "hash": "bf96143f9d308f2fd4565b20f7bb7acb"
   },
-  "graphify-out/transcripts/Rapture - Nadia Ali.txt": {
-    "mtime": 1778813699.2655718,
-    "hash": "33b3d6d1bac15984184a028b54145a7e"
-  },
-  "graphify-out/transcripts/Chimera - Hana.txt": {
-    "mtime": 1778813704.9264817,
-    "hash": "b04cfba8636917afeee5ce6ce0265df3"
-  },
-  "graphify-out/transcripts/What a Feeling - Courtney Storm.txt": {
-    "mtime": 1778813709.8624034,
-    "hash": "4541ede1664f7b3af1d4d9e293801342"
-  },
-  "graphify-out/transcripts/Armin - Revolution.txt": {
-    "mtime": 1778813714.1273355,
-    "hash": "f0fa56e64306bc079c47002dc31fda63"
-  },
-  "graphify-out/transcripts/Best Friend - Sofi Tukker.txt": {
-    "mtime": 1778813718.3612683,
-    "hash": "71ea8addf026287d504feecfefe0e32f"
-  },
-  "graphify-out/transcripts/Yonaka - Seize the Power.txt": {
-    "mtime": 1778813721.894212,
-    "hash": "a10ab25b74ad116df823f7135fe47d31"
-  },
-  "graphify-out/transcripts/Only this moment - royksopp.txt": {
-    "mtime": 1778813729.7270875,
-    "hash": "28b76baa860634d653cc5f424b0bcd65"
-  },
-  "graphify-out/transcripts/Hideaway - Kiesza.txt": {
-    "mtime": 1778813736.5739787,
-    "hash": "75064f172eafaff4df18afc660a83cc4"
-  },
-  "graphify-out/transcripts/Gabry Ponte - Tutta L'Italia.txt": {
-    "mtime": 1778813740.2749197,
-    "hash": "014aa4576ef9c090d19ec39fefe34a40"
-  },
-  "graphify-out/transcripts/Pet Shop Boys - I'm not scared.txt": {
-    "mtime": 1778813752.3577275,
-    "hash": "418c1343da339311351629073a6192ff"
-  },
-  "graphify-out/transcripts/CruelSummer - Malvina.txt": {
-    "mtime": 1778813758.621628,
-    "hash": "c5d90f5f8647f994b791ec9584393c76"
-  },
-  "graphify-out/transcripts/Cinderella - Ella Lee.txt": {
-    "mtime": 1778813767.6904836,
-    "hash": "2a5d3654e8f9430acaab9268a77aa74e"
-  },
-  "graphify-out/transcripts/Queen of Kings - Alessandra.txt": {
-    "mtime": 1778813771.0864296,
-    "hash": "319488b483bb8ded06028a0f1e9bf4ce"
-  },
-  "graphify-out/transcripts/Sash - Raindrops.txt": {
-    "mtime": 1778813776.2273479,
-    "hash": "acfef84a256d596d32982100aceeea0c"
-  },
-  "graphify-out/transcripts/Underworld - Born Slippy.txt": {
-    "mtime": 1778813822.7136078,
-    "hash": "ab7e2ab434125c2daea0d87af73c6b89"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/Rapture - Nadia Ali.mp3": {
-    "mtime": 1778721135.804715,
-    "hash": "eeacdc06e6c6db0f2b919f159974d709"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/Chimera - Hana.mp3": {
-    "mtime": 1778721135.640718,
-    "hash": "a48399aff94d8f429a234ee337cd8d08"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/What a Feeling - Courtney Storm.mp3": {
-    "mtime": 1778721135.8607137,
-    "hash": "92331a1524774b5541a36f3c43d7dcee"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/Armin - Revolution.mp3": {
-    "mtime": 1778721135.6097186,
-    "hash": "d758bae136cc131dd699da8a8d5241cf"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/Best Friend - Sofi Tukker.mp3": {
-    "mtime": 1778721135.6257184,
-    "hash": "0fa3d075153c0f5847183a5e61fc5df6"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/Yonaka - Seize the Power.mp3": {
-    "mtime": 1778721135.8727136,
-    "hash": "bb73b7acf3d29755d5f90a0e19cc33de"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/Only this moment - royksopp.mp3": {
-    "mtime": 1778721135.7567158,
-    "hash": "3d48aadade3d2ed10416a5bad1c21d61"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/Hideaway - Kiesza.mp3": {
-    "mtime": 1778721135.7167165,
-    "hash": "35be7328a36a61ee7a5836ff332012e5"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/Gabry Ponte - Tutta L'Italia.mp3": {
-    "mtime": 1778721135.7047167,
-    "hash": "3f95bac2963d46e7686a9ba00138605d"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/Pet Shop Boys - I'm not scared.mp3": {
-    "mtime": 1778721135.7747154,
-    "hash": "496d0e344b7357cb5b3ae6408f19b7ef"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/CruelSummer - Malvina.mp3": {
-    "mtime": 1778721135.6757174,
-    "hash": "00185d5e7f0b3ddb1866599286d6a457"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/Cinderella - Ella Lee.mp3": {
-    "mtime": 1778721135.6567178,
-    "hash": "e9c37f22dab21adb733e96398ad5e395"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/Queen of Kings - Alessandra.mp3": {
-    "mtime": 1778721135.7917151,
-    "hash": "f471e4341d968e7c680d40bd89f86a9b"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/Sash - Raindrops.mp3": {
-    "mtime": 1778721135.8207145,
-    "hash": "2970452538b2a1d54885f4cd1a578065"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/Underworld - Born Slippy.mp3": {
-    "mtime": 1778721135.848714,
-    "hash": "ded402d68b9acf1fe008be63cb1cade4"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/In da name of love - Anita and Ray.mp3": {
-    "mtime": 1778721135.7267163,
-    "hash": "364236aa8daf6a91f312d5c34d1699b6"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/Titanium - David Guetta ft Sia.mp3": {
-    "mtime": 1778721135.8347144,
-    "hash": "6bec0383cdd358d2cad3d826483b3c31"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/Fascination (The Droyds One Armed Remix).mp3": {
-    "mtime": 1778721135.6917171,
-    "hash": "f88dc0b1023769bd9a7c51de67043eb7"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/It's a fine day - Opus III.mp3": {
-    "mtime": 1778721135.740716,
-    "hash": "0c05b28babb027d56e0523b186c221af"
-  },
-  "/home/darkangel/ai-light-show-v4/data/songs/ayuni.mp3": {
-    "mtime": 1778721135.8837132,
-    "hash": "382e14ed3b3a0d920610ecd8bff58a09"
+  "/home/darkangel/ai-light-show-v4/frontend/index.html": {
+    "mtime": 1778815282.713322,
+    "hash": "03f213b70918117ae49cc62ad4f25cff"
   }
 }

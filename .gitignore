@@ -223,6 +223,8 @@ __marimo__/
 data/
 
 # Graphify
-.graphify/
-graphify_output/
-*.graphify
+graphify-out/.graphify_python
+graphify-out/.graphify_*.json
+graphify-out/transcripts/
+graphify-out/cache/
+graphify-out/semantic-extraction.json

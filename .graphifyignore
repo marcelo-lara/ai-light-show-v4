@@ -1,0 +1,7 @@
+# Ignore binary media files - transcripts and song audio are not useful for code navigation
+data/songs/
+graphify-out/transcripts/
+
+# Ignore test artifacts and data fixtures (not code)
+data/artifacts/
+data/fixtures/
