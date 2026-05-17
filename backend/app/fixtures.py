@@ -66,12 +66,56 @@ class FixtureManager:
     Epic 02.F7-F10: Load and manage fixtures and POIs.
     """
     
-    def __init__(self, fixtures_dir: str = "data/fixtures"):
+    def __init__(self, fixtures_dir: Optional[str] = None):
+        if fixtures_dir is None:
+            fixtures_dir = str(Path(__file__).resolve().parents[2] / "data" / "fixtures")
+
         self.fixtures_dir = Path(fixtures_dir)
         self.fixtures: Dict[str, Fixture] = {}
         self.pois: Dict[str, POI] = {}
         self._load_fixtures()
         self._load_pois()
+
+    def _normalize_canvas_position(self, location: Dict[str, Any]) -> CanvasPosition:
+        """Convert normalized room coordinates to the 100x50 preview canvas."""
+        return CanvasPosition(
+            x=float(location.get("x", 0.0)) * 100.0,
+            y=float(location.get("y", 0.0)) * 50.0,
+        )
+
+    def _normalize_physical_position(self, location: Dict[str, Any]) -> PhysicalPosition:
+        """Coerce legacy location payloads into the physical position model."""
+        return PhysicalPosition(
+            x=float(location.get("x", 0.0)),
+            y=float(location.get("y", 0.0)),
+            z=float(location.get("z", 0.0)),
+        )
+
+    def _normalize_legacy_fixture(self, raw_fixture: Dict[str, Any]) -> Fixture:
+        location = raw_fixture.get("location", {})
+        fixture_type_id = str(raw_fixture.get("fixture", "unknown"))
+
+        if "." in fixture_type_id:
+            fixture_type = fixture_type_id.split(".")[1]
+        else:
+            fixture_type = fixture_type_id or "unknown"
+
+        return Fixture(
+            fixture_id=str(raw_fixture.get("id")),
+            type=fixture_type,
+            physical_pos=self._normalize_physical_position(location),
+            canvas_anchor=self._normalize_canvas_position(location),
+        )
+
+    def _normalize_legacy_poi(self, raw_poi: Dict[str, Any]) -> POI:
+        location = raw_poi.get("location", {})
+
+        return POI(
+            poi_id=str(raw_poi.get("id")),
+            name=str(raw_poi.get("name", raw_poi.get("id", "poi"))),
+            canvas_pos=self._normalize_canvas_position(location),
+            physical_pos=self._normalize_physical_position(location),
+        )
     
     def _load_fixtures(self):
         """Load fixtures from fixtures.json."""
@@ -82,9 +126,14 @@ class FixtureManager:
         try:
             with open(fixture_file) as f:
                 data = json.load(f)
-            
-            fixture_set = FixtureSet(**data)
-            for fixture in fixture_set.fixtures:
+
+            if isinstance(data, list):
+                fixtures = [self._normalize_legacy_fixture(fixture) for fixture in data]
+            else:
+                fixture_set = FixtureSet(**data)
+                fixtures = fixture_set.fixtures
+
+            for fixture in fixtures:
                 self.fixtures[fixture.fixture_id] = fixture
         except Exception as e:
             print(f"Failed to load fixtures: {e}")
@@ -98,9 +147,14 @@ class FixtureManager:
         try:
             with open(poi_file) as f:
                 data = json.load(f)
-            
-            poi_set = POISet(**data)
-            for poi in poi_set.pois:
+
+            if isinstance(data, list):
+                pois = [self._normalize_legacy_poi(poi) for poi in data]
+            else:
+                poi_set = POISet(**data)
+                pois = poi_set.pois
+
+            for poi in pois:
                 self.pois[poi.poi_id] = poi
         except Exception as e:
             print(f"Failed to load POIs: {e}")
