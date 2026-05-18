@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "preset_id": "ocean_waves",
+  "preset_version": 1,
+  "display": {"name": "Ocean Waves", "tags": ["parcan", "ocean"]},
+  "description": "Beat-reactive parcan-only ocean swell look.",
+  "seed_policy": "required",
+  "params": [
+    {"id": "base_color", "type": "color", "default": "#001a3a", "group": "appearance"},
+    {"id": "highlight_color", "type": "color", "default": "#0077cc", "group": "appearance"},
+    {"id": "wave_speed", "type": "float", "default": 0.35, "min": 0.0, "max": 2.0, "step": 0.01, "group": "motion"},
+    {"id": "wave_scale", "type": "float", "default": 1.0, "min": 0.1, "max": 4.0, "step": 0.1, "group": "motion"}
+  ],
+  "registers": [],
+  "math": {"preset_init": [], "frame": []},
+  "layers": [
+    {
+      "id": "ocean",
+      "shader": "ocean_waves",
+      "enabled": true,
+      "params": {
+        "base_color": "#001a3a",
+        "highlight_color": "#0077cc",
+        "wave_speed": 0.35,
+        "wave_scale": 1.0
+      },
+      "modulators": {
+        "wave_speed": {"source": "beat_phase", "ops": [{"op": "scale", "min": 0.2, "max": 0.8}]}
+      },
+      "math": {"preset_init": [], "frame": []}
+    }
+  ]
+}

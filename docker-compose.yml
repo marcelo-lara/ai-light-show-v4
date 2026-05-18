@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "3401:3401"
+    volumes:
+      - ./data/songs:/data/songs:ro
+      - ./data/fixtures:/data/fixtures:ro
+      - ./data/artifacts:/data/artifacts
+    environment:
+      DATA_DIR: /data
+      ARTIFACTS_DIR: /data/artifacts
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3400:3400"
+    depends_on:
+      - backend

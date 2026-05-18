@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "preset_id": "bouncing_ball_reference_v1",
+  "preset_version": 1,
+  "display": {"name": "Bouncing Ball Reference", "tags": ["calibration", "test"]},
+  "description": "Deterministic calibration preset for visual regression baseline.",
+  "seed_policy": "required",
+  "params": [
+    {"id": "start_x", "type": "int", "default": 97, "min": 0, "max": 99, "group": "position"},
+    {"id": "start_y", "type": "int", "default": 47, "min": 0, "max": 49, "group": "position"},
+    {"id": "velocity_x", "type": "int", "default": 1, "min": -5, "max": 5, "group": "motion"},
+    {"id": "velocity_y", "type": "int", "default": 1, "min": -5, "max": 5, "group": "motion"},
+    {"id": "color", "type": "color", "default": "#ffffff", "group": "appearance"}
+  ],
+  "registers": [],
+  "math": {"preset_init": [], "frame": []},
+  "layers": [
+    {
+      "id": "ball",
+      "shader": "bouncing_ball",
+      "enabled": true,
+      "params": {
+        "start_x": 97,
+        "start_y": 47,
+        "velocity_x": 1,
+        "velocity_y": 1,
+        "color": "#ffffff"
+      },
+      "modulators": {},
+      "math": {"preset_init": [], "frame": []}
+    }
+  ]
+}
